@@ -13,9 +13,10 @@ namespace NovaMarket.Editor
     /// Procedurally rebuilds the CEDI Medellín environment: Aburrá valley terrain with painted
     /// layers, hillside brick neighbourhoods (barrios), slope forests, afternoon lighting and the
     /// global post-processing volume. Uses a fixed seed, so every run gives the same result.
-    /// Leaves the CEDI lot, roads, distant buildings and existing valley trees untouched.
+    /// Also builds the transport corridor (river canal and metro, see the Infrastructure part).
+    /// Leaves the CEDI lot, roads and existing valley trees untouched.
     /// </summary>
-    public static class CediEnvironmentBuilder
+    public static partial class CediEnvironmentBuilder
     {
         private const string Root = "Assets/NOVAMARKET/";
         private const string TerrainFolder = Root + "Terrain";
@@ -75,6 +76,7 @@ namespace NovaMarket.Editor
             TerrainData terrainData = CreateTerrainData();
             Terrain terrain = CreateTerrain(environment, terrainData);
 
+            BuildInfrastructure(environment);
             BuildBarrios(environment);
             PaintTerrain(terrainData);
             PlaceTrees(terrainData, environment);
@@ -113,6 +115,7 @@ namespace NovaMarket.Editor
             DestroyChild(environment, "Terrain/ValleyFloor");
             DestroyChild(environment, "Terrain/Terrain_Aburra");
             DestroyChild(environment, "Barrios");
+            DestroyChild(environment, "Infrastructure");
             GameObject volume = GameObject.Find("Global Volume");
             if (volume != null) Object.DestroyImmediate(volume);
         }
@@ -163,8 +166,8 @@ namespace NovaMarket.Editor
             float height = baseHeight * (0.6f + 0.5f * ridges)
                            + mountain * (Fbm(x * 0.006f, z * 0.006f, 4) - 0.5f) * 30f;
 
-            // Keep a pass open where the main road leaves the valley.
-            height *= Smooth01((Mathf.Abs(z - RoadZ) - 35f) / 240f);
+            // Keep a pass open where the transport corridor (highway, metro, river) leaves the valley.
+            height *= Smooth01((CorridorDistance(z) - 25f) / 240f);
             return Mathf.Max(0f, height);
         }
 
@@ -199,6 +202,7 @@ namespace NovaMarket.Editor
             for (int ix = 0; ix < HeightRes; ix++)
                 normalized[iz, ix] = heights[iz, ix] / MaxHeight;
             data.SetHeights(0, 0, normalized);
+            CutRiverHoles(data);
 
             data.terrainLayers = CreateTerrainLayers();
             data.treePrototypes = CreateTreePrototypes();
@@ -340,7 +344,7 @@ namespace NovaMarket.Editor
                 float h = SampleHeight(x, z);
                 float steep = SampleSteepness(x, z);
                 if (h < 18f || h > 240f || steep < 7f || steep > 27f) continue;
-                if (Mathf.Abs(z - RoadZ) < 280f) continue;
+                if (CorridorDistance(z) < 250f) continue;
                 bool tooClose = false;
                 foreach (Vector2 c in centers) tooClose |= Vector2.Distance(c, new Vector2(x, z)) < 300f;
                 if (tooClose) continue;
@@ -649,7 +653,7 @@ namespace NovaMarket.Editor
 
             bool Blocked(float x, float z)
             {
-                if (Mathf.Abs(z - RoadZ) < RoadHalfWidth + 7f) return true;
+                if (Mathf.Abs(z - RoadZ) < RoadHalfWidth + 7f || InInfrastructure(x, z)) return true;
                 if (SampleAlpha(treeBlock, x, z) > 0f || SampleAlpha(dirtStamp, x, z) > 0.35f) return true;
                 if (SampleSteepness(x, z) > 40f) return true;
                 foreach (Rect r in obstacles) if (r.Contains(new Vector2(x, z))) return true;
