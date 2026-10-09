@@ -27,8 +27,8 @@ Assets/NOVAMARKET/
         Simulation/    Future simulation systems (empty)
         UI/            Future UI scripts (empty)
     Prefabs/
-        Buildings/  Vehicles/  Equipment/  Characters/  Environment/
-    Materials/         Project materials (URP)
+        Buildings/  Vehicles/  Equipment/  Characters/  Environment/ (Tree_Blockout)
+    Materials/         Project materials (URP); Blockout/ holds greybox M_* materials
     Models/            Imported 3D models
     UI/                UI assets (sprites, UXML/USS, fonts)
     Data/              ScriptableObject asset instances
@@ -46,15 +46,36 @@ Code uses the `NovaMarket.*` namespaces matching the `Scripts/` subfolders.
 
 `Assets/Scenes/SampleScene.unity` is the original template scene and is kept untouched.
 
-Current `CEDI_Medellin` hierarchy (base only):
+`CEDI_Medellin` is the first scene in the build settings (index 0).
+
+Current `CEDI_Medellin` hierarchy (greybox blockout, primitives + `Materials/Blockout/`):
 
 ```
-Main Camera
+Main Camera                        elevated overview, (-48, 52, -104)
 Directional Light
 CEDI_Medellin                      root of all scenario content
     Environment
-        TemporaryGround            Plane scaled 10x → 100 m x 100 m, for scale checks only
+        Terrain/ValleyFloor        valley floor, scale 300 x 300
+        Mountains                  north/south ridges and foothills + west/east closures
+        MainRoad                   Road_Main (2900 m x 12 m at z = -60), lane lines, AccessRoad_ToGate
+        DistantBuildings           Industrial_01-07, Tower_01-05, Block_01-04
+        Vegetation                 36 Tree_Blockout prefab instances (Tree_01 ...)
+    CEDI
+        Building                   FloorSlab 44 m x 26 m, Walls, MainFacade, Roof (cutaway material, y = 8.85)
+        Receiving                  floor, StagingLane_01-03, Docks
+        Storage                    floor, RackRow_01-04 (16 m x 6 m x 2.2 m)
+        Picking                    floor, PickStation_01-03
+        Shipping                   floor, StagingLane_04-06, Docks
+        Yard                       YardPavement 120 m x 55 m
+        Gate                       GatePad, inbound/outbound lanes, GateIsland, stop lines
+        ContainerYard              YardLink, ContainerPad, Container_01-06
+        Parking                    ParkingPad 36 m x 18 m, StallLines
+    Debug
+        ScaleMarkers               1 m cube, 5 m and 10 m poles
 ```
+
+Flow inside the building: Receiving → Storage → Picking → Shipping. The blockout has no
+scripts or interactables attached yet.
 
 ## Data architecture
 
@@ -80,8 +101,9 @@ shows name, description and data of the selected object.
 ## Not implemented yet
 
 - Concrete data types (CompanyData, ScenarioData, ... RoleData)
-- Selection system and any UI
-- CEDI Medellín environment: terrain, mountains, roads, buildings, docks, vehicles
+- Selection system and any UI; no `InteractableObject` placed in scenes yet
+- Final art for CEDI Medellín (current environment is a greybox blockout)
+- Vehicles, characters and equipment prefabs
 - ERP, Excel integration, database
 - AI, Mentor
 - S&OP, advanced simulation
