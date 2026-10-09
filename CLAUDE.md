@@ -73,7 +73,9 @@ Gemas con forma, color y valor distintos por nivel.
 
 - Unity **6000.3.25f1** (Unity 6.3), URP 17.3.0 (`Assets/Settings/PC_RPAsset` / `Mobile_RPAsset`)
 - Nuevo Input System (`Assets/InputSystem_Actions.inputactions`), AI Navigation, uGUI, Test Framework
-- Aún no hay asmdefs: todos los scripts compilan en `Assembly-CSharp`
+- Asmdefs: `NovaMarket.Runtime` (`Scripts/`), `NovaMarket.Editor` (`Scripts/Editor/`, solo Editor) y
+  `NovaMarket.Tests.EditMode` (`Tests/EditMode/`). Un script nuevo en `Scripts/` entra solo en
+  `NovaMarket.Runtime`; si usa otro paquete, agrega la referencia en el asmdef.
 
 ## Reglas
 
@@ -82,7 +84,7 @@ Gemas con forma, color y valor distintos por nivel.
 - Todo el contenido del proyecto vive en `Assets/NOVAMARKET/`. No toques el contenido de la
   plantilla URP (`Assets/Scenes/SampleScene.unity`, `Assets/TutorialInfo/`, `Assets/Readme.asset`).
 - Los namespaces son `NovaMarket.<Carpeta>`, igual que `Scripts/<Carpeta>/` (Core, Data,
-  Interaction, Simulation, UI).
+  Interaction, CameraControl, Simulation, UI). Las pruebas usan `NovaMarket.Tests.<Carpeta>`.
 - Los tipos de datos derivan de `NovaMarket.Data.NovaDataAsset` y usan
   `[CreateAssetMenu(menuName = NovaDataAsset.MenuRoot + "<Tipo>")]`; las instancias van en
   `Assets/NOVAMARKET/Data/`.

@@ -24,9 +24,12 @@ Assets/NOVAMARKET/
         Core/          Project-wide conventions and shared utilities (WorldScale)
         Data/          ScriptableObject data definitions (NovaDataAsset and subclasses)
         Interaction/   Selectable / interactable objects (IInteractable, InteractableObject)
+        CameraControl/ Strategy camera (StrategyCameraRig logic + StrategyCameraController)
         Simulation/    Future simulation systems (empty)
         UI/            Future UI scripts (empty)
         Editor/        Editor-only tools (CediEnvironmentBuilder, EnvironmentMeshes)
+    Tests/
+        EditMode/      NUnit tests run from the Test Runner (StrategyCameraRigTests)
     Prefabs/
         Buildings/  Vehicles/  Equipment/  Characters/
         Environment/   Tree_Blockout + generated terrain tree prefabs (Tree_Broadleaf_*, Tree_Guayacan_* ...)
@@ -44,6 +47,11 @@ Assets/NOVAMARKET/
 
 Code uses the `NovaMarket.*` namespaces matching the `Scripts/` subfolders.
 
+Assemblies: `NovaMarket.Runtime` (everything under `Scripts/`, references `Unity.InputSystem`),
+`NovaMarket.Editor` (`Scripts/Editor/`, Editor only, references URP) and
+`NovaMarket.Tests.EditMode` (`Tests/EditMode/`). Logic that can be tested lives in plain C#
+classes; MonoBehaviours only connect it to the scene, input and UI.
+
 ## Scenes
 
 | Scene | Role |
@@ -58,7 +66,7 @@ Code uses the `NovaMarket.*` namespaces matching the `Scripts/` subfolders.
 Current `CEDI_Medellin` hierarchy (greybox blockout, primitives + `Materials/Blockout/`):
 
 ```
-Main Camera                        review camera, FOV 40, (-86, 75, -172) looking at the CEDI
+Main Camera                        StrategyCameraController; starts at 50° looking at the CEDI
 Directional Light                  late-afternoon sun from the west-southwest (25° high)
 Global Volume                      VP_CEDI_Medellin: ACES, soft bloom, warm grading
 CEDI_Medellin                      root of all scenario content
@@ -104,6 +112,24 @@ It never touches the CEDI lot, `MainRoad`, `DistantBuildings`, `Vegetation` or `
 - Assets are updated in place on rebuild; deleting and recreating them at the same path
   makes Unity drop data set in between.
 
+## Strategy camera
+
+`StrategyCameraController` (on `Main Camera`) is the Play-mode RTS camera, Age of Empires III
+style. It defines its Input System actions in code and feeds `StrategyCameraRig`, a plain C#
+class with all the math (covered by `StrategyCameraRigTests`).
+
+| Input | Action |
+|---|---|
+| WASD / arrows, pointer at a screen edge | Pan (faster when zoomed out) |
+| Middle mouse drag | Grab and drag the ground |
+| Mouse wheel | Zoom, 35–450 m from the focus point |
+| Q / E | Rotate 45° left / right, eased |
+
+The focus point is clamped to the flat valley floor (x ±780, z ±420 m) and the camera keeps
+15 m above the terrain. All values are in `StrategyCameraSettings`, editable in the Inspector.
+In the Editor, edge scrolling only works while the mouse is over the Game view.
+Right-click the component → **Apply Start View** to preview the start view in Edit mode.
+
 ## Data architecture
 
 All data assets derive from `NovaMarket.Data.NovaDataAsset` (a `ScriptableObject` with
@@ -131,7 +157,6 @@ shows name, description and data of the selected object.
 - Selection system and any UI; no `InteractableObject` placed in scenes yet
 - Final art for CEDI Medellín (environment is a procedural blockout; no purchased assets)
 - River, elevated train and highway from the game vision
-- Gameplay RTS camera (the Main Camera is only a review camera)
 - Vehicles, characters and equipment prefabs
 - ERP, Excel integration, database
 - AI, Mentor
