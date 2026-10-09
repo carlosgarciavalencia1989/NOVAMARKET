@@ -24,6 +24,11 @@ namespace NovaMarket.Editor
         private static readonly Vector2 IndustrialCenter = new Vector2(0f, -20f);
         private static readonly Vector2 IndustrialRadii = new Vector2(500f, 330f);
 
+        // Downtown towers stand well behind the CEDI (seen from the start view) and never close to it.
+        private static readonly Vector2 DowntownCenter = new Vector2(380f, 300f);
+        private const float DowntownRadius = 240f;
+        private const float TowerMinDistanceToCedi = 280f;
+
         // Submeshes of the ground palette.
         private const int GroundAsphalt = 0;
         private const int GroundSidewalk = 1;
@@ -78,20 +83,42 @@ namespace NovaMarket.Editor
             foreach (Transform t in environment.Find("Vegetation")) handPlacedTrees.Add(new Vector2(t.position.x, t.position.z));
 
             var industrial = new Dictionary<Vector2Int, UrbanChunk>();
-            var rng = new System.Random(Seed + 11);
-            int industrialBlocks = 0;
+            var city = new Dictionary<Vector2Int, UrbanChunk>();
+            var industrialRng = new System.Random(Seed + 11);
+            var cityRng = new System.Random(Seed + 13);
+            int industrialBlocks = 0, cityBlocks = 0, parks = 0, towerBlocks = 0;
 
             foreach (Rect block in EnumerateBlocks())
             {
                 Rect cell = Expand(block, StreetWidth / 2f);
                 if (!IsBuildable(cell)) continue;
-                if (!IsIndustrial(block.center)) continue;
+                bool isIndustrial = IsIndustrial(block.center);
 
-                UrbanChunk chunk = GetChunk(industrial, block.center);
+                UrbanChunk chunk = GetChunk(isIndustrial ? industrial : city, block.center);
                 AddGroundPlate(chunk.Ground, cell, 0.03f, GroundAsphalt);
                 StampRect(treeBlock, cell);
-                BuildIndustrialBlock(chunk, block, rng);
-                industrialBlocks++;
+
+                if (isIndustrial)
+                {
+                    BuildIndustrialBlock(chunk, block, industrialRng);
+                    industrialBlocks++;
+                    continue;
+                }
+
+                AddAvenueTrees(block, cityRng);
+                float downtown = DowntownWeight(block.center);
+                if (downtown > 0f)
+                {
+                    BuildDowntownBlock(chunk, block, downtown, cityRng);
+                    towerBlocks++;
+                }
+                else if (cityRng.NextDouble() < 0.08)
+                {
+                    BuildParkBlock(chunk, block, cityRng);
+                    parks++;
+                }
+                else BuildCityBlock(chunk, block, cityRng);
+                cityBlocks++;
             }
 
             // Streets that cross the corridor to the river bridges.
@@ -103,7 +130,9 @@ namespace NovaMarket.Editor
             }
 
             CreateChunkObjects(environment, "IndustrialZone", "Industrial", industrial, groundPalette, buildingPalette);
-            Debug.Log($"Urban: {industrialBlocks} industrial blocks.");
+            CreateChunkObjects(environment, "City", "City", city, groundPalette, buildingPalette);
+            Debug.Log($"Urban: {industrialBlocks} industrial blocks, {cityBlocks} city blocks " +
+                      $"({towerBlocks} downtown, {parks} parks).");
         }
 
         // ------------------------------------------------------------------ grid
@@ -313,6 +342,204 @@ namespace NovaMarket.Editor
             b.AddBox(cab + Vector3.up * 1.75f, along, outward, 1.25f, 1.45f, 1.2f, cabColor, cabColor);
         }
 
+        // ------------------------------------------------------------------ city
+
+        private const float SidewalkWidth = 2.5f;
+        private const float FloorHeight = 3f;
+
+        /// <summary>0 outside downtown, rising to 1 at its center; always 0 near the CEDI.</summary>
+        private static float DowntownWeight(Vector2 center)
+        {
+            if (Vector2.Distance(center, CediClearZone.center) < TowerMinDistanceToCedi) return 0f;
+            return Mathf.Clamp01(1f - Vector2.Distance(center, DowntownCenter) / DowntownRadius);
+        }
+
+        /// <summary>
+        /// Perimeter block, as in Medellín: rows of 2-6 floor buildings along the four streets,
+        /// in brick and cream, with a courtyard (green, paved or with a low building) inside.
+        /// </summary>
+        private static void BuildCityBlock(UrbanChunk chunk, Rect block, System.Random rng)
+        {
+            AddGroundPlate(chunk.Ground, block, 0.18f, GroundSidewalk);
+            Rect inner = Shrink(block, SidewalkWidth);
+            float south = Range(rng, 11f, 16f), north = Range(rng, 11f, 16f);
+            float west = Range(rng, 11f, 16f), east = Range(rng, 11f, 16f);
+            float sideLength = inner.height - north - south;
+
+            // North and south rows run the full width; west and east rows fill the gap between them.
+            BuildFrontage(chunk.Buildings, new Vector3(inner.xMin, 0f, inner.yMin), Vector3.right, Vector3.forward,
+                inner.width, south, 2, 6, rng);
+            BuildFrontage(chunk.Buildings, new Vector3(inner.xMax, 0f, inner.yMax), Vector3.left, Vector3.back,
+                inner.width, north, 2, 6, rng);
+            BuildFrontage(chunk.Buildings, new Vector3(inner.xMin, 0f, inner.yMax - north), Vector3.back, Vector3.right,
+                sideLength, west, 2, 6, rng);
+            BuildFrontage(chunk.Buildings, new Vector3(inner.xMax, 0f, inner.yMin + south), Vector3.forward, Vector3.left,
+                sideLength, east, 2, 6, rng);
+
+            Rect court = Rect.MinMaxRect(inner.xMin + west + 1f, inner.yMin + south + 1f, inner.xMax - east - 1f,
+                inner.yMax - north - 1f);
+            if (court.width < 8f || court.height < 8f) return;
+            double roll = rng.NextDouble();
+            if (roll < 0.45)
+            {
+                AddGroundPlate(chunk.Ground, court, 0.22f, GroundGrass);
+                AddUrbanTree(court.center.x + Range(rng, -3f, 3f), court.center.y + Range(rng, -3f, 3f), PickCityTree(rng));
+            }
+            else if (roll < 0.75 && !OverlapsHandPlacedTree(court))
+            {
+                int facade = PickFacade(rng);
+                float height = 2f * FloorHeight + 0.6f;
+                chunk.Buildings.AddTexturedBox(new Vector3(court.center.x, height / 2f, court.center.y), Vector3.right,
+                    Vector3.forward, court.width * 0.35f, height / 2f, court.height * 0.35f, facade, RoofFlat, FacadeTile);
+            }
+        }
+
+        /// <summary>
+        /// Row of adjoining buildings along a street. <paramref name="start"/> is the street-side corner,
+        /// buildings advance along <paramref name="along"/> and are <paramref name="depth"/> deep towards
+        /// <paramref name="inward"/>.
+        /// </summary>
+        private static void BuildFrontage(MeshBuilder b, Vector3 start, Vector3 along, Vector3 inward, float length,
+            float depth, int minFloors, int maxFloors, System.Random rng)
+        {
+            float s = 0f;
+            while (s < length - 4f)
+            {
+                float width = Range(rng, 7f, 15f);
+                if (length - s - width < 6f) width = length - s; // the last lot reaches the corner
+                Vector3 front = start + along * (s + width / 2f);
+                s += width;
+                if (rng.NextDouble() < 0.06) continue; // empty lot / parking
+
+                float lotDepth = depth * Range(rng, 0.8f, 1f);
+                Vector3 center = front + inward * (lotDepth / 2f);
+                Rect footprint = FootprintOf(center, along, inward, width / 2f, lotDepth / 2f);
+                if (OverlapsHandPlacedTree(footprint)) continue;
+
+                int floors = PickFloors(rng, minFloors, maxFloors);
+                float height = floors * FloorHeight + 0.6f;
+                int facade = PickFacade(rng);
+                int roof = rng.NextDouble() < 0.65 ? RoofFlat : RoofDark;
+                // 5 cm gaps between neighbours avoid flickering coplanar walls.
+                b.AddTexturedBox(center + Vector3.up * (height / 2f), along, inward, width / 2f - 0.05f, height / 2f,
+                    lotDepth / 2f, facade, roof, FacadeTile);
+                AddRooftopDetail(b, center, height, along, inward, roof, rng);
+            }
+        }
+
+        /// <summary>Water tanks and stair houses break up the flat roofs.</summary>
+        private static void AddRooftopDetail(MeshBuilder b, Vector3 center, float roofY, Vector3 along, Vector3 inward,
+            int roof, System.Random rng)
+        {
+            double roll = rng.NextDouble();
+            Vector3 offset = along * Range(rng, -2f, 2f) + inward * Range(rng, -2f, 2f);
+            if (roll < 0.22)
+                b.AddBox(center + offset + Vector3.up * (roofY + 0.8f), along, inward, 0.8f, 0.8f, 0.8f, DockDark, DockDark);
+            else if (roll < 0.36)
+                b.AddBox(center + offset + Vector3.up * (roofY + 1.3f), along, inward, 1.3f, 1.3f, 1.6f, roof, roof);
+        }
+
+        /// <summary>
+        /// Downtown block: a low podium along the streets and one or two towers, taller towards
+        /// the center of downtown (brick towers, as in Medellín, with a muted tone, and cream ones).
+        /// </summary>
+        private static void BuildDowntownBlock(UrbanChunk chunk, Rect block, float weight, System.Random rng)
+        {
+            AddGroundPlate(chunk.Ground, block, 0.18f, GroundSidewalk);
+            Rect inner = Shrink(block, SidewalkWidth);
+            MeshBuilder b = chunk.Buildings;
+            BuildFrontage(b, new Vector3(inner.xMin, 0f, inner.yMin), Vector3.right, Vector3.forward, inner.width, 12f, 2, 4, rng);
+            BuildFrontage(b, new Vector3(inner.xMax, 0f, inner.yMax), Vector3.left, Vector3.back, inner.width, 12f, 2, 4, rng);
+
+            int towers = rng.NextDouble() < 0.5 ? 1 : 2;
+            for (int t = 0; t < towers; t++)
+            {
+                float halfX = Range(rng, 9f, 13f), halfZ = Range(rng, 8f, 12f);
+                float slot = towers == 1 ? 0f : (t == 0 ? -0.25f : 0.25f) * inner.width;
+                var center = new Vector3(inner.center.x + slot + Range(rng, -4f, 4f), 0f,
+                    inner.center.y + Range(rng, -6f, 6f));
+                if (OverlapsHandPlacedTree(FootprintOf(center, Vector3.right, Vector3.forward, halfX, halfZ))) continue;
+
+                int floors = Mathf.RoundToInt(Mathf.Lerp(9f, 26f, weight) * Range(rng, 0.75f, 1.1f));
+                float height = floors * FloorHeight + 1f;
+                int material = rng.NextDouble() < 0.55 ? TowerBrick : TowerCream;
+                b.AddTexturedBox(center + Vector3.up * (height / 2f), Vector3.right, Vector3.forward, halfX, height / 2f,
+                    halfZ, material, RoofFlat, TowerTile);
+
+                // Setback crown on some towers, then the machine room.
+                float top = height;
+                if (rng.NextDouble() < 0.4)
+                {
+                    float crown = 3f * FloorHeight;
+                    b.AddTexturedBox(center + Vector3.up * (top + crown / 2f), Vector3.right, Vector3.forward,
+                        halfX * 0.7f, crown / 2f, halfZ * 0.7f, material, RoofFlat, TowerTile);
+                    top += crown;
+                }
+                b.AddBox(center + Vector3.up * (top + 1.6f), Vector3.right, Vector3.forward, 3.5f, 1.6f, 2.5f, RoofDark, RoofDark);
+            }
+        }
+
+        /// <summary>Green block with crossing paths and plenty of trees, guayacanes among them.</summary>
+        private static void BuildParkBlock(UrbanChunk chunk, Rect block, System.Random rng)
+        {
+            AddGroundPlate(chunk.Ground, block, 0.18f, GroundGrass);
+            AddGroundPlate(chunk.Ground, new Rect(block.xMin, block.center.y - 1.75f, block.width, 3.5f), 0.22f, GroundSidewalk);
+            AddGroundPlate(chunk.Ground, new Rect(block.center.x - 1.75f, block.yMin, 3.5f, block.height), 0.22f, GroundSidewalk);
+
+            int trees = rng.Next(14, 24);
+            for (int i = 0; i < trees; i++)
+            {
+                float x = Range(rng, block.xMin + 3f, block.xMax - 3f);
+                float z = Range(rng, block.yMin + 3f, block.yMax - 3f);
+                if (Mathf.Abs(x - block.center.x) < 4f || Mathf.Abs(z - block.center.y) < 4f) continue;
+                AddUrbanTree(x, z, PickCityTree(rng));
+            }
+        }
+
+        /// <summary>Trees along the curb of the avenues (every third street).</summary>
+        private static void AddAvenueTrees(Rect block, System.Random rng)
+        {
+            int column = Mathf.RoundToInt(block.center.x / GridPitchX);
+            int row = Mathf.RoundToInt(block.center.y / GridPitchZ);
+            const float curb = 1.2f, spacing = 11f;
+            if (column % 3 == 0)
+                for (float z = block.yMin + 4f; z < block.yMax - 2f; z += spacing)
+                    if (rng.NextDouble() < 0.7) AddUrbanTree(block.xMin - curb, z, PickCityTree(rng));
+            if (row % 3 == 0)
+                for (float x = block.xMin + 4f; x < block.xMax - 2f; x += spacing)
+                    if (rng.NextDouble() < 0.7) AddUrbanTree(x, block.yMin - curb, PickCityTree(rng));
+        }
+
+        private static int PickFloors(System.Random rng, int min, int max)
+        {
+            // Mid-rise heavy: 3-4 floors are the most common, like most of Medellín's flat districts.
+            double roll = rng.NextDouble();
+            int floors = roll < 0.15 ? 2 : roll < 0.40 ? 3 : roll < 0.65 ? 4 : roll < 0.85 ? 5 : 6;
+            return Mathf.Clamp(floors, min, max);
+        }
+
+        private static int PickFacade(System.Random rng)
+        {
+            double roll = rng.NextDouble();
+            return roll < 0.6 ? FacadeBrickA + rng.Next(3) : roll < 0.9 ? FacadeCreamA + rng.Next(2) : FacadeWhite;
+        }
+
+        private static int PickCityTree(System.Random rng)
+        {
+            double roll = rng.NextDouble();
+            return roll < 0.15 ? TreeGuayacanYellow : roll < 0.28 ? TreeGuayacanPink : roll < 0.6 ? TreeBroadleafMid
+                : roll < 0.85 ? TreeBroadleafLight : TreeRoundMid;
+        }
+
+        private static Rect FootprintOf(Vector3 center, Vector3 along, Vector3 inward, float halfAlong, float halfInward)
+        {
+            Vector3 extent = new Vector3(Mathf.Abs(along.x) * halfAlong + Mathf.Abs(inward.x) * halfInward, 0f,
+                Mathf.Abs(along.z) * halfAlong + Mathf.Abs(inward.z) * halfInward);
+            return Rect.MinMaxRect(center.x - extent.x, center.z - extent.z, center.x + extent.x, center.z + extent.z);
+        }
+
+        private static Rect Shrink(Rect r, float m) => Expand(r, -m);
+
         // ------------------------------------------------------------------ geometry helpers
 
         /// <summary>Flat slab on the ground, from y = 0 up to <paramref name="top"/>.</summary>
@@ -336,7 +563,7 @@ namespace NovaMarket.Editor
         private static Material[] CreateGroundPalette() => new[]
         {
             CreateMaterial("M_Urban_Asphalt", new Color(0.37f, 0.37f, 0.38f)),
-            CreateMaterial("M_Urban_Sidewalk", new Color(0.64f, 0.62f, 0.58f)),
+            CreateMaterial("M_Urban_Sidewalk", new Color(0.68f, 0.67f, 0.64f)),
             CreateMaterial("M_Urban_Grass", new Color(0.42f, 0.54f, 0.27f)),
             CreateMaterial("M_Urban_Yard", new Color(0.56f, 0.56f, 0.55f))
         };
@@ -351,15 +578,15 @@ namespace NovaMarket.Editor
 
             return new[]
             {
-                CreateTexturedMaterial("M_Facade_Brick_A", new Color(0.60f, 0.42f, 0.33f), facade),
-                CreateTexturedMaterial("M_Facade_Brick_B", new Color(0.53f, 0.37f, 0.30f), facade),
-                CreateTexturedMaterial("M_Facade_Brick_C", new Color(0.66f, 0.49f, 0.39f), facade),
+                CreateTexturedMaterial("M_Facade_Brick_A", new Color(0.52f, 0.44f, 0.40f), facade),
+                CreateTexturedMaterial("M_Facade_Brick_B", new Color(0.46f, 0.40f, 0.37f), facade),
+                CreateTexturedMaterial("M_Facade_Brick_C", new Color(0.58f, 0.51f, 0.46f), facade),
                 CreateTexturedMaterial("M_Facade_Cream_A", new Color(0.82f, 0.77f, 0.66f), facade),
                 CreateTexturedMaterial("M_Facade_Cream_B", new Color(0.74f, 0.70f, 0.61f), facade),
                 CreateTexturedMaterial("M_Facade_White", new Color(0.86f, 0.85f, 0.81f), facade),
-                CreateMaterial("M_Roof_Flat", new Color(0.56f, 0.54f, 0.51f)),
+                CreateMaterial("M_Roof_Flat", new Color(0.52f, 0.51f, 0.49f)),
                 CreateMaterial("M_Roof_Dark", new Color(0.40f, 0.39f, 0.38f)),
-                CreateTexturedMaterial("M_Tower_Brick", new Color(0.58f, 0.43f, 0.35f), tower),
+                CreateTexturedMaterial("M_Tower_Brick", new Color(0.52f, 0.45f, 0.41f), tower),
                 CreateTexturedMaterial("M_Tower_Cream", new Color(0.80f, 0.77f, 0.70f), tower),
                 CreateTexturedMaterial("M_Warehouse_Wall_A", new Color(0.78f, 0.77f, 0.73f), cladding),
                 CreateTexturedMaterial("M_Warehouse_Wall_B", new Color(0.64f, 0.67f, 0.68f), cladding),
