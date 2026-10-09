@@ -99,6 +99,10 @@ Gemas con forma, color y valor distintos por nivel.
 
 - Los materiales usan el prefijo `M_` (`M_<Categoría>_<Variante>`); los de blockout están en
   `Materials/Blockout/`. Los prefabs van en la carpeta `Prefabs/<Categoría>/` correspondiente.
+- El entorno de CEDI Medellín (terreno, barrios, árboles de terreno, sol, niebla, Global Volume)
+  lo genera `NovaMarket.Editor.CediEnvironmentBuilder` (menú NOVAMARKET → Environment). Para
+  cambiarlo, ajusta el builder y reconstruye; no edites a mano `Terrain/`, `Models/Generated/` ni
+  `Materials/Environment/`.
 - Siempre haz commit de los `.meta` junto con su asset y nunca edites GUIDs a mano.
 - Prefiere manejar el Editor (Unity CLI / MCP) antes que editar a mano el YAML de `.unity`,
   `.prefab` o `.mat`.
