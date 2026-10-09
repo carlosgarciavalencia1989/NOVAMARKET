@@ -21,12 +21,19 @@ namespace NovaMarket.Editor
             for (int i = 0; i < submeshCount; i++) submeshes[i] = new List<int>();
         }
 
-        public void AddTriangle(Vector3 a, Vector3 b, Vector3 c, Vector3 outward, int submesh)
+        public int VertexCount => vertices.Count;
+
+        public void AddTriangle(Vector3 a, Vector3 b, Vector3 c, Vector3 outward, int submesh) =>
+            AddTriangle(a, b, c, Vector2.zero, Vector2.right, Vector2.up, outward, submesh);
+
+        public void AddTriangle(Vector3 a, Vector3 b, Vector3 c, Vector2 uvA, Vector2 uvB, Vector2 uvC,
+            Vector3 outward, int submesh)
         {
             Vector3 normal = Vector3.Cross(b - a, c - a);
             if (Vector3.Dot(normal, outward) < 0f)
             {
                 (b, c) = (c, b);
+                (uvB, uvC) = (uvC, uvB);
                 normal = -normal;
             }
             normal.Normalize();
@@ -34,7 +41,7 @@ namespace NovaMarket.Editor
             int start = vertices.Count;
             vertices.Add(a); vertices.Add(b); vertices.Add(c);
             normals.Add(normal); normals.Add(normal); normals.Add(normal);
-            uvs.Add(Vector2.zero); uvs.Add(Vector2.right); uvs.Add(Vector2.up);
+            uvs.Add(uvA); uvs.Add(uvB); uvs.Add(uvC);
             submeshes[submesh].Add(start);
             submeshes[submesh].Add(start + 1);
             submeshes[submesh].Add(start + 2);
@@ -44,6 +51,72 @@ namespace NovaMarket.Editor
         {
             AddTriangle(a, b, c, outward, submesh);
             AddTriangle(a, c, d, outward, submesh);
+        }
+
+        public void AddQuad(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Vector2 uvA, Vector2 uvB, Vector2 uvC,
+            Vector2 uvD, Vector3 outward, int submesh)
+        {
+            AddTriangle(a, b, c, uvA, uvB, uvC, outward, submesh);
+            AddTriangle(a, c, d, uvA, uvC, uvD, outward, submesh);
+        }
+
+        /// <summary>
+        /// Textured vertical wall. U fits a whole number of <paramref name="tile"/>.x tiles in the wall
+        /// width (so windows never get cut at corners); V counts tile.y meters up from the bottom.
+        /// </summary>
+        public void AddWall(Vector3 bottomStart, Vector3 along, float length, float height, Vector3 outward,
+            int submesh, Vector2 tile)
+        {
+            float u = Mathf.Max(1f, Mathf.Round(length / tile.x));
+            float v = height / tile.y;
+            Vector3 end = bottomStart + along * length;
+            AddQuad(bottomStart, bottomStart + Vector3.up * height, end + Vector3.up * height, end,
+                new Vector2(0f, 0f), new Vector2(0f, v), new Vector2(u, v), new Vector2(u, 0f), outward, submesh);
+        }
+
+        /// <summary>Box without a bottom face whose walls are textured with <see cref="AddWall"/>.</summary>
+        public void AddTexturedBox(Vector3 center, Vector3 right, Vector3 forward, float halfX, float halfY,
+            float halfZ, int sideSubmesh, int topSubmesh, Vector2 tile)
+        {
+            Vector3 bottom = center - Vector3.up * halfY;
+            float height = halfY * 2f;
+            Vector3 c00 = bottom - right * halfX - forward * halfZ;
+            Vector3 c10 = bottom + right * halfX - forward * halfZ;
+            Vector3 c11 = bottom + right * halfX + forward * halfZ;
+            Vector3 c01 = bottom - right * halfX + forward * halfZ;
+            AddWall(c00, right, halfX * 2f, height, -forward, sideSubmesh, tile);
+            AddWall(c10, forward, halfZ * 2f, height, right, sideSubmesh, tile);
+            AddWall(c11, -right, halfX * 2f, height, forward, sideSubmesh, tile);
+            AddWall(c01, -forward, halfZ * 2f, height, -right, sideSubmesh, tile);
+
+            Vector3 up = Vector3.up * height;
+            AddQuad(c00 + up, c10 + up, c11 + up, c01 + up, new Vector2(0f, 0f), new Vector2(halfX * 2f / tile.x, 0f),
+                new Vector2(halfX * 2f / tile.x, halfZ * 2f / tile.y), new Vector2(0f, halfZ * 2f / tile.y),
+                Vector3.up, topSubmesh);
+        }
+
+        /// <summary>
+        /// Shallow gable roof over a rectangle at height <paramref name="eaveY"/>; the ridge runs along
+        /// <paramref name="right"/>. Roof U runs along the ridge and V down the slope, in tile meters.
+        /// </summary>
+        public void AddGableRoof(Vector3 center, Vector3 right, Vector3 forward, float halfX, float halfZ, float eaveY,
+            float rise, int roofSubmesh, int gableSubmesh, Vector2 roofTile)
+        {
+            Vector3 Point(float sx, float y, float sz) =>
+                new Vector3(center.x, y, center.z) + right * (sx * halfX) + forward * (sz * halfZ);
+
+            float slope = Mathf.Sqrt(halfZ * halfZ + rise * rise);
+            float u = halfX * 2f / roofTile.x, v = slope / roofTile.y;
+            float ridgeY = eaveY + rise;
+            foreach (float side in new[] { -1f, 1f })
+            {
+                AddQuad(Point(-1f, eaveY, side), Point(1f, eaveY, side), Point(1f, ridgeY, 0f), Point(-1f, ridgeY, 0f),
+                    new Vector2(0f, 0f), new Vector2(u, 0f), new Vector2(u, v), new Vector2(0f, v),
+                    forward * side + Vector3.up * 3f, roofSubmesh);
+                // Gables sample a plain band of the wall texture (above the plinth).
+                AddTriangle(Point(side, eaveY, -1f), Point(side, eaveY, 1f), Point(side, ridgeY, 0f),
+                    new Vector2(0.1f, 0.5f), new Vector2(0.9f, 0.5f), new Vector2(0.5f, 0.55f), right * side, gableSubmesh);
+            }
         }
 
         /// <summary>Oriented box without a bottom face: four walls plus a top (roof) face.</summary>

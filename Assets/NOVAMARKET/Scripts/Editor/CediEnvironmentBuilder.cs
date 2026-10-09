@@ -77,6 +77,7 @@ namespace NovaMarket.Editor
             Terrain terrain = CreateTerrain(environment, terrainData);
 
             BuildInfrastructure(environment);
+            BuildUrban(environment);
             BuildBarrios(environment);
             PaintTerrain(terrainData);
             PlaceTrees(terrainData, environment);
@@ -89,6 +90,8 @@ namespace NovaMarket.Editor
             AssetDatabase.SaveAssets();
             EditorSceneManager.MarkSceneDirty(scene);
             heights = heightsBlur = dirtStamp = treeBlock = forestMap = slopeLandMap = null;
+            urbanTrees = null;
+            handPlacedTrees = null;
             Debug.Log("CEDI Medellin environment rebuilt.");
         }
 
@@ -116,6 +119,9 @@ namespace NovaMarket.Editor
             DestroyChild(environment, "Terrain/Terrain_Aburra");
             DestroyChild(environment, "Barrios");
             DestroyChild(environment, "Infrastructure");
+            DestroyChild(environment, "IndustrialZone");
+            DestroyChild(environment, "City");
+            DestroyChild(environment, "DistantBuildings"); // blockout boxes, replaced by the urban builder
             GameObject volume = GameObject.Find("Global Volume");
             if (volume != null) Object.DestroyImmediate(volume);
         }
@@ -247,18 +253,7 @@ namespace NovaMarket.Editor
         private static TerrainLayer CreateLayer(string name, float tileSize, Color[] pixels)
         {
             string texturePath = $"{TextureFolder}/T_Terrain_{name}.png";
-            var texture = new Texture2D(TextureSize, TextureSize, TextureFormat.RGB24, false);
-            texture.SetPixels(pixels);
-            texture.Apply();
-            File.WriteAllBytes(texturePath, texture.EncodeToPNG());
-            Object.DestroyImmediate(texture);
-
-            AssetDatabase.ImportAsset(texturePath, ImportAssetOptions.ForceSynchronousImport);
-            var importer = (TextureImporter)AssetImporter.GetAtPath(texturePath);
-            importer.wrapMode = TextureWrapMode.Repeat;
-            importer.anisoLevel = 4;
-            importer.maxTextureSize = TextureSize;
-            importer.SaveAndReimport();
+            SaveTexture(texturePath, TextureSize, TextureSize, pixels);
 
             string layerPath = $"{TerrainFolder}/TL_{name}.terrainlayer";
             var layer = AssetDatabase.LoadAssetAtPath<TerrainLayer>(layerPath);
@@ -277,13 +272,34 @@ namespace NovaMarket.Editor
 
         private const int TextureSize = 512;
 
-        private static Color[] MakeTexture(System.Func<float, float, Color> shade)
+        private static Color[] MakeTexture(System.Func<float, float, Color> shade) =>
+            MakeTexture(TextureSize, TextureSize, shade);
+
+        private static Color[] MakeTexture(int width, int height, System.Func<float, float, Color> shade)
         {
-            var pixels = new Color[TextureSize * TextureSize];
-            for (int y = 0; y < TextureSize; y++)
-            for (int x = 0; x < TextureSize; x++)
-                pixels[y * TextureSize + x] = shade((float)x / TextureSize, (float)y / TextureSize);
+            var pixels = new Color[width * height];
+            for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
+                pixels[y * width + x] = shade((float)x / width, (float)y / height);
             return pixels;
+        }
+
+        /// <summary>Writes a generated texture as PNG and imports it as a tiling, mipmapped texture.</summary>
+        private static Texture2D SaveTexture(string path, int width, int height, Color[] pixels)
+        {
+            var texture = new Texture2D(width, height, TextureFormat.RGB24, false);
+            texture.SetPixels(pixels);
+            texture.Apply();
+            File.WriteAllBytes(path, texture.EncodeToPNG());
+            Object.DestroyImmediate(texture);
+
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
+            var importer = (TextureImporter)AssetImporter.GetAtPath(path);
+            importer.wrapMode = TextureWrapMode.Repeat;
+            importer.anisoLevel = 4;
+            importer.maxTextureSize = Mathf.Max(width, height);
+            importer.SaveAndReimport();
+            return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
         }
 
         private static Color[] MakeGrassLight() => MakeTexture((u, v) =>
@@ -634,11 +650,26 @@ namespace NovaMarket.Editor
                 return asset;
             }
             string name = asset.name;
-            EditorUtility.CopySerialized(asset, existing);
+            if (asset is Mesh source && existing is Mesh target)
+                CopyMesh(source, target); // CopySerialized leaves the mesh's GPU buffers stale
+            else
+                EditorUtility.CopySerialized(asset, existing);
             existing.name = name;
             Object.DestroyImmediate(asset);
             EditorUtility.SetDirty(existing);
             return existing;
+        }
+
+        private static void CopyMesh(Mesh source, Mesh target)
+        {
+            target.Clear();
+            target.indexFormat = source.indexFormat;
+            target.SetVertices(source.vertices);
+            target.SetNormals(source.normals);
+            target.SetUVs(0, source.uv);
+            target.subMeshCount = source.subMeshCount;
+            for (int i = 0; i < source.subMeshCount; i++) target.SetTriangles(source.GetTriangles(i), i);
+            target.RecalculateBounds();
         }
 
         private static void PlaceTrees(TerrainData data, Transform environment)
@@ -646,8 +677,6 @@ namespace NovaMarket.Editor
             var rng = new System.Random(Seed + 7);
             var obstacles = new List<Rect>();
             foreach (Rect r in lotRects) obstacles.Add(Expand(r, 12f));
-            foreach (Renderer r in environment.Find("DistantBuildings").GetComponentsInChildren<Renderer>())
-                obstacles.Add(Expand(Rect.MinMaxRect(r.bounds.min.x, r.bounds.min.z, r.bounds.max.x, r.bounds.max.z), 6f));
             var existing = new List<Vector2>();
             foreach (Transform t in environment.Find("Vegetation")) existing.Add(new Vector2(t.position.x, t.position.z));
 
@@ -703,9 +732,13 @@ namespace NovaMarket.Editor
                 valleyTrees++;
             }
 
+            // Street, park and yard trees laid out by the urban builder.
+            foreach (UrbanTree tree in urbanTrees)
+                trees.Add(MakeTree(rng, tree.Position.x, tree.Position.y, tree.Kind));
+
             data.SetTreeInstances(trees.ToArray(), true);
-            Debug.Log($"Trees placed: {trees.Count - valleyTrees} on slopes, {valleyTrees} in the valley " +
-                      $"(terrain now holds {data.treeInstanceCount}).");
+            Debug.Log($"Trees placed: {trees.Count - valleyTrees - urbanTrees.Count} on slopes, {valleyTrees} in the valley, " +
+                      $"{urbanTrees.Count} in town (terrain now holds {data.treeInstanceCount}).");
         }
 
         private static TreeInstance MakeTree(System.Random rng, float x, float z, int kind)
