@@ -105,6 +105,23 @@ namespace NovaMarket.Tests.CameraControl
         }
 
         [Test]
+        public void FocusOn_TravelsToThePointWithinBounds()
+        {
+            var rig = CreateRig(distance: 120f);
+            rig.FocusOn(new Vector3(300f, 25f, -200f));
+
+            Assert.AreEqual(new Vector3(300f, 0f, -200f), rig.TargetFocus, "the focus stays on the ground");
+            rig.Tick(1f / 60f);
+            Assert.That(rig.Focus.x, Is.GreaterThan(0f).And.LessThan(300f), "the camera should glide, not jump");
+            Settle(rig);
+            Assert.AreEqual(300f, rig.Focus.x, Tolerance);
+            Assert.AreEqual(120f, rig.Distance, Tolerance, "travelling keeps the zoom");
+
+            rig.FocusOn(new Vector3(5000f, 0f, 0f));
+            Assert.AreEqual(settings.FocusBounds.xMax, rig.TargetFocus.x, Tolerance);
+        }
+
+        [Test]
         public void EdgeScroll_PointsTowardsTheTouchedBorder()
         {
             var screen = new Vector2(1920f, 1080f);

@@ -59,6 +59,9 @@ namespace NovaMarket.CameraControl
             targetFocus = ClampFocus(targetFocus + applied);
         }
 
+        /// <summary>Glides the focus to a ground point (used by the minimap); keeps zoom and yaw.</summary>
+        public void FocusOn(Vector3 point) => targetFocus = ClampFocus(point);
+
         /// <summary>Positive steps zoom in, negative steps zoom out.</summary>
         public void Zoom(float steps)
         {

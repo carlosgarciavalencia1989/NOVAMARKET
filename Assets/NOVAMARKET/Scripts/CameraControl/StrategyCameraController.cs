@@ -34,6 +34,10 @@ namespace NovaMarket.CameraControl
         private int pendingRotationSteps;
 
         public StrategyCameraRig Rig => rig;
+        public Camera Camera => targetCamera;
+
+        /// <summary>Makes the camera travel to a ground point, e.g. after a minimap click.</summary>
+        public void FocusOn(Vector3 worldPoint) => rig.FocusOn(worldPoint);
 
         private void Awake()
         {
