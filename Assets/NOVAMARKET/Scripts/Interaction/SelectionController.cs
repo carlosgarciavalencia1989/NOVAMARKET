@@ -13,6 +13,7 @@ namespace NovaMarket.Interaction
     {
         [SerializeField] private Camera viewCamera;
         [SerializeField] private SelectionRing ring;
+        [Tooltip("Layers the selection ray can hit (the terrain must be included so ground clicks deselect).")]
         [SerializeField] private LayerMask selectableLayers = ~0;
         [SerializeField] private float maxRayDistance = 5000f;
 

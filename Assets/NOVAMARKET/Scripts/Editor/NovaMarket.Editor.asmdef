@@ -3,6 +3,8 @@
     "rootNamespace": "NovaMarket.Editor",
     "references": [
         "NovaMarket.Runtime",
+        "Unity.InputSystem",
+        "UnityEngine.UI",
         "Unity.RenderPipelines.Core.Runtime",
         "Unity.RenderPipelines.Universal.Runtime"
     ],

@@ -23,25 +23,31 @@ Assets/NOVAMARKET/
     Scripts/
         Core/          Project-wide conventions and shared utilities (WorldScale)
         Data/          ScriptableObject data definitions (NovaDataAsset and subclasses)
-        Interaction/   Selectable / interactable objects (IInteractable, InteractableObject)
+        Interaction/   Selectable objects and selection (IInteractable, InteractableObject, CediFacility,
+                       InteractableLink, SelectionController, SelectionRing)
         CameraControl/ Strategy camera (StrategyCameraRig logic + StrategyCameraController)
-        Simulation/    Future simulation systems (empty)
-        UI/            Future UI scripts (empty)
-        Editor/        Editor-only tools (CediEnvironmentBuilder + its .Infrastructure/.Urban parts, EnvironmentMeshes)
+        Simulation/    Plain C# operation state shown by the HUD (OperationState, MissionState, ResourceState,
+                       NotificationFeed, FacilityDirectory, SampleOperationData, HudFormat)
+        UI/            HUD (HudController, HudDataSource, *View classes, HudIcon, minimap)
+        Editor/        Editor-only tools (CediEnvironmentBuilder + its .Infrastructure/.Urban parts, EnvironmentMeshes,
+                       CediHudSetup + its .Hud part)
     Tests/
-        EditMode/      NUnit tests run from the Test Runner (StrategyCameraRigTests)
+        EditMode/      NUnit tests run from the Test Runner (camera rig, Simulation/, Interaction/, UI/)
     Prefabs/
         Buildings/  Vehicles/  Equipment/  Characters/
         Environment/   Tree_Blockout + generated terrain tree prefabs (Tree_Broadleaf_*, Tree_Guayacan_* ...)
     Materials/         Project materials (URP)
         Blockout/      Greybox M_* materials of the original blockout
+        UI/            M_UI_SelectionRing (unlit gold selection ring)
         Environment/   Generated: houses, buildings, warehouses, river/metro, tree canopies, skybox
             Textures/  Generated facade, tower window, cladding and metal roof textures
     Models/            Imported 3D models
         Generated/     Generated meshes (Trees/, Barrios/, Infrastructure/, Urban/)
     Terrain/           Generated: TerrainData, terrain layers and their textures
     Rendering/         Volume profiles (VP_CEDI_Medellin)
-    UI/                UI assets (sprites, UXML/USS, fonts)
+    UI/                UI assets
+        Hud/           Hud.uxml, Hud.uss, HudTheme.tss, HudPanelSettings
+        Fonts/         Oswald (SIL OFL, licence in Oswald-OFL.txt) and its Oswald_SDF font asset
     Data/              ScriptableObject asset instances
     Documentation/     Project documentation (this file)
 ```
@@ -87,15 +93,26 @@ CEDI_Medellin                      root of all scenario content
         Picking                    floor, PickStation_01-03
         Shipping                   floor, StagingLane_04-06, Docks
         Yard                       YardPavement 120 m x 55 m
-        Gate                       GatePad, inbound/outbound lanes, GateIsland, stop lines
+        Gate                       GatePad, inbound/outbound lanes, GateIsland, stop lines,
+                                   GuardBooth (booth + barrier arms)
         ContainerYard              YardLink, ContainerPad, Container_01-06
         Parking                    ParkingPad 36 m x 18 m, StallLines
+        Office                     2-storey admin office 14 m x 9 m x 7 m at (-48, 0, -23)
+    Systems
+        Selection                  SelectionController (left click selects, Escape / ground click clears)
+        SelectionRing              SelectionRing mesh, M_UI_SelectionRing
+        MinimapCamera              MinimapRenderer: top-down orthographic camera, renders a few frames
+        EventSystem                EventSystem + InputSystemUIInputModule
+        HUD                        UIDocument (Hud.uxml) + HudDataSource + HudController
     Debug
         ScaleMarkers               1 m cube, 5 m and 10 m poles
 ```
 
-Flow inside the building: Receiving → Storage → Picking → Shipping. The blockout has no
-scripts or interactables attached yet.
+Flow inside the building: Receiving → Storage → Picking → Shipping. `Building`, `Gate`, `Office`
+and `ContainerYard` carry a `CediFacility`; `Receiving`, `Storage`, `Picking` and `Shipping` carry an
+`InteractableLink` to the warehouse, so clicking any zone selects it. Office, booth, facilities and
+`Systems` are created by **NOVAMARKET → HUD → Setup HUD and Selection in CEDI Scene**
+(`CediHudSetup`, safe to run again).
 
 ## Environment builder
 
@@ -164,13 +181,51 @@ Asset instances go in `Assets/NOVAMARKET/Data/`.
 - `InteractableObject`: minimal `MonoBehaviour` implementation. Name/description fall back
   to the assigned data asset, then to the GameObject name. Subclass and override to add behaviour.
 
-Future: a selection system (raycast from camera → `IInteractable`) and a UI panel that
-shows name, description and data of the selected object.
+- `CediFacility`: an `InteractableObject` that only stores a facility id (`CediFacilityIds`);
+  its data lives in the operation state, not in the scene.
+- `InteractableLink`: forwards clicks on its colliders to another interactable.
+- `SelectionController`: left click raycasts from the camera; the hit collider resolves to an
+  `InteractableLink` target or the nearest `IInteractable` parent. Ground clicks and Escape
+  clear the selection; clicks over the HUD are ignored (`IsPointerBlocked`, set by the HUD).
+- `SelectionRing`: flat elliptical gold band around the selection's renderer bounds.
+
+## Operation state (Simulation)
+
+`OperationState` is the single object the HUD reads. It groups `MissionState` (level, counter,
+objectives, score), `ResourceState` (positions, budget in COP, trucks, operators, service
+level), `NotificationFeed` (timed notices; time is passed in, so it is testable) and
+`FacilityDirectory` (`FacilityInfo` per facility id: stats and orders). Player orders go through
+`OperationState.IssueOrder` (raises `OrderIssued`); dispatches through `RegisterDispatch`.
+All of it is plain C# with no `UnityEngine`, covered by EditMode tests.
+
+For now `SampleOperationData` fills it with illustrative level III (S&OP) numbers. The future
+simulation should build or update the same `OperationState` and call the same methods; the
+HUD then needs no changes.
+
+## HUD
+
+UI Toolkit, Age of Empires III style: dark panels with a bevelled gold frame, Oswald font.
+Layout in `UI/Hud/Hud.uxml`, styles in `Hud.uss`, scaling 1920 × 1080 reference
+(`HudPanelSettings`). Icons are vector `HudIcon` elements drawn with Painter2D.
+
+| Area | Content | Script |
+|---|---|---|
+| Top right | Level bar, dispatch counter, primary/secondary objectives with checkboxes, score | `ObjectivesView` |
+| Bottom right | Resource bar (positions, budget, trucks, operators, service level) | `ResourceBarView` |
+| Bottom right | Round minimap: valley picture, CEDI marker, camera view; click/drag to travel | `MinimapView`, `MinimapRenderer`, `MinimapOverlay`, `MinimapProjection` |
+| Bottom left | Selected object: icon, name, data, order buttons | `SelectionPanelView` |
+| Left | Notices that slide in and fade out by themselves | `NotificationsView` |
+
+`HudController` (on `Systems/HUD`) wires the views to `HudDataSource` (owner of the
+`OperationState`; its **Play Demo Events** option scripts a short demo), the
+`SelectionController` and the `StrategyCameraController` (`FocusOn` makes the camera glide).
+Views subscribe to the state's `Changed` events, so they refresh only when data changes.
 
 ## Not implemented yet
 
 - Concrete data types (CompanyData, ScenarioData, ... RoleData)
-- Selection system and any UI; no `InteractableObject` placed in scenes yet
+- HUD data is sample data (`SampleOperationData`); nothing is computed by a simulation yet
+- Box/drag selection, unit selection (vehicles, people), order effects in the world
 - Final art for CEDI Medellín (environment is a procedural blockout; no purchased assets)
 - Vehicles, characters and equipment prefabs
 - ERP, Excel integration, database

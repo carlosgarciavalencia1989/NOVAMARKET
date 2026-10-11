@@ -1,0 +1,92 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:nm="NovaMarket.UI">
+    <ui:Style src="Hud.uss" />
+    <ui:VisualElement name="hudRoot" class="hud-root" picking-mode="Ignore">
+
+        <ui:VisualElement name="topRight" class="hud-top-right" picking-mode="Ignore">
+            <ui:VisualElement name="levelBar" class="panel level-bar">
+                <ui:Label name="levelLabel" class="level-label" text="Nivel" />
+            </ui:VisualElement>
+            <ui:VisualElement name="objectivesPanel" class="panel">
+                <ui:VisualElement class="objectives-header">
+                    <ui:Label name="counterLabel" class="counter-label" text="Despachos completados" />
+                    <ui:Label name="counterValue" class="counter-value" text="0/0" />
+                </ui:VisualElement>
+                <ui:Label class="section-title" text="OBJETIVOS PRINCIPALES" />
+                <ui:VisualElement name="primaryObjectives" />
+                <ui:Label class="section-title" text="OBJETIVOS SECUNDARIOS" />
+                <ui:VisualElement name="secondaryObjectives" />
+                <ui:VisualElement class="score-row">
+                    <nm:HudIcon kind="Gem" />
+                    <ui:Label class="score-label" text="Puntuación" />
+                    <ui:Label name="scoreValue" class="score-value" text="0" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="notifications" class="hud-notifications" picking-mode="Ignore" />
+
+        <ui:VisualElement name="bottomLeft" class="hud-bottom-left" picking-mode="Ignore">
+            <ui:VisualElement name="selectionPanel" class="panel">
+                <ui:VisualElement class="selection-header">
+                    <ui:VisualElement class="selection-icon-frame">
+                        <nm:HudIcon name="selectionIcon" kind="Warehouse" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="selection-titles">
+                        <ui:Label name="selectionName" class="selection-name" text="Selección" />
+                        <ui:Label name="selectionSubtitle" class="selection-subtitle" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Label name="selectionDescription" class="selection-description" />
+                <ui:VisualElement name="selectionStats" class="selection-stats" />
+                <ui:VisualElement name="selectionOrders" class="selection-orders" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="bottomRight" class="hud-bottom-right" picking-mode="Ignore">
+            <ui:VisualElement name="resourceBar" class="panel resource-bar">
+                <ui:VisualElement name="positionsResource" class="resource">
+                    <nm:HudIcon kind="Rack" />
+                    <ui:VisualElement>
+                        <ui:Label class="resource-caption" text="POSICIONES" />
+                        <ui:Label name="positionsValue" class="resource-value" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="budgetResource" class="resource">
+                    <nm:HudIcon kind="Budget" />
+                    <ui:VisualElement>
+                        <ui:Label class="resource-caption" text="PRESUPUESTO" />
+                        <ui:Label name="budgetValue" class="resource-value" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="trucksResource" class="resource">
+                    <nm:HudIcon kind="Truck" />
+                    <ui:VisualElement>
+                        <ui:Label class="resource-caption" text="CAMIONES" />
+                        <ui:Label name="trucksValue" class="resource-value" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="operatorsResource" class="resource">
+                    <nm:HudIcon kind="Worker" />
+                    <ui:VisualElement>
+                        <ui:Label class="resource-caption" text="OPERARIOS" />
+                        <ui:Label name="operatorsValue" class="resource-value" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="serviceResource" class="resource resource--last">
+                    <nm:HudIcon kind="Service" />
+                    <ui:VisualElement>
+                        <ui:Label class="resource-caption" text="NIVEL DE SERVICIO" />
+                        <ui:Label name="serviceValue" class="resource-value" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="minimapFrame" class="minimap-frame">
+                <ui:VisualElement name="minimap" class="minimap">
+                    <nm:MinimapOverlay name="minimapOverlay" class="minimap-overlay" />
+                </ui:VisualElement>
+                <ui:Label class="minimap-north" text="N" picking-mode="Ignore" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

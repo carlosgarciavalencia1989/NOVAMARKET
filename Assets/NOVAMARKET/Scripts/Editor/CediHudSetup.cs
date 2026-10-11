@@ -41,7 +41,8 @@ namespace NovaMarket.Editor
             BuildOffice(cedi);
             BuildGuardBooth(cedi.Find("Gate"));
             SetupFacilities(cedi);
-            SetupSelection(systems);
+            SelectionController selection = SetupSelection(systems);
+            SetupHud(systems, selection);
 
             AssetDatabase.SaveAssets();
             EditorSceneManager.MarkSceneDirty(scene);
