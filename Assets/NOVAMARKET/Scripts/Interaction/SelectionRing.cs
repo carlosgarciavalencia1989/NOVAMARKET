@@ -21,6 +21,8 @@ namespace NovaMarket.Interaction
 
         private Mesh mesh;
         private MeshRenderer meshRenderer;
+        private Transform target;
+        private Vector3 localBase;
 
         private void Awake()
         {
@@ -37,14 +39,23 @@ namespace NovaMarket.Interaction
         private void Update()
         {
             if (!meshRenderer.enabled) return;
+            if (target == null)
+            {
+                Hide(); // the selected object was destroyed (e.g. a truck left the CEDI)
+                return;
+            }
+            Follow();
             float scale = 1f + pulseAmount * Mathf.Sin(Time.unscaledTime * pulseSpeed);
             transform.localScale = new Vector3(scale, 1f, scale);
         }
 
-        /// <summary>Places the ring around every renderer under <paramref name="target"/>.</summary>
+        /// <summary>
+        /// Places the ring around every mesh under <paramref name="target"/>, measured in the
+        /// target's own axes so the ring keeps fitting while a vehicle moves and turns.
+        /// </summary>
         public void Show(Transform target)
         {
-            if (!TryGetBounds(target, out Bounds bounds))
+            if (!TryGetLocalBounds(target, out Bounds bounds))
             {
                 Hide();
                 return;
@@ -55,24 +66,44 @@ namespace NovaMarket.Interaction
             float radiusZ = bounds.extents.z * Mathf.Sqrt(2f) + margin;
             BuildEllipseRing(mesh, radiusX, radiusZ, width, segments);
 
-            transform.SetPositionAndRotation(
-                new Vector3(bounds.center.x, bounds.min.y + groundOffset, bounds.center.z), Quaternion.identity);
+            this.target = target;
+            localBase = new Vector3(bounds.center.x, bounds.min.y, bounds.center.z);
+            Follow();
             meshRenderer.enabled = true;
         }
 
-        public void Hide() => meshRenderer.enabled = false;
+        public void Hide()
+        {
+            meshRenderer.enabled = false;
+            target = null;
+        }
 
-        /// <summary>Combined world bounds of all renderers under the target.</summary>
-        public static bool TryGetBounds(Transform target, out Bounds bounds)
+        private void Follow() =>
+            transform.SetPositionAndRotation(target.TransformPoint(localBase) + Vector3.up * groundOffset,
+                Quaternion.Euler(0f, target.eulerAngles.y, 0f));
+
+        /// <summary>Bounds of all meshes under the target, in the target's local space.</summary>
+        public static bool TryGetLocalBounds(Transform target, out Bounds bounds)
         {
             bounds = default;
             bool found = false;
-            foreach (Renderer renderer in target.GetComponentsInChildren<Renderer>())
+            Matrix4x4 toTarget = target.worldToLocalMatrix;
+            foreach (MeshFilter filter in target.GetComponentsInChildren<MeshFilter>())
             {
-                if (renderer is ParticleSystemRenderer) continue;
-                if (!found) bounds = renderer.bounds;
-                else bounds.Encapsulate(renderer.bounds);
-                found = true;
+                if (filter.sharedMesh == null) continue;
+                Bounds mesh = filter.sharedMesh.bounds;
+                Matrix4x4 toLocal = toTarget * filter.transform.localToWorldMatrix;
+                for (int corner = 0; corner < 8; corner++)
+                {
+                    var point = new Vector3(
+                        (corner & 1) == 0 ? mesh.min.x : mesh.max.x,
+                        (corner & 2) == 0 ? mesh.min.y : mesh.max.y,
+                        (corner & 4) == 0 ? mesh.min.z : mesh.max.z);
+                    Vector3 local = toLocal.MultiplyPoint3x4(point);
+                    if (!found) bounds = new Bounds(local, Vector3.zero);
+                    else bounds.Encapsulate(local);
+                    found = true;
+                }
             }
             return found;
         }

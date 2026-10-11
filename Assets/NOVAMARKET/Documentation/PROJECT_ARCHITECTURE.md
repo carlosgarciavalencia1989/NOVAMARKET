@@ -24,20 +24,26 @@ Assets/NOVAMARKET/
         Core/          Project-wide conventions and shared utilities (WorldScale)
         Data/          ScriptableObject data definitions (NovaDataAsset and subclasses)
         Interaction/   Selectable objects and selection (IInteractable, InteractableObject, CediFacility,
-                       InteractableLink, SelectionController, SelectionRing)
+                       InteractableLink, ISelectionDetailsProvider, SelectionController, SelectionRing)
         CameraControl/ Strategy camera (StrategyCameraRig logic + StrategyCameraController)
         Simulation/    Plain C# operation state shown by the HUD (OperationState, MissionState, ResourceState,
-                       NotificationFeed, FacilityDirectory, SampleOperationData, HudFormat)
+                       NotificationFeed, FacilityDirectory, SampleOperationData, HudFormat) and the CEDI
+                       operation (CediOperationSimulation, TruckAgent, ForkliftAgent, CediLayout,
+                       ForkliftNetwork, RouteMover, Polyline, DockManager, GateLane, CediCatalog)
+        Operation/     Scene side of the operation (CediOperationRunner, VehicleVisual, GateBarrier)
         UI/            HUD (HudController, HudDataSource, *View classes, HudIcon, minimap)
         Editor/        Editor-only tools (CediEnvironmentBuilder + its .Infrastructure/.Urban parts, EnvironmentMeshes,
                        CediHudSetup + its .Hud part)
     Tests/
         EditMode/      NUnit tests run from the Test Runner (camera rig, Simulation/, Interaction/, UI/)
     Prefabs/
-        Buildings/  Vehicles/  Equipment/  Characters/
+        Buildings/  Characters/
+        Vehicles/      Truck_Receiving, Turbo_Dispatch, Forklift (simple shapes, pivot at ground centre, front +Z)
+        Equipment/     Pallet
         Environment/   Tree_Blockout + generated terrain tree prefabs (Tree_Broadleaf_*, Tree_Guayacan_* ...)
     Materials/         Project materials (URP)
         Blockout/      Greybox M_* materials of the original blockout
+        Vehicles/      M_Vehicle_* and M_Pallet_* (vehicle and pallet shapes)
         UI/            M_UI_SelectionRing (unlit gold selection ring)
         Environment/   Generated: houses, buildings, warehouses, river/metro, tree canopies, skybox
             Textures/  Generated facade, tower window, cladding and metal roof textures
@@ -103,6 +109,7 @@ CEDI_Medellin                      root of all scenario content
         SelectionRing              SelectionRing mesh, M_UI_SelectionRing
         MinimapCamera              MinimapRenderer: top-down orthographic camera, renders a few frames
         EventSystem                EventSystem + InputSystemUIInputModule
+        Operation                  CediOperationRunner; spawns Vehicles/ and StagedPallets_* in Play
         HUD                        UIDocument (Hud.uxml) + HudDataSource + HudController
     Debug
         ScaleMarkers               1 m cube, 5 m and 10 m poles
@@ -111,7 +118,7 @@ CEDI_Medellin                      root of all scenario content
 Flow inside the building: Receiving → Storage → Picking → Shipping. `Building`, `Gate`, `Office`
 and `ContainerYard` carry a `CediFacility`; `Receiving`, `Storage`, `Picking` and `Shipping` carry an
 `InteractableLink` to the warehouse, so clicking any zone selects it. Office, booth, facilities and
-`Systems` are created by **NOVAMARKET → HUD → Setup HUD and Selection in CEDI Scene**
+`Systems` are created by **NOVAMARKET → HUD → Setup CEDI Gameplay (HUD, Selection, Operation)**
 (`CediHudSetup`, safe to run again).
 
 ## Environment builder
@@ -187,7 +194,10 @@ Asset instances go in `Assets/NOVAMARKET/Data/`.
 - `SelectionController`: left click raycasts from the camera; the hit collider resolves to an
   `InteractableLink` target or the nearest `IInteractable` parent. Ground clicks and Escape
   clear the selection; clicks over the HUD are ignored (`IsPointerBlocked`, set by the HUD).
-- `SelectionRing`: flat elliptical gold band around the selection's renderer bounds.
+- `SelectionRing`: flat elliptical gold band around the selection, measured in the target's own
+  axes; it follows moving vehicles and turns with them.
+- `ISelectionDetailsProvider`: objects whose panel data changes while selected (vehicles); the
+  HUD polls `GetDetails()` every frame. A destroyed selection (a truck that left) is cleared.
 
 ## Operation state (Simulation)
 
@@ -198,9 +208,36 @@ level), `NotificationFeed` (timed notices; time is passed in, so it is testable)
 `OperationState.IssueOrder` (raises `OrderIssued`); dispatches through `RegisterDispatch`.
 All of it is plain C# with no `UnityEngine`, covered by EditMode tests.
 
-For now `SampleOperationData` fills it with illustrative level III (S&OP) numbers. The future
-simulation should build or update the same `OperationState` and call the same methods; the
-HUD then needs no changes.
+`SampleOperationData` gives the starting numbers (level III, S&OP); the CEDI operation below
+then updates the same state as trucks and forklifts work. Panels read `SelectionDetails`
+(title, rows, optional progress bar, orders) from facilities (`FacilityInfo.ToDetails`) and vehicles.
+
+## CEDI operation
+
+`CediOperationSimulation` (plain C#, `Tick(deltaTime, clock)`) runs the yard and the warehouse:
+
+- **Receiving trucks** (16 m, the first one is Don Hernán's import container) and **dispatch
+  turbos** (9 m) arrive on the highway, queue at the inbound stop line (`GateLane`), wait for
+  the document check and a free dock (`DockManager`), the barrier lifts, they cross the yard,
+  reverse to the dock, unload / load pallet by pallet, U-turn and leave through the outbound
+  gate. States: `TruckState`. Routes are truck-centre polylines in `CediLayout` (right-hand
+  traffic; inbound yard road z = -16, outbound z = -21), driven by `RouteMover` (accelerates,
+  brakes, reverses).
+- **Forklifts** (4) take pallets from the receiving staging lanes to random rack slots
+  (put-away, +1 position) and from racks to the shipping lanes of docked turbos (pick,
+  -1 position), driving only on the aisle graph of `ForkliftNetwork` (Dijkstra).
+- Each event updates the `OperationState`: occupied positions, trucks in the lot, dispatches
+  (`RegisterDispatch` when a loaded turbo crosses the outbound barrier), the Don Hernán
+  objective, notices ("Camión de Don Hernán en portería.", "Despacho a Envigado en camino.")
+  and live warehouse / gate data (published once per second).
+- Tuning (sizes, speeds, handling times, arrival intervals): `CediOperationSettings`.
+  `CediOperationSimulationTests` runs 15 minutes of operation and checks there is no gridlock.
+
+Scene side (`Scripts/Operation/`): `CediOperationRunner` (on `Systems/Operation`; Inspector:
+simulation speed and seed) ticks the simulation, instantiates one prefab per vehicle and shows
+staged pallets; `VehicleVisual` copies an agent's pose and is selectable; `GateBarrier` lifts the
+barrier arms on their hinges. To use real models later, replace the prefabs in
+`Prefabs/Vehicles/` keeping the pivot at the ground centre and the front towards +Z.
 
 ## HUD
 
@@ -213,21 +250,21 @@ Layout in `UI/Hud/Hud.uxml`, styles in `Hud.uss`, scaling 1920 × 1080 reference
 | Top right | Level bar, dispatch counter, primary/secondary objectives with checkboxes, score | `ObjectivesView` |
 | Bottom right | Resource bar (positions, budget, trucks, operators, service level) | `ResourceBarView` |
 | Bottom right | Round minimap: valley picture, CEDI marker, camera view; click/drag to travel | `MinimapView`, `MinimapRenderer`, `MinimapOverlay`, `MinimapProjection` |
-| Bottom left | Selected object: icon, name, data, order buttons | `SelectionPanelView` |
+| Bottom left | Selected object: icon, name, data rows, progress bar (unloading/loading), order buttons | `SelectionPanelView` |
 | Left | Notices that slide in and fade out by themselves | `NotificationsView` |
 
 `HudController` (on `Systems/HUD`) wires the views to `HudDataSource` (owner of the
-`OperationState`; its **Play Demo Events** option scripts a short demo), the
+`OperationState`; shows a welcome notice), the
 `SelectionController` and the `StrategyCameraController` (`FocusOn` makes the camera glide).
 Views subscribe to the state's `Changed` events, so they refresh only when data changes.
 
 ## Not implemented yet
 
 - Concrete data types (CompanyData, ScenarioData, ... RoleData)
-- HUD data is sample data (`SampleOperationData`); nothing is computed by a simulation yet
-- Box/drag selection, unit selection (vehicles, people), order effects in the world
+- Operation numbers are illustrative; no forecasting, MRP or DDMRP drives arrivals yet
+- Box/drag selection, people, order effects in the world, truck-to-truck collision avoidance in the yard
 - Final art for CEDI Medellín (environment is a procedural blockout; no purchased assets)
-- Vehicles, characters and equipment prefabs
+- Final vehicle models (current prefabs are simple shapes), characters
 - ERP, Excel integration, database
 - AI, Mentor
 - S&OP, advanced simulation

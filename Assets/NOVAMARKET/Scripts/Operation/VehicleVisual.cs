@@ -9,7 +9,7 @@ namespace NovaMarket.Operation
     /// agent's position and smoothly turns towards its heading; it holds no logic of its own.
     /// The prefab's pivot is the vehicle centre on the ground and its front points to +Z.
     /// </summary>
-    public class VehicleVisual : InteractableObject
+    public class VehicleVisual : InteractableObject, ISelectionDetailsProvider
     {
         [Tooltip("How fast the body turns towards the route direction.")]
         [SerializeField] private float turnSharpness = 6f;
@@ -19,6 +19,8 @@ namespace NovaMarket.Operation
         private VehicleAgent agent;
 
         public VehicleAgent Agent => agent;
+
+        public SelectionDetails GetDetails() => agent?.Describe();
 
         public void Bind(VehicleAgent vehicle)
         {

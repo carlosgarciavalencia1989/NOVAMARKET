@@ -43,7 +43,11 @@ namespace NovaMarket.UI
             selection.SelectionChanged += selectionPanel.Show;
         }
 
-        private void LateUpdate() => minimapView?.Update();
+        private void LateUpdate()
+        {
+            minimapView?.Update();
+            selectionPanel?.Refresh();
+        }
 
         private void OnDestroy()
         {
@@ -53,7 +57,6 @@ namespace NovaMarket.UI
             objectives.Dispose();
             resources.Dispose();
             notifications.Dispose();
-            selectionPanel.Dispose();
         }
 
         /// <summary>True when a screen point (Input System coordinates, origin bottom-left) is over a HUD panel.</summary>

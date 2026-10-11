@@ -38,6 +38,12 @@
                 </ui:VisualElement>
                 <ui:Label name="selectionDescription" class="selection-description" />
                 <ui:VisualElement name="selectionStats" class="selection-stats" />
+                <ui:VisualElement name="selectionProgress" class="selection-progress">
+                    <ui:Label name="selectionProgressLabel" class="progress-label" />
+                    <ui:VisualElement class="progress-track">
+                        <ui:VisualElement name="selectionProgressFill" class="progress-fill" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
                 <ui:VisualElement name="selectionOrders" class="selection-orders" />
             </ui:VisualElement>
         </ui:VisualElement>

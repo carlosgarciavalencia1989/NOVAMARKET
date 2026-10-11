@@ -11,6 +11,7 @@ namespace NovaMarket.UI
         Gate,
         Office,
         Container,
+        Forklift,
         Rack,
         Budget,
         Truck,
@@ -98,6 +99,17 @@ namespace NovaMarket.UI
                 case HudIconKind.Container:
                     Polygon(painter, color, P(2, 7), P(22, 7), P(22, 18), P(2, 18));
                     for (float x = 6f; x < 21f; x += 4f) Line(painter, Detail, 1.4f, P(x, 9), P(x, 16));
+                    break;
+                case HudIconKind.Forklift:
+                    Polygon(painter, color, P(3, 9), P(13, 9), P(15, 13), P(15, 18), P(3, 18));
+                    Polygon(painter, Detail, P(5, 10.5f), P(11, 10.5f), P(12.5f, 13), P(5, 13));
+                    Line(painter, color, 1.6f, P(4, 9), P(5, 4), P(12, 4), P(13, 9));
+                    Line(painter, color, 2f, P(17, 3), P(17, 19));
+                    Line(painter, color, 2f, P(17, 19), P(23, 19));
+                    Circle(painter, color, P(6, 19.5f), 2.6f * scale);
+                    Circle(painter, color, P(13, 19.5f), 2.6f * scale);
+                    Circle(painter, Detail, P(6, 19.5f), 1.1f * scale);
+                    Circle(painter, Detail, P(13, 19.5f), 1.1f * scale);
                     break;
                 case HudIconKind.Rack:
                     Line(painter, color, 2f, P(3, 3), P(3, 21));

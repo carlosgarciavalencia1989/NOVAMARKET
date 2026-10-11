@@ -46,6 +46,8 @@ namespace NovaMarket.Interaction
 
         private void Update()
         {
+            // A selected vehicle that leaves the scenario is destroyed; drop it from the selection.
+            if (Selected is UnityEngine.Object selectedObject && selectedObject == null) Select(null);
             if (cancel.WasPressedThisFrame()) Select(null);
             if (!select.WasPressedThisFrame()) return;
 
