@@ -136,6 +136,16 @@ namespace NovaMarket.Tests.Simulation
         }
 
         [Test]
+        public void Operation_KeepsUpWithArrivalsWithoutGridlock()
+        {
+            Run(900f);
+
+            Assert.AreEqual(state.Mission.CounterTarget, state.Mission.CounterValue, "all 8 dispatches done in 15 min");
+            Assert.GreaterOrEqual(simulation.TrucksExited, 20, "trucks keep flowing through the gate");
+            Assert.LessOrEqual(simulation.Vehicles.OfType<TruckAgent>().Count(), 9, "no growing backlog of trucks");
+        }
+
+        [Test]
         public void WarehouseData_FollowsTheOperation()
         {
             int warehouseUpdates = 0, gateUpdates = 0;

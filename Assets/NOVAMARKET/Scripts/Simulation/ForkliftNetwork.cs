@@ -76,7 +76,11 @@ namespace NovaMarket.Simulation
         /// <summary>Idle spots, one per forklift.</summary>
         public static ForkliftSpot Park(int index)
         {
-            Vector2[] parks = { new Vector2(ShippingLaneX, -9.5f), new Vector2(WestCrossX, 11.2f), new Vector2(EastCrossX, 11.2f) };
+            Vector2[] parks =
+            {
+                new Vector2(ShippingLaneX, -9.5f), new Vector2(WestCrossX, 11.2f),
+                new Vector2(EastCrossX, 11.2f), new Vector2(WestCrossX, -11.2f)
+            };
             Vector2 point = parks[index % parks.Length];
             return new ForkliftSpot(point, point, "zona de espera");
         }

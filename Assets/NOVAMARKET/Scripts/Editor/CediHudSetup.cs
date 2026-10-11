@@ -24,7 +24,7 @@ namespace NovaMarket.Editor
         private static readonly Vector3 OfficeSize = new Vector3(14f, 7f, 9f);
         private static readonly Vector3 GateIslandCenter = new Vector3(0f, 0.3f, -38f);
 
-        [MenuItem("NOVAMARKET/HUD/Setup HUD and Selection in CEDI Scene")]
+        [MenuItem("NOVAMARKET/HUD/Setup CEDI Gameplay (HUD, Selection, Operation)")]
         public static void SetupAll()
         {
             Scene scene = SceneManager.GetActiveScene();
@@ -43,10 +43,11 @@ namespace NovaMarket.Editor
             SetupFacilities(cedi);
             SelectionController selection = SetupSelection(systems);
             SetupHud(systems, selection);
+            SetupOperation(systems, cedi.Find("Gate"));
 
             AssetDatabase.SaveAssets();
             EditorSceneManager.MarkSceneDirty(scene);
-            Debug.Log("CEDI HUD and selection set up.");
+            Debug.Log("CEDI gameplay (HUD, selection, operation) set up.");
         }
 
         // ------------------------------------------------------------------ blockouts
@@ -68,7 +69,7 @@ namespace NovaMarket.Editor
             Box(office, "Office_Canopy", new Vector3(-5f, 2.8f, northFace + 1f), new Vector3(4f, 0.25f, 2f), "M_Building_Accent", false);
         }
 
-        /// <summary>Guard booth on the gate island and one barrier arm per lane at the stop lines.</summary>
+        /// <summary>Guard booth on the gate island (the barrier arms are built by the .Operation part).</summary>
         private static void BuildGuardBooth(Transform gate)
         {
             Transform booth = GetOrCreateChild(gate, "GuardBooth");
@@ -77,8 +78,6 @@ namespace NovaMarket.Editor
             Box(booth, "Booth_Body", new Vector3(0f, 1.25f, 0f), new Vector3(1f, 2.5f, 2.2f), "M_Building_Wall");
             Box(booth, "Booth_Window", new Vector3(0f, 1.8f, 0f), new Vector3(1.04f, 0.8f, 1.8f), "M_Building_Glass", false);
             Box(booth, "Booth_Roof", new Vector3(0f, 2.6f, 0f), new Vector3(1.6f, 0.15f, 2.8f), "M_Building_Accent");
-            Box(booth, "Barrier_Inbound", new Vector3(2.3f, 0.8f, -4.6f), new Vector3(3.4f, 0.1f, 0.1f), "M_Marking_Yellow", false);
-            Box(booth, "Barrier_Outbound", new Vector3(-2.3f, 0.8f, 4.6f), new Vector3(3.4f, 0.1f, 0.1f), "M_Marking_Yellow", false);
         }
 
         private static void Box(Transform parent, string name, Vector3 localPosition, Vector3 size, string material,
