@@ -66,6 +66,18 @@ namespace NovaMarket.Simulation
         public IReadOnlyList<FacilityOrder> Orders => orders;
 
         public FacilityOrder FindOrder(string orderId) => orders.Find(o => o.Id == orderId);
+
+        public SelectionDetails ToDetails() =>
+            new SelectionDetails(Name, Subtitle, IconFor(Kind), stats, orders, Id);
+
+        private static SelectionIcon IconFor(FacilityKind kind) => kind switch
+        {
+            FacilityKind.Warehouse => SelectionIcon.Warehouse,
+            FacilityKind.Gate => SelectionIcon.Gate,
+            FacilityKind.Office => SelectionIcon.Office,
+            FacilityKind.ContainerYard => SelectionIcon.ContainerYard,
+            _ => SelectionIcon.Info
+        };
     }
 
     /// <summary>All facilities of the scenario, by id. Raises <see cref="Changed"/> when one is replaced.</summary>
