@@ -1,3 +1,43 @@
+# Git LFS: archivos pesados o binarios que Git no puede comparar linea a linea.
+# Las escenas, prefabs y materiales se quedan como texto normal para poder ver sus cambios.
+
+# Terreno (TerrainData de Unity siempre se guarda en binario)
 Assets/NOVAMARKET/Terrain/**/*.asset filter=lfs diff=lfs merge=lfs -text
+
+# Mallas generadas por CediEnvironmentBuilder (grandes y se regeneran)
 Assets/NOVAMARKET/Models/Generated/**/*.asset filter=lfs diff=lfs merge=lfs -text
+
+# Datos de iluminacion y NavMesh horneados
+Assets/**/LightingData.asset filter=lfs diff=lfs merge=lfs -text
+Assets/**/NavMesh*.asset filter=lfs diff=lfs merge=lfs -text
+*.exr filter=lfs diff=lfs merge=lfs -text
+*.hdr filter=lfs diff=lfs merge=lfs -text
+
+# Texturas e imagenes
 *.png filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.tga filter=lfs diff=lfs merge=lfs -text
+*.tif filter=lfs diff=lfs merge=lfs -text
+*.tiff filter=lfs diff=lfs merge=lfs -text
+*.psd filter=lfs diff=lfs merge=lfs -text
+*.raw filter=lfs diff=lfs merge=lfs -text
+
+# Modelos 3D
+*.fbx filter=lfs diff=lfs merge=lfs -text
+*.FBX filter=lfs diff=lfs merge=lfs -text
+*.obj filter=lfs diff=lfs merge=lfs -text
+*.blend filter=lfs diff=lfs merge=lfs -text
+*.glb filter=lfs diff=lfs merge=lfs -text
+*.gltf filter=lfs diff=lfs merge=lfs -text
+
+# Audio y video
+*.wav filter=lfs diff=lfs merge=lfs -text
+*.mp3 filter=lfs diff=lfs merge=lfs -text
+*.ogg filter=lfs diff=lfs merge=lfs -text
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+
+# Fuentes y documentos
+*.ttf filter=lfs diff=lfs merge=lfs -text
+*.otf filter=lfs diff=lfs merge=lfs -text
+*.pdf filter=lfs diff=lfs merge=lfs -text
