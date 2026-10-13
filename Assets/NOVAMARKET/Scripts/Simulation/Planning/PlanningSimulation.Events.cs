@@ -90,7 +90,7 @@ namespace NovaMarket.Simulation.Planning
                     }
                     int delayed = InTransitBoxes(sku);
                     const string hint = "Con el retraso, el lead time real pasa de 3 a 5 semanas. El stock de seguridad " +
-                                        "debe calcularse con el lead time real: SS = Z × σ × √(L+1).";
+                                        "debe calcularse con el lead time real: SS = Z × desviación × √(L+1).";
                     if (delayed == 0)
                         return new EventDialog(scheduled, "Retraso del barco",
                             "El barco del perfume quedó retenido en Cartagena dos semanas. Por suerte hoy no tienes " +

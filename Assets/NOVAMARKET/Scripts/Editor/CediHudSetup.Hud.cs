@@ -46,6 +46,13 @@ namespace NovaMarket.Editor
             SetField(hud, "selection", selection);
             SetField(hud, "cameraController", Object.FindAnyObjectByType<StrategyCameraController>());
             SetField(hud, "minimap", minimap);
+
+            // First playable level: the season order plan (the .Operation part links the runner).
+            var scenario = new SerializedObject(dataSource);
+            scenario.FindProperty("scenario").enumValueIndex = (int)HudScenario.SeasonPlanning;
+            scenario.ApplyModifiedPropertiesWithoutUndo();
+            var planning = GetOrAdd<PlanningLevelController>(hudObject.gameObject);
+            SetField(planning, "dataSource", dataSource);
         }
 
         /// <summary>Dynamic SDF font asset for UI Toolkit, generated from the Oswald TTF.</summary>

@@ -26,6 +26,13 @@ namespace NovaMarket.Simulation
             return Math.Round(value, decimals, MidpointRounding.AwayFromZero).ToString(pattern, Format);
         }
 
+        /// <summary>Demand multiplier with one or two decimals: 1.9 → "×1,9", 1.35 → "×1,35".</summary>
+        public static string Factor(double factor)
+        {
+            bool oneDecimal = Math.Abs(factor * 10 - Math.Round(factor * 10)) < 1e-9;
+            return "×" + Decimal(factor, oneDecimal ? 1 : 2);
+        }
+
         /// <summary>Fraction as a percentage with one decimal: 0.962 → "96,2 %".</summary>
         public static string Percent(double fraction) =>
             (fraction * 100.0).ToString("0.0", Format) + " %";

@@ -32,7 +32,7 @@ namespace NovaMarket.Simulation.Planning
                         lessons.Add(new PlanningLesson("Ventas perdidas de perfume después del retraso",
                             $"Desde el retraso del barco perdiste {lost} cajas de perfume. El stock de seguridad debe " +
                             "calcularse con el lead time real (5 semanas con el retraso), no con el del contrato.",
-                            "Stock de seguridad: SS = Z × σ × √(L+1) con el lead time real."));
+                            "Stock de seguridad: SS = Z × desviación × √(L+1) con el lead time real."));
                         break;
                     case SeasonEventKind.NewCustomer when LostShare(player, scheduled.Sku, scheduled.FromWeek, scheduled.ToWeek, out int lost):
                         lessons.Add(new PlanningLesson("Ventas perdidas de crema por el cliente nuevo",

@@ -52,6 +52,13 @@ namespace NovaMarket.Editor
                 colours.GetArrayElementAtIndex(i).objectReferenceValue =
                     AssetDatabase.LoadAssetAtPath<Material>(BlockoutMaterials + containers[i] + ".mat");
             serialized.ApplyModifiedPropertiesWithoutUndo();
+
+            // Planning level: trucks come from the order plan, stock is drawn in the racks.
+            var planning = Object.FindAnyObjectByType<PlanningLevelController>();
+            if (planning != null) SetField(planning, "operationRunner", runner);
+            var rackStock = GetOrAdd<RackStockDisplay>(operationObject.gameObject);
+            SetField(rackStock, "level", planning);
+            SetField(rackStock, "palletPrefab", pallet);
         }
 
         // ------------------------------------------------------------------ gate barriers

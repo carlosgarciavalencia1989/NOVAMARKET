@@ -39,6 +39,12 @@ namespace NovaMarket.Tests.Simulation
         public void Decimal_UsesCommaDecimalsAndHalfUpRounding(double value, int decimals, string expected) =>
             Assert.AreEqual(expected, HudFormat.Decimal(value, decimals));
 
+        [TestCase(1.9, "×1,9")]
+        [TestCase(1.35, "×1,35")]
+        [TestCase(1.5, "×1,5")]
+        public void Factor_ShowsOnlyTheNeededDecimals(double factor, string expected) =>
+            Assert.AreEqual(expected, HudFormat.Factor(factor));
+
         [TestCase(12_500, "$ 12.500")]
         [TestCase(845_000_000, "$ 845 M")]
         [TestCase(1_250_500_000, "$ 1.250,5 M")]

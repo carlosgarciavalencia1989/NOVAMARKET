@@ -1,5 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:nm="NovaMarket.UI">
     <ui:Style src="Hud.uss" />
+    <ui:Style src="Planning.uss" />
     <ui:VisualElement name="hudRoot" class="hud-root" picking-mode="Ignore">
 
         <ui:VisualElement name="topRight" class="hud-top-right" picking-mode="Ignore">
@@ -93,6 +94,10 @@
                 <ui:Label class="minimap-north" text="N" picking-mode="Ignore" />
             </ui:VisualElement>
         </ui:VisualElement>
+
+        <!-- Planning level: built in code by PlanningPanelView and the dialog views. -->
+        <ui:VisualElement name="planningPanel" class="panel planning-panel hidden" />
+        <ui:VisualElement name="modalLayer" class="modal-layer hidden" />
 
     </ui:VisualElement>
 </ui:UXML>

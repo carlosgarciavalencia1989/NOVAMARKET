@@ -239,7 +239,7 @@ namespace NovaMarket.Simulation.Planning
                     $"Después de la semana {week} solo atendiste el {HudFormat.Percent(ServiceLevel)} de la demanda " +
                     $"(el mínimo es {HudFormat.Percent(PlanningRules.GameOverServiceLevel)}). Las tiendas se quedaron " +
                     "sin producto porque los pedidos no cubrieron la demanda del lead time.",
-                    "Repasa el stock de seguridad (SS = Z × σ × √(L+1)) y el nivel objetivo S = F + SS: " +
+                    "Repasa el stock de seguridad (SS = Z × desviación × √(L+1)) y el nivel objetivo S = F + SS: " +
                     "pide lo que falta para llegar a S cada semana.");
 
             if (overflowStreak >= PlanningRules.GameOverOverflowWeeks)

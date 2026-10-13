@@ -4467,6 +4467,7 @@ GameObject:
   m_Component:
   - component: {fileID: 391676704}
   - component: {fileID: 391676705}
+  - component: {fileID: 391676706}
   m_Layer: 0
   m_Name: Operation
   m_TagString: Untagged
@@ -4514,6 +4515,25 @@ MonoBehaviour:
   outboundBarrier: {fileID: 615629547}
   simulationSpeed: 1
   seed: 1616
+--- !u!114 &391676706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 391676703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdd699dc33d569e44b60a8b44d60af60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Operation.RackStockDisplay
+  level: {fileID: 939378066}
+  palletPrefab: {fileID: 4223571980572429246, guid: 5bbb48e52369c2d40a7bcbc52eed7eb5, type: 3}
+  skuColors:
+  - {r: 0.93, g: 0.42, b: 0.4, a: 1}
+  - {r: 0.58, g: 0.45, b: 0.85, a: 1}
+  - {r: 0.96, g: 0.76, b: 0.3, a: 1}
+  - {r: 0.6, g: 0.84, b: 0.92, a: 1}
 --- !u!1 &392281239
 GameObject:
   m_ObjectHideFlags: 0
@@ -9936,6 +9956,7 @@ GameObject:
   - component: {fileID: 939378065}
   - component: {fileID: 939378064}
   - component: {fileID: 939378063}
+  - component: {fileID: 939378066}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -9987,6 +10008,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a031b1deb6110454d9796c72f2420b6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.UI.HudDataSource
+  scenario: 1
   showWelcome: 1
 --- !u!114 &939378065
 MonoBehaviour:
@@ -10011,6 +10033,21 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
+--- !u!114 &939378066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 939378061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b78b95cc0ed55d24ca9404f6c6be597e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.UI.PlanningLevelController
+  dataSource: {fileID: 939378064}
+  operationRunner: {fileID: 391676705}
+  fixedSeed: 0
 --- !u!1 &960290696
 GameObject:
   m_ObjectHideFlags: 0
