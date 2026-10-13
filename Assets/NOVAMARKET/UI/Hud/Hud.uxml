@@ -1,6 +1,9 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:nm="NovaMarket.UI">
     <ui:Style src="Hud.uss" />
     <ui:Style src="Planning.uss" />
+    <ui:Style src="Campaign.uss" />
+    <ui:Style src="Erp.uss" />
+    <ui:Style src="Sheet.uss" />
     <ui:VisualElement name="hudRoot" class="hud-root" picking-mode="Ignore">
 
         <ui:VisualElement name="topRight" class="hud-top-right" picking-mode="Ignore">
@@ -97,6 +100,10 @@
 
         <!-- Planning level: built in code by PlanningPanelView and the dialog views. -->
         <ui:VisualElement name="planningPanel" class="panel planning-panel hidden" />
+        <!-- Planner campaign (v2): built in code by CampaignController and its views. -->
+        <ui:VisualElement name="workspaceBar" class="panel workspace-bar hidden" />
+        <ui:VisualElement name="windowLayer" class="window-layer hidden" picking-mode="Ignore" />
+        <ui:VisualElement name="menuLayer" class="menu-layer hidden" />
         <ui:VisualElement name="modalLayer" class="modal-layer hidden" />
 
     </ui:VisualElement>

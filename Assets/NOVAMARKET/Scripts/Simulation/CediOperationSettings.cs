@@ -68,6 +68,9 @@ namespace NovaMarket.Simulation
         public int MaxScheduledTrucks { get; set; } = 12;
 
         /// <summary>Settings for the planning level: scheduled trucks, positions owned by the plan.</summary>
+        /// <summary>Planner campaign: trucks keep the CEDI alive in the background, but no level counts dispatches.</summary>
+        public static CediOperationSettings ForCampaign() => new CediOperationSettings { CountDispatches = false };
+
         public static CediOperationSettings ForPlanning() => new CediOperationSettings
         {
             SpawnRandomTrucks = false,

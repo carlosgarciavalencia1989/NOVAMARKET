@@ -36,6 +36,12 @@ namespace NovaMarket.CameraControl
         public StrategyCameraRig Rig => rig;
         public Camera Camera => targetCamera;
 
+        /// <summary>
+        /// True while a full-screen menu or a window takes the keyboard and mouse wheel (typing
+        /// "WASD" in the planner sheet must not move the camera). Pending inputs are dropped.
+        /// </summary>
+        public bool InputSuspended { get; set; }
+
         /// <summary>Makes the camera travel to a ground point, e.g. after a minimap click.</summary>
         public void FocusOn(Vector3 worldPoint) => rig.FocusOn(worldPoint);
 
@@ -56,6 +62,15 @@ namespace NovaMarket.CameraControl
         {
             float deltaTime = Time.unscaledDeltaTime;
             Vector2 pointerPosition = pointer.ReadValue<Vector2>();
+            if (InputSuspended)
+            {
+                pendingZoomSteps = 0f;
+                pendingRotationSteps = 0;
+                dragging = false;
+                rig.Tick(deltaTime);
+                ApplyPose();
+                return;
+            }
 
             Vector2 pan = move.ReadValue<Vector2>();
             if (edgeScrolling && !dragging && IsPointerOverGame())

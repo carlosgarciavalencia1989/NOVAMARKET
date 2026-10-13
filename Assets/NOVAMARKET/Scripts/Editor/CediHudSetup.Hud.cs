@@ -1,6 +1,8 @@
 using NovaMarket.CameraControl;
+using NovaMarket.Data;
 using NovaMarket.Interaction;
 using NovaMarket.UI;
+using NovaMarket.UI.Campaign;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -20,6 +22,7 @@ namespace NovaMarket.Editor
         private const string HudLayoutPath = HudFolder + "/Hud.uxml";
         private const string ThemePath = HudFolder + "/HudTheme.tss";
         private const string PanelSettingsPath = HudFolder + "/HudPanelSettings.asset";
+        private const string CampaignPath = Root + "Data/Campaign.asset";
 
         private static void SetupHud(Transform systems, SelectionController selection)
         {
@@ -47,12 +50,18 @@ namespace NovaMarket.Editor
             SetField(hud, "cameraController", Object.FindAnyObjectByType<StrategyCameraController>());
             SetField(hud, "minimap", minimap);
 
-            // First playable level: the season order plan (the .Operation part links the runner).
+            // The planner campaign (v2) is the default; the season level (v1, future boss) stays available by
+            // switching the scenario in the Inspector (the .Operation part links its runner).
             var scenario = new SerializedObject(dataSource);
-            scenario.FindProperty("scenario").enumValueIndex = (int)HudScenario.SeasonPlanning;
+            scenario.FindProperty("scenario").enumValueIndex = (int)HudScenario.PlannerCampaign;
             scenario.ApplyModifiedPropertiesWithoutUndo();
             var planning = GetOrAdd<PlanningLevelController>(hudObject.gameObject);
             SetField(planning, "dataSource", dataSource);
+
+            var campaign = GetOrAdd<CampaignController>(hudObject.gameObject);
+            SetField(campaign, "dataSource", dataSource);
+            SetField(campaign, "campaign", AssetDatabase.LoadAssetAtPath<CampaignDatabase>(CampaignPath));
+            SetField(campaign, "cameraController", Object.FindAnyObjectByType<StrategyCameraController>());
         }
 
         /// <summary>Dynamic SDF font asset for UI Toolkit, generated from the Oswald TTF.</summary>

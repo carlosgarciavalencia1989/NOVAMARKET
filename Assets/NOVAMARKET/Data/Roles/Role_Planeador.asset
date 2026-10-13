@@ -18,8 +18,7 @@ MonoBehaviour:
     semana es un mini ciclo de S&OP: descarga del ERP, calcula en la hoja del planeador,
     negocia y decide."
   lane: 0
-  covers: "Pron\xF3stico \u2192 Gesti\xF3n de la demanda \u2192 Materiales (MRP \xB7
-    DDMRP)"
+  covers: "Pron\xF3stico, gesti\xF3n de la demanda y materiales (MRP \xB7 DDMRP)"
   isPlayable: 1
   worlds:
   - "Pron\xF3stico"

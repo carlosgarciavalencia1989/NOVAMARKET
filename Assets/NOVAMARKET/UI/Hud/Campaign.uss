@@ -1,0 +1,725 @@
+/* Planner campaign (v2): start menu, world map and workspace bar. Colours come from Hud.uss. */
+
+/* While a menu or a window is open, the scene HUD panels step aside. */
+.hud-root--menu .hud-top-right,
+.hud-root--menu .hud-bottom-left,
+.hud-root--menu .hud-bottom-right,
+.hud-root--menu .hud-notifications,
+.hud-root--window .hud-bottom-left,
+.hud-root--window .hud-bottom-right {
+    display: none;
+}
+
+.menu-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(10, 7, 4, 0.62);
+}
+
+.menu-screen {
+    width: 1600px;
+    max-height: 96%;
+    padding: 22px 30px 24px 30px;
+}
+
+.menu-heading {
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.menu-title {
+    font-size: 64px;
+    letter-spacing: 8px;
+    color: var(--gold-bright);
+    -unity-text-align: middle-center;
+}
+
+.menu-subtitle {
+    font-size: 21px;
+    color: var(--text);
+    -unity-text-align: middle-center;
+}
+
+.menu-rule {
+    height: 2px;
+    margin: 12px 0 4px 0;
+    background-color: var(--gold-dark);
+}
+
+.menu-columns {
+    flex-direction: row;
+}
+
+.menu-column {
+    flex-grow: 1;
+    flex-basis: 0;
+}
+
+.menu-column--left {
+    margin-right: 26px;
+}
+
+.menu-step {
+    flex-direction: row;
+    align-items: center;
+    margin: 8px 0 6px 0;
+}
+
+.menu-step-number {
+    width: 34px;
+    height: 34px;
+    margin-right: 10px;
+    border-radius: 17px;
+    border-width: 2px;
+    border-color: var(--gold-light);
+    background-color: rgb(110, 70, 28);
+    font-size: 19px;
+    color: var(--gold-bright);
+    -unity-text-align: middle-center;
+    padding: 0;
+}
+
+.menu-step-title {
+    font-size: 24px;
+    letter-spacing: 1px;
+    color: var(--gold-bright);
+}
+
+.lane-title {
+    margin: 8px 0 2px 2px;
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: var(--gold);
+}
+
+.choice-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.choice-card {
+    flex-direction: row;
+    align-items: center;
+    margin: 3px;
+    padding: 9px 12px;
+    border-width: 1px;
+    border-color: var(--gold-dark);
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.38);
+    transition-duration: 0.12s;
+}
+
+.choice-grid .choice-card {
+    width: 48.8%;
+}
+
+.choice-card:hover {
+    border-color: var(--gold);
+    background-color: rgba(92, 69, 36, 0.35);
+}
+
+.choice-card--selected,
+.choice-card--selected:hover {
+    border-width: 2px;
+    border-color: var(--gold-bright);
+    background-color: rgba(184, 145, 63, 0.22);
+}
+
+.choice-card--locked {
+    opacity: 0.5;
+}
+
+.choice-card--locked:hover {
+    border-color: var(--gold-dark);
+    background-color: rgba(0, 0, 0, 0.38);
+}
+
+.choice-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 12px;
+    color: var(--gold-light);
+}
+
+.choice-texts {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.choice-name-row {
+    flex-direction: row;
+    align-items: center;
+}
+
+.choice-name {
+    font-size: 21px;
+    color: var(--text-bright);
+}
+
+.choice-detail {
+    font-size: 15px;
+    white-space: normal;
+    color: var(--text-dim);
+}
+
+.choice-tag {
+    margin-left: 10px;
+    padding: 1px 7px;
+    border-width: 1px;
+    border-radius: 3px;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+.choice-tag--soon {
+    border-color: var(--amber);
+    color: var(--amber);
+}
+
+.choice-tag--ready {
+    border-color: var(--green);
+    color: var(--green);
+}
+
+.choice-size {
+    margin-left: 8px;
+    font-size: 15px;
+    color: var(--gold-light);
+}
+
+.cast-box {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-left-width: 4px;
+    border-left-color: var(--gold);
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.cast-caption {
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--gold);
+}
+
+.cast-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.cast-member {
+    flex-direction: row;
+    align-items: center;
+    width: 20%;
+    margin: 3px 0;
+}
+
+.cast-texts {
+    margin-left: 8px;
+    flex-shrink: 1;
+}
+
+.cast-name {
+    font-size: 16px;
+    color: var(--text-bright);
+}
+
+.cast-job {
+    font-size: 13px;
+    color: var(--text-dim);
+}
+
+.menu-footer {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.menu-summary {
+    flex-grow: 1;
+    font-size: 19px;
+    color: var(--text);
+}
+
+.menu-summary--ready {
+    color: var(--gold-bright);
+}
+
+.big-button {
+    margin: 0 0 0 12px;
+    padding: 12px 38px;
+    border-width: 2px;
+    border-color: var(--gold-light);
+    border-radius: 4px;
+    background-color: rgb(110, 70, 28);
+    color: var(--gold-bright);
+    font-size: 23px;
+    letter-spacing: 2px;
+}
+
+.big-button:hover {
+    background-color: rgb(140, 92, 38);
+}
+
+.big-button:disabled {
+    opacity: 0.4;
+}
+
+/* ---------------------------------------------------------------- character badges (from data) */
+
+.npc-badge {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-width: 3px;
+    border-color: var(--gold-light);
+    border-radius: 23px;
+    align-items: center;
+    justify-content: center;
+}
+
+.npc-badge--small {
+    width: 38px;
+    height: 38px;
+    border-width: 2px;
+    border-radius: 19px;
+}
+
+.npc-initials {
+    font-size: 18px;
+    color: rgb(255, 250, 238);
+    -unity-text-align: middle-center;
+    padding: 0;
+}
+
+.npc-badge--small .npc-initials {
+    font-size: 15px;
+}
+
+/* ---------------------------------------------------------------- world map */
+
+.map-screen {
+    width: 1660px;
+    height: 900px;
+    padding: 18px 26px;
+}
+
+.map-header {
+    flex-direction: row;
+    align-items: center;
+}
+
+.map-title {
+    font-size: 34px;
+    letter-spacing: 2px;
+    color: var(--gold-bright);
+}
+
+.map-subtitle {
+    margin-left: 18px;
+    font-size: 19px;
+    color: var(--text-dim);
+}
+
+.world-tabs {
+    flex-direction: row;
+    margin: 12px 0 10px 0;
+}
+
+.world-tab {
+    flex-direction: row;
+    align-items: center;
+    margin-right: 8px;
+    padding: 8px 18px;
+    border-width: 1px;
+    border-color: var(--gold-dark);
+    border-radius: 4px 4px 0 0;
+    background-color: rgba(0, 0, 0, 0.35);
+}
+
+.world-tab--active {
+    border-width: 2px;
+    border-color: var(--gold-bright);
+    background-color: rgba(184, 145, 63, 0.22);
+}
+
+.world-tab--locked {
+    opacity: 0.55;
+}
+
+.world-tab .hud-icon {
+    width: 18px;
+    height: 18px;
+    margin-left: 8px;
+    color: var(--text-dim);
+}
+
+.world-tab-text {
+    font-size: 19px;
+    color: var(--text-bright);
+}
+
+.map-body {
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+.map-board {
+    flex-grow: 1;
+    margin-right: 20px;
+    border-width: 1px;
+    border-color: var(--gold-dark);
+    border-radius: 4px;
+    background-color: rgba(48, 38, 22, 0.55);
+}
+
+.map-path {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    color: var(--gold);
+}
+
+.map-node {
+    position: absolute;
+    width: 150px;
+    align-items: center;
+}
+
+.map-node-circle {
+    width: 96px;
+    height: 96px;
+    border-width: 4px;
+    border-color: var(--gold-light);
+    border-radius: 48px;
+    background-color: rgb(110, 70, 28);
+    align-items: center;
+    justify-content: center;
+    transition-duration: 0.12s;
+}
+
+.map-node:hover .map-node-circle {
+    border-color: var(--gold-bright);
+    background-color: rgb(140, 92, 38);
+}
+
+.map-node--selected .map-node-circle,
+.map-node--selected:hover .map-node-circle {
+    border-width: 5px;
+    border-color: rgb(255, 236, 170);
+    background-color: rgb(160, 106, 40);
+}
+
+.map-node--locked .map-node-circle,
+.map-node--locked:hover .map-node-circle {
+    border-color: rgb(110, 100, 82);
+    background-color: rgb(52, 46, 38);
+}
+
+.map-node--boss .map-node-circle {
+    width: 124px;
+    height: 124px;
+    border-radius: 62px;
+}
+
+.map-node-id {
+    font-size: 30px;
+    color: var(--gold-bright);
+    -unity-text-align: middle-center;
+    padding: 0;
+}
+
+.map-node--locked .map-node-id {
+    color: rgb(150, 140, 120);
+}
+
+.map-node-circle .hud-icon {
+    width: 22px;
+    height: 22px;
+    color: rgb(170, 158, 134);
+}
+
+.map-node-title {
+    margin-top: 6px;
+    font-size: 17px;
+    white-space: normal;
+    color: var(--text-bright);
+    -unity-text-align: upper-center;
+}
+
+.map-node--locked .map-node-title {
+    color: var(--text-dim);
+}
+
+.map-node-step {
+    font-size: 13px;
+    color: var(--gold);
+    -unity-text-align: upper-center;
+}
+
+.level-detail {
+    width: 470px;
+    flex-shrink: 0;
+    padding: 16px 18px;
+    border-width: 1px;
+    border-color: var(--gold-dark);
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.35);
+}
+
+.detail-id {
+    font-size: 16px;
+    letter-spacing: 3px;
+    color: var(--gold);
+}
+
+.detail-title {
+    font-size: 32px;
+    white-space: normal;
+    color: var(--gold-bright);
+}
+
+.detail-step {
+    font-size: 16px;
+    color: var(--gold-light);
+}
+
+.detail-summary {
+    margin-top: 10px;
+    font-size: 18px;
+    white-space: normal;
+    color: var(--text-bright);
+}
+
+.detail-section {
+    margin-top: 16px;
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: var(--gold);
+}
+
+.detail-row {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 6px;
+}
+
+.detail-text {
+    margin-left: 10px;
+    font-size: 17px;
+    white-space: normal;
+    flex-shrink: 1;
+    color: var(--text);
+}
+
+.detail-gem {
+    width: 34px;
+    height: 34px;
+}
+
+.detail-stars {
+    flex-direction: row;
+}
+
+.detail-stars .hud-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 4px;
+    color: rgb(72, 62, 46);
+}
+
+.detail-spacer {
+    flex-grow: 1;
+}
+
+.detail-play {
+    margin: 14px 0 0 0;
+}
+
+/* ---------------------------------------------------------------- workspace bar */
+
+.workspace-bar {
+    position: absolute;
+    top: 16px;
+    left: 20px;
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 10px 6px 16px;
+}
+
+.workspace-title {
+    margin-right: 14px;
+    font-size: 21px;
+    color: var(--gold-bright);
+}
+
+.workspace-button {
+    flex-direction: row;
+    align-items: center;
+    margin: 0 0 0 8px;
+    padding: 7px 16px;
+    font-size: 17px;
+}
+
+.workspace-button .hud-icon {
+    width: 22px;
+    height: 22px;
+    margin-right: 8px;
+    color: var(--gold-light);
+}
+
+.workspace-button--active {
+    border-width: 2px;
+    border-color: var(--gold-bright);
+    background-color: rgb(110, 70, 28);
+}
+
+/* ---------------------------------------------------------------- windows (ERP, sheet) */
+
+.window-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.window {
+    position: absolute;
+    left: 20px;
+    top: 82px;
+    right: 446px;
+    bottom: 20px;
+    padding: 0;
+    border-width: 3px;
+    overflow: hidden;
+}
+
+/* UI Toolkit shrinks children that do not fit; menus keep their natural size instead of overlapping. */
+.menu-screen > *,
+.menu-heading > *,
+.menu-column > *,
+.choice-texts > *,
+.cast-box > *,
+.map-screen > *,
+.level-detail > * {
+    flex-shrink: 0;
+}
+
+.level-detail .cast-member {
+    width: 50%;
+}
+
+/* ---------------------------------------------------------------- compact start menu (fits 1080 p) */
+
+.menu-screen {
+    padding: 14px 26px 16px 26px;
+}
+
+.menu-heading {
+    margin-bottom: 2px;
+}
+
+.menu-title {
+    font-size: 50px;
+    letter-spacing: 7px;
+}
+
+.menu-subtitle {
+    font-size: 19px;
+}
+
+.menu-rule {
+    margin: 6px 0 2px 0;
+}
+
+.menu-step {
+    margin: 4px 0 2px 0;
+}
+
+.lane-title {
+    margin: 4px 0 1px 2px;
+}
+
+.choice-card {
+    padding: 6px 10px;
+}
+
+.choice-icon {
+    width: 34px;
+    height: 34px;
+}
+
+.choice-grid .choice-detail {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.menu-cast {
+    margin-top: 10px;
+}
+
+.menu-cast .cast-member {
+    width: 10%;
+}
+
+.menu-cast .cast-job {
+    font-size: 12px;
+}
+
+.menu-footer {
+    margin-top: 10px;
+}
+
+/* Labels of the default theme carry margins and padding; menus use their own spacing. */
+.menu-screen Label,
+.map-screen Label {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* Spacing that the label reset above must not remove (two classes win over class + type). */
+.level-detail .detail-section {
+    margin-top: 18px;
+    margin-bottom: 2px;
+}
+
+.level-detail .detail-summary {
+    margin-top: 10px;
+}
+
+.map-node .map-node-title {
+    margin-top: 6px;
+}
+
+.map-screen .map-board {
+    background-color: rgb(38, 30, 18);
+}
+
+.map-node--boss .map-node-id {
+    font-size: 24px;
+    letter-spacing: 2px;
+}
+
+.menu-cast .cast-texts {
+    flex-shrink: 1;
+    overflow: hidden;
+    margin-right: 6px;
+}
+
+.menu-cast .cast-job,
+.menu-cast .cast-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

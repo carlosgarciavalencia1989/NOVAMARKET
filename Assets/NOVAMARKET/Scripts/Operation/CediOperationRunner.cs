@@ -46,9 +46,12 @@ namespace NovaMarket.Operation
         // Created in Awake so the planning level can schedule trucks from its own Start.
         private void Awake()
         {
-            CediOperationSettings settings = dataSource.Scenario == HudScenario.SeasonPlanning
-                ? CediOperationSettings.ForPlanning()
-                : null;
+            CediOperationSettings settings = dataSource.Scenario switch
+            {
+                HudScenario.SeasonPlanning => CediOperationSettings.ForPlanning(),
+                HudScenario.PlannerCampaign => CediOperationSettings.ForCampaign(),
+                _ => null
+            };
             Simulation = new CediOperationSimulation(dataSource.State, settings, seed);
         }
 

@@ -24,14 +24,31 @@ namespace NovaMarket.Simulation
         /// <summary>Raised once when an objective becomes completed.</summary>
         public event Action<Objective> ObjectiveCompleted;
 
-        public int LevelNumber { get; }
-        public string LevelTitle { get; }
+        public int LevelNumber { get; private set; }
+        public string LevelTitle { get; private set; }
 
-        /// <summary>Header text, e.g. "Nivel III: Planeación S&amp;OP".</summary>
-        public string LevelHeader => $"Nivel {RomanNumerals.From(LevelNumber)}: {LevelTitle}";
+        /// <summary>Header text, e.g. "Nivel III: Planeación S&amp;OP" (or the header given to <see cref="Reset"/>).</summary>
+        public string LevelHeader => header ?? $"Nivel {RomanNumerals.From(LevelNumber)}: {LevelTitle}";
 
-        public string CounterLabel { get; }
-        public int CounterTarget { get; }
+        private string header;
+
+        /// <summary>
+        /// Starts another level in the same HUD: new header, counter and no objectives. The score is
+        /// kept (it is the player's total).
+        /// </summary>
+        public void Reset(string levelHeader, string counterLabel, int counterTarget)
+        {
+            header = levelHeader;
+            LevelTitle = levelHeader;
+            CounterLabel = counterLabel;
+            CounterTarget = Math.Max(0, counterTarget);
+            CounterValue = 0;
+            objectives.Clear();
+            Changed?.Invoke();
+        }
+
+        public string CounterLabel { get; private set; }
+        public int CounterTarget { get; private set; }
         public int CounterValue { get; private set; }
         public int Score { get; private set; }
 

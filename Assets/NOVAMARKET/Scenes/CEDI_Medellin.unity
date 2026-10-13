@@ -9957,6 +9957,7 @@ GameObject:
   - component: {fileID: 939378064}
   - component: {fileID: 939378063}
   - component: {fileID: 939378066}
+  - component: {fileID: 939378067}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -10008,7 +10009,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a031b1deb6110454d9796c72f2420b6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.UI.HudDataSource
-  scenario: 1
+  scenario: 2
   showWelcome: 1
 --- !u!114 &939378065
 MonoBehaviour:
@@ -10047,6 +10048,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.UI.PlanningLevelController
   dataSource: {fileID: 939378064}
   operationRunner: {fileID: 391676705}
+  fixedSeed: 0
+--- !u!114 &939378067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 939378061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75a375afa33f4aa49a248e9358bf6920, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.UI.Campaign.CampaignController
+  dataSource: {fileID: 939378064}
+  campaign: {fileID: 11400000, guid: 9c73f70855f5c8140a678a8ff585b22c, type: 2}
+  cameraController: {fileID: 773018515}
   fixedSeed: 0
 --- !u!1 &960290696
 GameObject:

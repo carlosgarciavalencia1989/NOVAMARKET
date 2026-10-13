@@ -57,6 +57,10 @@ Assets/NOVAMARKET/
         UI/            HUD (HudController, HudDataSource, *View classes, HudIcon, minimap) and the planning
                        level UI (PlanningLevelController, PlanningPanelView, AtlasDialogView, EventDialogView,
                        SeasonResultView, ModalLayer, CharacterBadge, HudElements)
+            Campaign/  Planner campaign UI, namespace NovaMarket.UI.Campaign (CampaignController, StartMenuView,
+                       WorldMapView, WorkspaceBarView, NpcBadge)
+            Erp/       NOVA ERP window (ErpWindowView, ErpTableView)
+            Sheet/     Planner sheet window (SheetWindowView, SheetGridView)
         Editor/        Editor-only tools (CediEnvironmentBuilder + its .Infrastructure/.Urban parts, EnvironmentMeshes,
                        CediHudSetup + its .Hud part)
     Tests/
@@ -78,7 +82,8 @@ Assets/NOVAMARKET/
     Terrain/           Generated: TerrainData, terrain layers and their textures
     Rendering/         Volume profiles (VP_CEDI_Medellin)
     UI/                UI assets
-        Hud/           Hud.uxml, Hud.uss, Planning.uss, HudTheme.tss, HudPanelSettings
+        Hud/           Hud.uxml, Hud.uss, Planning.uss, Campaign.uss (menu, map, bar), Erp.uss, Sheet.uss,
+                       HudTheme.tss, HudPanelSettings
         Fonts/         Oswald (SIL OFL, licence in Oswald-OFL.txt) and its Oswald_SDF font asset
     Data/              ScriptableObject asset instances: Campaign.asset (CampaignDatabase), Roles/, Sectors/
                        (Sector_Cosmetica + Cosmetica/Historia_Atlas_Cosmetica.csv), Characters/
@@ -142,8 +147,8 @@ CEDI_Medellin                      root of all scenario content
         EventSystem                EventSystem + InputSystemUIInputModule
         Operation                  CediOperationRunner + RackStockDisplay; spawn Vehicles/, StagedPallets_*
                                    and RackPallets/ in Play
-        HUD                        UIDocument (Hud.uxml) + HudDataSource (scenario: SeasonPlanning) +
-                                   HudController + PlanningLevelController
+        HUD                        UIDocument (Hud.uxml) + HudDataSource (scenario: PlannerCampaign) +
+                                   HudController + CampaignController + PlanningLevelController (v1)
     Debug
         ScaleMarkers               1 m cube, 5 m and 10 m poles
 ```
@@ -317,6 +322,35 @@ Plain C# engine of DISENO_JUEGO_V2.md (the UI comes next: start menu, ERP window
   1.2, Andrés's comparison of the level and seasonal index a model would learn. `LevelBalanceTests`
   plays 200 seeds of each level.
 
+### Planner campaign UI (scenario `PlannerCampaign`, the default)
+
+`HudDataSource.scenario = PlannerCampaign` (default; `SeasonPlanning` still plays the v1 season):
+the CEDI runs with background trucks (`CediOperationSettings.ForCampaign()`) and
+`CampaignController` (on `Systems/HUD`; Inspector: `campaign` = Data/Campaign.asset, `fixedSeed`,
+0 = random) drives the flow, built in code into the `menuLayer`, `workspaceBar` and `windowLayer`
+containers of `Hud.uxml`:
+
+- `StartMenuView`: role cards by lane and sector cards from the campaign data (disabled ones
+  "PRÓXIMAMENTE"), the NPC team of the chosen role, "COMENZAR".
+- `WorldMapView`: world tabs (worlds 2–3 locked), level nodes 1.1–1.7 along a path (`Painter2D`,
+  solid up to the last built level, dotted after) and the locked boss; a detail card (Atlas step,
+  mode, characters, gem, stars) with "JUGAR NIVEL".
+- In a level: `WorkspaceBarView` (top left: NOVA ERP, Hoja del planeador, Mapa), the level checklist
+  in the objectives panel (`CampaignHudData` resets the `MissionState` and ticks steps from the sheet),
+  character lines as notices (the dialogue window comes with E8).
+- `ErpWindowView`: own enterprise look (navy bar with transaction code and SAP equivalent, screen menu
+  with locked screens, selection criteria with material suggestions, ALV-like grid, invoice detail per
+  month, "Descargar a hoja" with a link to the tab, F8 runs the query).
+- `SheetWindowView` + `SheetGridView`: spreadsheet window (formats, formula bar with name box and fx,
+  A B C headers and row numbers, tabs, status bar with the error explanation or sum/average/count).
+  The grid draws only visible cells, edits in place or in the formula bar, picks references by
+  clicking while a formula is typed (also on another tab), and drags the fill handle with
+  auto-scroll at the edges.
+
+While a menu or window is open `StrategyCameraController.InputSuspended` keeps WASD and the wheel
+for the UI. USS note: the default theme gives labels vertical margins and lets flex children shrink;
+the campaign styles reset both so panels keep their size (`.menu-screen > * { flex-shrink: 0 }`).
+
 ## Planning level: "Temporada de fin de año" (v1, future boss level)
 
 First playable level, specified in `Documentation/SIMULACION_PLANEACION.md`. With the v2 design it
@@ -326,8 +360,8 @@ the engine extended (staged lead times, events with hidden distributions, trust,
 boxes of 4 real SKUs for 16 weeks (September–December) and closes each week; the results are
 compared with the Atlas reference policy played with the same seed.
 
-`HudDataSource.scenario` chooses the HUD state: `SeasonPlanning` (default; `PlanningLevelData`)
-or `SampleOperation` (the earlier illustrative S&OP numbers with random trucks).
+To play it, set `HudDataSource.scenario` to `SeasonPlanning` (`PlanningLevelData`); `PlannerCampaign` is the
+default and `SampleOperation` shows the earlier illustrative S&OP numbers with random trucks.
 
 Engine (`Scripts/Simulation/Planning/`, plain C#):
 
@@ -367,8 +401,10 @@ The Oswald font has no σ, Σ, ⌈⌉, ★ or →: texts spell them out (stars a
 
 ## Not implemented yet
 
-- UI of the v2 slice: start menu (role and sector), world 1 map, NOVA ERP window, planner sheet view
-  and the 1.1/1.2 level flow (the engine above is done)
+- Level flow of 1.1/1.2 (E8): dialogue window for Andrés and Sofía, marking problems, formula cards,
+  Atlas help, delivery and result screen. Dialogues move from `LevelDialogue.cs` to data files per
+  character and level, so texts are edited without code and other sectors/roles bring their own
+- Sheet: copy/paste, insert rows/columns, more functions (RAIZ, SI.ERROR…), saved progress
 - Concrete data types (CompanyData, ScenarioData, ... RoleData); the planning SKUs live in code
 - Forecasting, MRP and DDMRP levels (only the season planning level exists)
 - Negotiation with arguments, character trust, FVA, staged import lead times, shipment board
