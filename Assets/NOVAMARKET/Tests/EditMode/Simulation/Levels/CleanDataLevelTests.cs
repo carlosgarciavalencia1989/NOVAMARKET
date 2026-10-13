@@ -56,7 +56,7 @@ namespace NovaMarket.Tests.Simulation.Levels
             LevelResult result = level.Deliver();
             Assert.AreEqual(3, result.Stars, string.Join(" | ", result.Criteria.Select(c => c.Detail)));
             Assert.IsTrue(result.ExcelBadge);
-            Assert.AreEqual(LevelDialogue.CleanSuccess, result.Debrief[0]);
+            Assert.AreEqual(DialogueKeys.Success, result.Debrief[0].Key);
             Assert.IsEmpty(result.DamagedSkus.ToList());
             Assert.AreEqual(5 + 2, result.Lessons.Count);
         }
@@ -79,13 +79,14 @@ namespace NovaMarket.Tests.Simulation.Levels
             LevelResult result = level.Deliver();
             Assert.IsFalse(result.Passed);
             Assert.AreEqual(0, result.Stars);
-            StringAssert.Contains("Te faltan 5 problemas", result.Debrief[0].Text);
+            Assert.AreEqual(DialogueKeys.MissingMany, result.Debrief[0].Key);
+            Assert.AreEqual("5", result.Debrief[0].Args["missing"]);
             string boxes = Issue(DataIssueKind.UnitsInBoxes).Code;
             SkuImpact impact = result.Impact.Single(i => i.Code == boxes);
             Assert.Less(impact.PlayerLevel, impact.CleanLevel / 10, "A row in boxes misses almost all the units.");
             Assert.IsTrue(impact.LevelIsWorse);
             Assert.AreEqual(5, result.DamagedSkus.Count(), "Every problem distorts what the model learns.");
-            Assert.IsTrue(result.Debrief.Any(l => l.Text.Contains(boxes) && l.Text.Contains("quedaría corto")));
+            Assert.IsTrue(result.Debrief.Any(l => l.Key == DialogueKeys.ImpactLevelLow && l.Args["code"] == boxes));
             SkuImpact zero = result.Impact.Single(i => i.Code == "CV10004");
             Assert.AreEqual(5, zero.Month, "The zero hurts June.");
             Assert.Less(zero.PlayerIndex, zero.CleanIndex);
@@ -119,7 +120,7 @@ namespace NovaMarket.Tests.Simulation.Levels
             Assert.AreEqual(2, result.Stars);
             Assert.AreEqual(1, level.WrongMarks().Count());
             Assert.AreEqual(1, level.ChangedGoodData().Count());
-            Assert.Contains(LevelDialogue.CleanChangedGoodData, result.Debrief.ToList());
+            Assert.IsTrue(result.Debrief.Any(l => l.Key == DialogueKeys.ChangedGoodData));
         }
 
         [Test]

@@ -11,8 +11,9 @@ namespace NovaMarket.Simulation.Levels
     /// </summary>
     public abstract class LevelSession
     {
-        protected LevelSession(LevelInfo info, ErpDataSet data, int seed)
+        protected LevelSession(LevelInfo info, ErpDataSet data, int seed, DialogueBook dialogue)
         {
+            Dialogue = dialogue ?? DialogueBook.Empty;
             Info = info ?? throw new ArgumentNullException(nameof(info));
             Data = data ?? throw new ArgumentNullException(nameof(data));
             Seed = seed;
@@ -29,6 +30,9 @@ namespace NovaMarket.Simulation.Levels
         public Workbook Book { get; }
         public AtlasHelpLog Help { get; }
 
+        /// <summary>The lines of the characters (from the dialogue data files).</summary>
+        public DialogueBook Dialogue { get; }
+
         /// <summary>Raised when a character says something during play (hints after a download…).</summary>
         public event Action<DialogueLine> Said;
 
@@ -43,6 +47,13 @@ namespace NovaMarket.Simulation.Levels
 
         /// <summary>Topics the Atlas can solve (each one costs the "sin ayuda" star).</summary>
         public abstract IReadOnlyList<string> HelpTopics { get; }
+
+        /// <summary>How a help topic reads in the help window.</summary>
+        public abstract string TopicName(string topic);
+
+        /// <summary>Sofía's or Andrés's free hint for a topic, or null when the data has none.</summary>
+        public DialogueLine HintFor(string topic) =>
+            Dialogue.Has(Info.Id, DialogueKeys.Hint(topic)) ? Line(DialogueKeys.Hint(topic)) : null;
 
         public LevelResult Result { get; private set; }
 
@@ -62,6 +73,12 @@ namespace NovaMarket.Simulation.Levels
         protected abstract void OnDownloaded(ErpTable table, Worksheet sheet);
 
         protected void Say(DialogueLine line) => Said?.Invoke(line);
+
+        protected DialogueLine Line(string key, params (string Name, string Value)[] args) =>
+            Dialogue.Line(Info.Id, key, DialogueArgs.Of(args));
+
+        protected IReadOnlyList<DialogueLine> Lines(string key, params (string Name, string Value)[] args) =>
+            Dialogue.Lines(Info.Id, key, DialogueArgs.Of(args));
 
         /// <summary>A billing-by-month result (not the invoice detail nor the material master).</summary>
         protected static bool IsBillingByMonth(ErpTable table) =>

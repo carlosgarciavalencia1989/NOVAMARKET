@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace NovaMarket.Simulation.Levels
 {
@@ -14,121 +16,160 @@ namespace NovaMarket.Simulation.Levels
     /// <summary>A line said by a character (id of its CharacterData: "andres", "sofia").</summary>
     public sealed class DialogueLine
     {
-        public DialogueLine(string characterId, DialogueMood mood, string text)
+        private static readonly IReadOnlyDictionary<string, string> NoArgs = new Dictionary<string, string>();
+
+        public DialogueLine(string characterId, DialogueMood mood, string text, string key = null,
+            IReadOnlyDictionary<string, string> args = null)
         {
-            CharacterId = characterId;
+            CharacterId = characterId ?? string.Empty;
             Mood = mood;
             Text = text ?? throw new ArgumentNullException(nameof(text));
+            Key = key ?? string.Empty;
+            Args = args ?? NoArgs;
         }
 
         public string CharacterId { get; }
         public DialogueMood Mood { get; }
         public string Text { get; }
 
+        /// <summary>Which line of the level it is ("intro", "exito"…), so the logic and the tests never depend on the wording.</summary>
+        public string Key { get; }
+
+        /// <summary>The values put into the text ({codes}, {missing}…).</summary>
+        public IReadOnlyDictionary<string, string> Args { get; }
+
         public override string ToString() => $"{CharacterId}: {Text}";
     }
 
     /// <summary>
-    /// What Andrés (mentor, S&amp;OP director) and Sofía (inventory control, she hands over the ERP
-    /// data) say in the levels 1.1 and 1.2. The UI draws them; the levels choose which ones to show.
+    /// A line as written in a dialogue data file: who says it, in which level, for which role and sector
+    /// (empty = all), its key, its order among the lines with the same key and the text with {placeholders}.
     /// </summary>
-    public static class LevelDialogue
+    public sealed class DialogueEntry
     {
-        public const string Andres = "andres";
-        public const string Sofia = "sofia";
-
-        private static DialogueLine A(DialogueMood mood, string text) => new DialogueLine(Andres, mood, text);
-        private static DialogueLine S(DialogueMood mood, string text) => new DialogueLine(Sofia, mood, text);
-
-        // ------------------------------------------------------------------ 1.1 Reunir la historia
-
-        public static IReadOnlyList<DialogueLine> GatherIntro(IReadOnlyList<string> codes) => new[]
+        public DialogueEntry(string levelId, string characterId, string key, int order, DialogueMood mood, string text,
+            string roleId = null, string sectorId = null)
         {
-            A(DialogueMood.Neutral, "Bienvenido al equipo de planeación. Todo pronóstico empieza por la historia: " +
-                                    "el modelo solo aprende lo que está en ella. Hoy la vas a reunir."),
-            S(DialogueMood.Neutral, $"Hola. Necesito la facturación real de {string.Join(", ", codes)}, de ene-23 a ago-26. " +
-                                    "Sácala del NOVA ERP, pantalla Facturación, y descárgala a tu hoja con «Descargar a hoja»."),
-            A(DialogueMood.Neutral, "Arma la tabla como en el Atlas: un SKU por fila y un mes por columna. " +
-                                    "Con 24 meses o más ya ves dos ciclos de temporada.")
-        };
-
-        public static DialogueLine ProjectionWarning { get; } = A(DialogueMood.Worried,
-            "Mira la columna que dice «(proy.)». Es un promedio móvil del mes en curso, no una venta. " +
-            "Si la dejas, mezclas pronóstico con historia y todo lo que sigue hereda el error. Consulta sin proyección o borra esa columna.");
-
-        public static DialogueLine PeriodsHint { get; } = A(DialogueMood.Neutral,
-            "Encima de los meses numera los periodos: escribe 1 en C1 y 2 en D1, selecciona las dos celdas y " +
-            "arrastra la esquina hasta AT1. La hoja sigue la serie hasta 44.");
-
-        public static DialogueLine TotalsHint { get; } = A(DialogueMood.Neutral,
-            "En AW3 te dejé =SUMA(AI3:AT3): suma los últimos 12 meses del primer SKU. Arrastra la esquina de la celda " +
-            "hacia abajo y la fórmula se ajusta sola a cada fila.");
-
-        public static DialogueLine GatherSuccess { get; } = A(DialogueMood.Happy,
-            "Historia completa: 44 meses, solo venta facturada y un SKU por fila. Esta tabla es la base de todo el mundo de Pronóstico.");
-
-        public static DialogueLine GatherWrongQuery { get; } = A(DialogueMood.Serious,
-            "La tabla no es la que pidió Sofía. Revisa los SKU, que vaya de ene-23 a ago-26 y que no quede ninguna proyección.");
-
-        public static DialogueLine GatherWrongTotals { get; } = A(DialogueMood.Serious,
-            "Los totales de 12 meses no cuadran. Deben sumar de sep-25 a ago-26: columnas AI a AT de cada fila.");
-
-        // ------------------------------------------------------------------ 1.2 Limpiar los datos
-
-        public static IReadOnlyList<DialogueLine> CleanIntro(int skus) => new[]
-        {
-            S(DialogueMood.Worried, $"Te pasé la facturación de {skus} SKU, pero viene con problemas: ceros que no son reales, " +
-                                    "un pedido raro de un cliente, meses antes de un lanzamiento y algo raro con las unidades. " +
-                                    "Revísala antes de que Andrés la use."),
-            A(DialogueMood.Neutral, "Descárgala y te armo la pestaña «Serie limpia» con una copia. Marca cada problema con su tipo " +
-                                    "y decide si imputas, excluyes o conviertes. Corrige solo en la Serie limpia."),
-            A(DialogueMood.Serious, "Una advertencia: no todo pico es un error. Si un mes alto se repite cada año, es la temporada.")
-        };
-
-        public static DialogueLine Hint(Erp.DataIssueKind kind) => kind switch
-        {
-            Erp.DataIssueKind.FalseZero => S(DialogueMood.Neutral,
-                "Un cero aislado entre meses con venta casi siempre es un agotado o un error de registro. " +
-                "Si el mes es fuerte para el SKU, imputa con el mismo mes de los otros años."),
-            Erp.DataIssueKind.OneOffOrder => S(DialogueMood.Neutral,
-                "Si un mes se dispara, abre el detalle de facturas de ese mes en el ERP: ahí ves qué cliente lo compró y por qué."),
-            Erp.DataIssueKind.PreLaunch => S(DialogueMood.Neutral,
-                "Cuando un SKU arranca con puros ceros, revisa si ya existía. Los meses antes del lanzamiento no son demanda: se excluyen."),
-            _ => S(DialogueMood.Neutral,
-                "Mira la columna UM. Si un SKU dice CJ y los demás UN, está en cajas. El maestro de materiales dice cuántas unidades trae cada caja.")
-        };
-
-        public static DialogueLine CleanSuccess { get; } = A(DialogueMood.Happy,
-            "Serie limpia. Cada corrección quedó documentada y el pronóstico va a aprender de la demanda real, no de los accidentes del ERP.");
-
-        public static DialogueLine CleanMissing(int missing) => A(DialogueMood.Serious,
-            $"Te faltan {missing} {(missing == 1 ? "problema" : "problemas")} por encontrar. Mira cómo dañarían el pronóstico:");
-
-        public static DialogueLine CleanBadCorrection { get; } = A(DialogueMood.Worried,
-            "Encontraste los problemas, pero algunas correcciones no quedaron bien. Mira la diferencia en el error del pronóstico:");
-
-        private static readonly string[] MonthNames =
-        {
-            "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
-        };
-
-        /// <summary>Andrés shows what the model would learn wrong from a SKU of the player's series.</summary>
-        public static DialogueLine Impact(SkuImpact sku)
-        {
-            if (sku.LevelIsWorse)
-                return A(DialogueMood.Serious,
-                    $"Con tu serie, el modelo creería que {sku.Code} vende {HudFormat.Number((long)Math.Round(sku.PlayerLevel))} " +
-                    $"unidades al mes en promedio, y son {HudFormat.Number((long)Math.Round(sku.CleanLevel))}: todo el pronóstico " +
-                    $"quedaría {(sku.PlayerLevel > sku.CleanLevel ? "inflado" : "corto")}.");
-            string month = MonthNames[sku.Month];
-            return A(DialogueMood.Serious,
-                $"Con tu serie, el índice de {month} de {sku.Code} sería {HudFormat.Decimal(sku.PlayerIndex, 2)} en vez de " +
-                $"{HudFormat.Decimal(sku.CleanIndex, 2)}: cada {month} el pronóstico quedaría " +
-                $"{(sku.PlayerIndex > sku.CleanIndex ? "por encima" : "por debajo")} de la venta.");
+            LevelId = levelId ?? string.Empty;
+            CharacterId = characterId ?? string.Empty;
+            Key = key ?? string.Empty;
+            Order = order;
+            Mood = mood;
+            Text = text ?? string.Empty;
+            RoleId = roleId ?? string.Empty;
+            SectorId = sectorId ?? string.Empty;
         }
 
-        public static DialogueLine CleanChangedGoodData { get; } = A(DialogueMood.Serious,
-            "Cambiaste datos que estaban bien. Un pico que se repite cada diciembre es temporada, no un error: si lo borras, " +
-            "el modelo deja de esperarlo.");
+        public string LevelId { get; }
+        public string CharacterId { get; }
+        public string Key { get; }
+        public int Order { get; }
+        public DialogueMood Mood { get; }
+        public string Text { get; }
+        public string RoleId { get; }
+        public string SectorId { get; }
+
+        /// <summary>A line for a given sector beats one for any sector; a given role beats any role.</summary>
+        public int Specificity => (SectorId.Length > 0 ? 2 : 0) + (RoleId.Length > 0 ? 1 : 0);
+
+        public bool AppliesTo(string roleId, string sectorId) =>
+            (RoleId.Length == 0 || RoleId == roleId) && (SectorId.Length == 0 || SectorId == sectorId);
+    }
+
+    /// <summary>
+    /// Every line the characters can say, read from the dialogue data files (one per character and level).
+    /// The levels ask for a line by key with its values; the book fills the {placeholders}. A missing line
+    /// shows as "[1.2/key]" so it is easy to spot and the level still works.
+    /// </summary>
+    public sealed class DialogueBook
+    {
+        private static readonly Regex Placeholder = new Regex(@"\{([a-zA-Z_]+)\}");
+
+        private readonly Dictionary<(string Level, string Key), List<DialogueEntry>> entries =
+            new Dictionary<(string, string), List<DialogueEntry>>();
+
+        /// <param name="roleId">Keeps only the lines for this role (or for every role); null keeps all.</param>
+        public DialogueBook(IEnumerable<DialogueEntry> lines, string roleId = null, string sectorId = null)
+        {
+            var chosen = new Dictionary<(string, string, string, int), DialogueEntry>();
+            foreach (DialogueEntry entry in lines ?? Enumerable.Empty<DialogueEntry>())
+            {
+                if (entry == null || roleId != null && !entry.AppliesTo(roleId, sectorId)) continue;
+                var slot = (entry.LevelId, entry.Key, entry.CharacterId, entry.Order);
+                if (!chosen.TryGetValue(slot, out DialogueEntry current) || entry.Specificity > current.Specificity)
+                    chosen[slot] = entry;
+            }
+            foreach (DialogueEntry entry in chosen.Values)
+            {
+                if (!entries.TryGetValue((entry.LevelId, entry.Key), out List<DialogueEntry> list))
+                    entries[(entry.LevelId, entry.Key)] = list = new List<DialogueEntry>();
+                list.Add(entry);
+            }
+            foreach (List<DialogueEntry> list in entries.Values) list.Sort((a, b) => a.Order.CompareTo(b.Order));
+        }
+
+        public static DialogueBook Empty { get; } = new DialogueBook(null);
+
+        public bool Has(string levelId, string key) => entries.ContainsKey((levelId, key));
+
+        /// <summary>All the lines with this key, in order (an intro is several lines by several characters).</summary>
+        public IReadOnlyList<DialogueLine> Lines(string levelId, string key, IReadOnlyDictionary<string, string> args = null)
+        {
+            if (!entries.TryGetValue((levelId, key), out List<DialogueEntry> list))
+                return new[] { new DialogueLine(string.Empty, DialogueMood.Neutral, $"[{levelId}/{key}]", key, args) };
+            return list.Select(e => new DialogueLine(e.CharacterId, e.Mood, Fill(e.Text, args), key, args)).ToList();
+        }
+
+        public DialogueLine Line(string levelId, string key, IReadOnlyDictionary<string, string> args = null) =>
+            Lines(levelId, key, args)[0];
+
+        /// <summary>Replaces each {name} with its value; unknown names stay as they are.</summary>
+        public static string Fill(string text, IReadOnlyDictionary<string, string> args) =>
+            args == null || args.Count == 0
+                ? text
+                : Placeholder.Replace(text, m => args.TryGetValue(m.Groups[1].Value, out string value) ? value : m.Value);
+
+        /// <summary>The {placeholders} a text uses.</summary>
+        public static IEnumerable<string> PlaceholdersOf(string text) =>
+            Placeholder.Matches(text ?? string.Empty).Cast<Match>().Select(m => m.Groups[1].Value);
+    }
+
+    /// <summary>The keys of the dialogue lines of world 1 and the values each one can use.</summary>
+    public static class DialogueKeys
+    {
+        public const string Intro = "intro";
+        public const string Success = "exito";
+
+        // 1.1
+        public const string ProjectionWarning = "aviso-proyeccion";
+        public const string WrongQuery = "consulta-incorrecta";
+        public const string WrongTotals = "totales-incorrectos";
+
+        // 1.2
+        public const string MissingOne = "falta-un-problema";
+        public const string MissingMany = "faltan-problemas";
+        public const string BadCorrection = "correccion-incorrecta";
+        public const string ChangedGoodData = "datos-buenos-cambiados";
+        public const string ImpactLevelHigh = "impacto-nivel-alto";
+        public const string ImpactLevelLow = "impacto-nivel-bajo";
+        public const string ImpactIndexHigh = "impacto-indice-alto";
+        public const string ImpactIndexLow = "impacto-indice-bajo";
+
+        /// <summary>A free hint for a help topic (the Atlas solution, instead, costs a star).</summary>
+        public static string Hint(string topic) => "pista-" + topic;
+
+        /// <summary>Values the lines of world 1 may use, to check the data files.</summary>
+        public static readonly string[] KnownArgs = { "codes", "skus", "missing", "code", "player", "clean", "month" };
+    }
+
+    /// <summary>Builds the values of a line: <c>DialogueArgs.Of(("codes", "CV10001, CV10009"))</c>.</summary>
+    public static class DialogueArgs
+    {
+        public static IReadOnlyDictionary<string, string> Of(params (string Name, string Value)[] values)
+        {
+            var args = new Dictionary<string, string>();
+            foreach ((string name, string value) in values) args[name] = value;
+            return args;
+        }
     }
 }

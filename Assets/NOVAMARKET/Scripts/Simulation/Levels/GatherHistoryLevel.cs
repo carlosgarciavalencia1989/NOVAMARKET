@@ -30,16 +30,24 @@ namespace NovaMarket.Simulation.Levels
 
         private readonly List<string> codes;
 
-        public GatherHistoryLevel(Portfolio.Portfolio portfolio, int seed)
-            : base(ForecastWorld.GatherHistory, new ErpDataSet(portfolio, seed), seed)
+        public GatherHistoryLevel(Portfolio.Portfolio portfolio, int seed, DialogueBook dialogue = null)
+            : base(ForecastWorld.GatherHistory, new ErpDataSet(portfolio, seed), seed, dialogue)
         {
             var random = new Random(seed);
             codes = Pool.OrderBy(_ => random.Next()).Take(SkuCount).OrderBy(c => c, StringComparer.Ordinal).ToList();
         }
 
         public override IReadOnlyList<string> RequestedCodes => codes;
-        public override IReadOnlyList<DialogueLine> Intro => LevelDialogue.GatherIntro(codes);
+        public override IReadOnlyList<DialogueLine> Intro => Lines(DialogueKeys.Intro, ("codes", string.Join(", ", codes)));
         public override IReadOnlyList<string> HelpTopics { get; } = new[] { TopicQuery, TopicPeriods, TopicTotals };
+
+        public override string TopicName(string topic) => topic switch
+        {
+            TopicQuery => "La consulta en el ERP",
+            TopicPeriods => "La fila de periodos 1…44",
+            TopicTotals => "El total de los últimos 12 meses",
+            _ => topic
+        };
 
         /// <summary>The tab of the last billing download (the history table).</summary>
         public string HistorySheet { get; private set; }
@@ -59,9 +67,9 @@ namespace NovaMarket.Simulation.Levels
                 sheet.SetFormat(new CellRange(new CellAddress(TotalColumn, ErpTable.FirstDataRow),
                     new CellAddress(TotalColumn, ErpTable.FirstDataRow + Math.Max(0, table.Rows.Count - 1))), CellFormat.Number(0));
             });
-            if (table.Headers.Any(h => h.EndsWith(NovaErp.ProjectionSuffix))) Say(LevelDialogue.ProjectionWarning);
-            Say(LevelDialogue.PeriodsHint);
-            Say(LevelDialogue.TotalsHint);
+            if (table.Headers.Any(h => h.EndsWith(NovaErp.ProjectionSuffix))) Say(Line(DialogueKeys.ProjectionWarning));
+            Say(Line(DialogueKeys.Hint(TopicPeriods)));
+            Say(Line(DialogueKeys.Hint(TopicTotals)));
         }
 
         // ------------------------------------------------------------------ checks
@@ -154,10 +162,10 @@ namespace NovaMarket.Simulation.Levels
             };
 
             var debrief = new List<DialogueLine>();
-            if (ready) debrief.Add(LevelDialogue.GatherSuccess);
-            else if (!query || projection) debrief.Add(LevelDialogue.GatherWrongQuery);
-            else debrief.Add(LevelDialogue.GatherWrongTotals);
-            if (projection) debrief.Add(LevelDialogue.ProjectionWarning);
+            if (ready) debrief.Add(Line(DialogueKeys.Success));
+            else if (!query || projection) debrief.Add(Line(DialogueKeys.WrongQuery));
+            else debrief.Add(Line(DialogueKeys.WrongTotals));
+            if (projection) debrief.Add(Line(DialogueKeys.ProjectionWarning));
 
             var lessons = new List<string>
             {

@@ -46,8 +46,8 @@ namespace NovaMarket.Simulation.Levels
         private readonly Dictionary<(string, int), IssueMark> marks = new Dictionary<(string, int), IssueMark>();
         private readonly List<string> codes;
 
-        public CleanDataLevel(Portfolio.Portfolio portfolio, int seed)
-            : base(ForecastWorld.CleanData, DataQualityInjector.Inject(portfolio, Plan(), seed), seed)
+        public CleanDataLevel(Portfolio.Portfolio portfolio, int seed, DialogueBook dialogue = null)
+            : base(ForecastWorld.CleanData, DataQualityInjector.Inject(portfolio, Plan(), seed), seed, dialogue)
         {
             codes = Data.Issues.Select(i => i.Code).OrderBy(c => c, StringComparer.Ordinal).ToList();
         }
@@ -63,12 +63,15 @@ namespace NovaMarket.Simulation.Levels
         };
 
         public override IReadOnlyList<string> RequestedCodes => codes;
-        public override IReadOnlyList<DialogueLine> Intro => LevelDialogue.CleanIntro(codes.Count);
+        public override IReadOnlyList<DialogueLine> Intro => Lines(DialogueKeys.Intro, ("skus", codes.Count.ToString()));
 
         public override IReadOnlyList<string> HelpTopics { get; } =
             Enum.GetValues(typeof(DataIssueKind)).Cast<DataIssueKind>().Select(TopicOf).ToArray();
 
         public static string TopicOf(DataIssueKind kind) => kind.ToString();
+
+        public override string TopicName(string topic) =>
+            Enum.TryParse(topic, out DataIssueKind kind) ? DataIssue.Name(kind) : topic;
 
         /// <summary>The tab of the raw billing download.</summary>
         public string RawSheet { get; private set; }
@@ -270,17 +273,37 @@ namespace NovaMarket.Simulation.Levels
 
             List<SkuImpact> impact = Impact();
             var debrief = new List<DialogueLine>();
-            if (allFound && allCorrected) debrief.Add(LevelDialogue.CleanSuccess);
-            else if (!allFound) debrief.Add(LevelDialogue.CleanMissing(missing));
-            else if (corrected.Count < Data.Issues.Count || !actions || wrong.Count > 0) debrief.Add(LevelDialogue.CleanBadCorrection);
-            if (changed.Count > 0) debrief.Add(LevelDialogue.CleanChangedGoodData);
+            if (allFound && allCorrected) debrief.Add(Line(DialogueKeys.Success));
+            else if (!allFound) debrief.Add(Line(missing == 1 ? DialogueKeys.MissingOne : DialogueKeys.MissingMany, ("missing", missing.ToString())));
+            else if (corrected.Count < Data.Issues.Count || !actions || wrong.Count > 0) debrief.Add(Line(DialogueKeys.BadCorrection));
+            if (changed.Count > 0) debrief.Add(Line(DialogueKeys.ChangedGoodData));
             foreach (SkuImpact sku in impact.Where(i => i.Damage > LevelResult.VisibleDamage))
-                debrief.Add(LevelDialogue.Impact(sku));
+                debrief.Add(ImpactLine(sku));
 
             var lessons = Data.Issues.Select(i => $"{i.KindName}: {i.Explanation} ({i.AtlasStep})").ToList();
             lessons.Add("No borres un cero sin reemplazarlo: el mes desaparece y los promedios se corren.");
             lessons.Add("Documenta cada imputación: en la sustentación te van a preguntar por qué cambiaste el dato.");
             return new LevelResult(Info, criteria, allCorrected && allFormulas, debrief, lessons, impact);
+        }
+
+        private static readonly string[] MonthNames =
+        {
+            "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+        };
+
+        /// <summary>Andrés shows what the model would learn wrong from a SKU of the player's series.</summary>
+        private DialogueLine ImpactLine(SkuImpact sku)
+        {
+            if (sku.LevelIsWorse)
+                return Line(sku.PlayerLevel > sku.CleanLevel ? DialogueKeys.ImpactLevelHigh : DialogueKeys.ImpactLevelLow,
+                    ("code", sku.Code),
+                    ("player", HudFormat.Number((long)Math.Round(sku.PlayerLevel))),
+                    ("clean", HudFormat.Number((long)Math.Round(sku.CleanLevel))));
+            return Line(sku.PlayerIndex > sku.CleanIndex ? DialogueKeys.ImpactIndexHigh : DialogueKeys.ImpactIndexLow,
+                ("code", sku.Code),
+                ("month", MonthNames[sku.Month]),
+                ("player", HudFormat.Decimal(sku.PlayerIndex, 2)),
+                ("clean", HudFormat.Decimal(sku.CleanIndex, 2)));
         }
 
         private static string CorrectionDetail(int corrected, int total, bool actions, int wrong, int changed)

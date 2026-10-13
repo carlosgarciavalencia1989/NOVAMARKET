@@ -15,18 +15,17 @@ namespace NovaMarket.Tests.Simulation.Levels
         [SetUp]
         public void SetUp()
         {
-            level = new GatherHistoryLevel(LevelPlayers.Portfolio, seed: 8);
+            level = new GatherHistoryLevel(LevelPlayers.Portfolio, seed: 8, TestDialogue.Book);
             said = new List<DialogueLine>();
             level.Said += said.Add;
         }
 
         [Test]
-        public void Level_AsksForFourRealSkus_AndIntroducesAndresAndSofia()
+        public void Level_AsksForFourRealSkus()
         {
             Assert.AreEqual(4, level.RequestedCodes.Distinct().Count());
             Assert.IsTrue(level.RequestedCodes.All(c => LevelPlayers.Portfolio.Find(c).IsReal));
             CollectionAssert.AreEqual(level.RequestedCodes, new GatherHistoryLevel(LevelPlayers.Portfolio, 8).RequestedCodes);
-            CollectionAssert.AreEqual(new[] { "andres", "sofia", "andres" }, level.Intro.Select(l => l.CharacterId));
             Assert.AreEqual("1.1", level.Info.Id);
             Assert.AreEqual(ScaffoldMode.Guided, level.Info.Mode);
         }
@@ -39,7 +38,7 @@ namespace NovaMarket.Tests.Simulation.Levels
             Assert.AreEqual(1, sheet.Value("C1").Number, "First period given.");
             Assert.AreEqual("=SUMA(AI3:AT3)", sheet.GetInput(CellAddress.Parse("AW3")), "First total given.");
             Assert.AreEqual(GatherHistoryLevel.TotalHeader, sheet.Value("AW2").Text);
-            Assert.Contains(LevelDialogue.ProjectionWarning, said);
+            Assert.IsTrue(said.Any(l => l.Key == DialogueKeys.ProjectionWarning));
             Assert.IsTrue(level.HasProjection());
         }
 
@@ -55,7 +54,7 @@ namespace NovaMarket.Tests.Simulation.Levels
             Assert.IsTrue(result.ExcelBadge);
             Assert.IsTrue(result.EarnedGem);
             Assert.AreEqual(300 + ForecastWorld.GatherHistory.Gem.Points, result.Points);
-            Assert.AreEqual(LevelDialogue.GatherSuccess, result.Debrief[0]);
+            Assert.AreEqual(DialogueKeys.Success, result.Debrief[0].Key);
             Assert.AreEqual(3, result.Lessons.Count);
         }
 
@@ -85,7 +84,7 @@ namespace NovaMarket.Tests.Simulation.Levels
             Assert.IsFalse(result.Passed);
             Assert.AreEqual(0, result.Stars);
             Assert.AreEqual(0, result.Points);
-            Assert.AreEqual(LevelDialogue.GatherWrongQuery, result.Debrief[0]);
+            Assert.AreEqual(DialogueKeys.WrongQuery, result.Debrief[0].Key);
         }
 
         [Test]

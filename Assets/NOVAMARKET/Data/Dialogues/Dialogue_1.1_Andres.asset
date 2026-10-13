@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 257ba41e073b10a4cbe266f99f49a89e, type: 3}
+  m_Name: Dialogue_1.1_Andres
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Data.DialogueData
+  id: 1.1-andres
+  displayName: "Nivel 1.1 \xB7 Andr\xE9s"
+  description: "Andr\xE9s en el nivel 1.1 Reunir la historia (mentor, modo guiado)."
+  character: {fileID: 11400000, guid: 6e25b6e5246067341937c05527caa91b, type: 2}
+  levelId: 1.1
+  roleId: planeador
+  sectorId: 
+  lines:
+  - key: intro
+    order: 1
+    mood: 0
+    text: "Bienvenido al equipo de planeaci\xF3n. Todo pron\xF3stico empieza por
+      la historia: el modelo solo aprende lo que est\xE1 en ella. Hoy la vas a reunir."
+  - key: intro
+    order: 3
+    mood: 0
+    text: "Arma la tabla como en el Atlas: un SKU por fila y un mes por columna.
+      Con 24 meses o m\xE1s ya ves dos ciclos de temporada."
+  - key: aviso-proyeccion
+    order: 1
+    mood: 2
+    text: "Mira la columna que dice \xAB(proy.)\xBB. Es un promedio m\xF3vil del
+      mes en curso, no una venta. Si la dejas, mezclas pron\xF3stico con historia
+      y todo lo que sigue hereda el error. Consulta sin proyecci\xF3n o borra esa
+      columna."
+  - key: pista-periodos
+    order: 1
+    mood: 0
+    text: 'Encima de los meses numera los periodos: escribe 1 en C1 y 2 en D1, selecciona
+      las dos celdas y arrastra la esquina hasta AT1. La hoja sigue la serie hasta
+      44.'
+  - key: pista-totales
+    order: 1
+    mood: 0
+    text: "En AW3 te dej\xE9 =SUMA(AI3:AT3): suma los \xFAltimos 12 meses del primer
+      SKU. Arrastra la esquina de la celda hacia abajo y la f\xF3rmula se ajusta
+      sola a cada fila."
+  - key: exito
+    order: 1
+    mood: 1
+    text: "Historia completa: 44 meses, solo venta facturada y un SKU por fila. Esta
+      tabla es la base de todo el mundo de Pron\xF3stico."
+  - key: consulta-incorrecta
+    order: 1
+    mood: 3
+    text: "La tabla no es la que pidi\xF3 Sof\xEDa. Revisa los SKU, que vaya de ene-23
+      a ago-26 y que no quede ninguna proyecci\xF3n."
+  - key: totales-incorrectos
+    order: 1
+    mood: 3
+    text: 'Los totales de 12 meses no cuadran. Deben sumar de sep-25 a ago-26: columnas
+      AI a AT de cada fila.'

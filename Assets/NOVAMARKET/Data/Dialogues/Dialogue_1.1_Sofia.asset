@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 257ba41e073b10a4cbe266f99f49a89e, type: 3}
+  m_Name: Dialogue_1.1_Sofia
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Data.DialogueData
+  id: 1.1-sofia
+  displayName: "Nivel 1.1 \xB7 Sof\xEDa"
+  description: "Sof\xEDa en el nivel 1.1 Reunir la historia (entrega los datos del
+    ERP)."
+  character: {fileID: 11400000, guid: da3215f2a4d1fd2438f92c338a0fe2de, type: 2}
+  levelId: 1.1
+  roleId: planeador
+  sectorId: 
+  lines:
+  - key: intro
+    order: 2
+    mood: 0
+    text: "Hola. Necesito la facturaci\xF3n real de {codes}, de ene-23 a ago-26.
+      S\xE1cala del NOVA ERP, pantalla Facturaci\xF3n, y desc\xE1rgala a tu hoja
+      con \xABDescargar a hoja\xBB."
+  - key: pista-consulta
+    order: 1
+    mood: 0
+    text: "En Facturaci\xF3n pon los materiales que te ped\xED y el rango ene-23
+      a ago-26. Antes de descargar, revisa las opciones de la consulta: solo me sirve
+      lo que de verdad se factur\xF3."

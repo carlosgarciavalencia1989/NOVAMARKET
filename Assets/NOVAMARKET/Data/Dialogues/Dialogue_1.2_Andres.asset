@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 257ba41e073b10a4cbe266f99f49a89e, type: 3}
+  m_Name: Dialogue_1.2_Andres
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Data.DialogueData
+  id: 1.2-andres
+  displayName: "Nivel 1.2 \xB7 Andr\xE9s"
+  description: "Andr\xE9s en el nivel 1.2 Limpiar los datos (explica, revisa la entrega
+    y muestra el da\xF1o en el pron\xF3stico)."
+  character: {fileID: 11400000, guid: 6e25b6e5246067341937c05527caa91b, type: 2}
+  levelId: 1.2
+  roleId: planeador
+  sectorId: 
+  lines:
+  - key: intro
+    order: 2
+    mood: 0
+    text: "Desc\xE1rgala y te armo la pesta\xF1a \xABSerie limpia\xBB con una copia.
+      Marca cada problema con su tipo y decide si imputas, excluyes o conviertes.
+      Corrige solo en la Serie limpia."
+  - key: intro
+    order: 3
+    mood: 3
+    text: "Una advertencia: no todo pico es un error. Si un mes alto se repite cada
+      a\xF1o, es la temporada."
+  - key: exito
+    order: 1
+    mood: 1
+    text: "Serie limpia. Cada correcci\xF3n qued\xF3 documentada y el pron\xF3stico
+      va a aprender de la demanda real, no de los accidentes del ERP."
+  - key: falta-un-problema
+    order: 1
+    mood: 3
+    text: "Te falta 1 problema por encontrar. Mira c\xF3mo da\xF1ar\xEDa el pron\xF3stico:"
+  - key: faltan-problemas
+    order: 1
+    mood: 3
+    text: "Te faltan {missing} problemas por encontrar. Mira c\xF3mo da\xF1ar\xEDan
+      el pron\xF3stico:"
+  - key: correccion-incorrecta
+    order: 1
+    mood: 2
+    text: "Encontraste los problemas, pero algunas correcciones no quedaron bien.
+      Mira la diferencia en el error del pron\xF3stico:"
+  - key: datos-buenos-cambiados
+    order: 1
+    mood: 3
+    text: 'Cambiaste datos que estaban bien. Un pico que se repite cada diciembre
+      es temporada, no un error: si lo borras, el modelo deja de esperarlo.'
+  - key: impacto-nivel-alto
+    order: 1
+    mood: 3
+    text: "Con tu serie, el modelo creer\xEDa que {code} vende {player} unidades
+      al mes en promedio, y son {clean}: todo el pron\xF3stico quedar\xEDa inflado."
+  - key: impacto-nivel-bajo
+    order: 1
+    mood: 3
+    text: "Con tu serie, el modelo creer\xEDa que {code} vende {player} unidades
+      al mes en promedio, y son {clean}: todo el pron\xF3stico quedar\xEDa corto."
+  - key: impacto-indice-alto
+    order: 1
+    mood: 3
+    text: "Con tu serie, el \xEDndice de {month} de {code} ser\xEDa {player} en vez
+      de {clean}: cada {month} el pron\xF3stico quedar\xEDa por encima de la venta."
+  - key: impacto-indice-bajo
+    order: 1
+    mood: 3
+    text: "Con tu serie, el \xEDndice de {month} de {code} ser\xEDa {player} en vez
+      de {clean}: cada {month} el pron\xF3stico quedar\xEDa por debajo de la venta."
