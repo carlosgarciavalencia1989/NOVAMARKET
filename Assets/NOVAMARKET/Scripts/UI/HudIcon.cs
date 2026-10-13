@@ -22,7 +22,11 @@ namespace NovaMarket.UI
         Info,
         Success,
         Warning,
-        Critical
+        Critical,
+        Lock,
+        Erp,
+        Sheet,
+        Map
     }
 
     /// <summary>
@@ -154,6 +158,34 @@ namespace NovaMarket.UI
                     Line(painter, Detail, 1.2f, P(2, 9.5f), P(22, 9.5f));
                     Line(painter, Detail, 1.2f, P(9, 9.5f), P(12, 21), P(15, 9.5f));
                     Line(painter, Detail, 1.2f, P(7, 4), P(9, 9.5f), P(12, 4), P(15, 9.5f), P(17, 4));
+                    break;
+                case HudIconKind.Lock:
+                    Line(painter, color, 2.4f, P(8, 11), P(8, 7.5f), P(9.5f, 4.5f), P(12, 3.5f), P(14.5f, 4.5f), P(16, 7.5f), P(16, 11));
+                    Polygon(painter, color, P(5, 11), P(19, 11), P(19, 21), P(5, 21));
+                    Circle(painter, Detail, P(12, 15), 1.8f * scale);
+                    Line(painter, Detail, 1.6f, P(12, 15.5f), P(12, 18.5f));
+                    break;
+                case HudIconKind.Erp:
+                    Polygon(painter, color, P(2, 4), P(22, 4), P(22, 17), P(2, 17));
+                    Polygon(painter, Detail, P(4, 6), P(20, 6), P(20, 15), P(4, 15));
+                    Line(painter, color, 1.4f, P(6, 8.5f), P(13, 8.5f));
+                    Line(painter, color, 1.4f, P(6, 11), P(17, 11));
+                    Line(painter, color, 1.4f, P(6, 13.2f), P(11, 13.2f));
+                    Polygon(painter, color, P(10, 17), P(14, 17), P(15, 20), P(9, 20));
+                    Line(painter, color, 1.6f, P(7, 21), P(17, 21));
+                    break;
+                case HudIconKind.Sheet:
+                    Polygon(painter, color, P(3, 3), P(21, 3), P(21, 21), P(3, 21));
+                    Polygon(painter, Detail, P(3, 3), P(21, 3), P(21, 7), P(3, 7));
+                    for (float y = 11f; y < 21f; y += 4f) Line(painter, Detail, 1.2f, P(3, y), P(21, y));
+                    Line(painter, Detail, 1.2f, P(9, 3), P(9, 21));
+                    Line(painter, Detail, 1.2f, P(15, 3), P(15, 21));
+                    break;
+                case HudIconKind.Map:
+                    Polygon(painter, color, P(2, 5), P(8, 3), P(16, 5), P(22, 3), P(22, 19), P(16, 21), P(8, 19), P(2, 21));
+                    Line(painter, Detail, 1.2f, P(8, 3), P(8, 19));
+                    Line(painter, Detail, 1.2f, P(16, 5), P(16, 21));
+                    Line(painter, Detail, 1.6f, P(4.5f, 15), P(7, 12), P(11, 14), P(14, 9), P(19, 8));
                     break;
                 case HudIconKind.Info:
                     Circle(painter, color, P(12, 12), 10f * scale);

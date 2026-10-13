@@ -32,4 +32,20 @@ namespace NovaMarket.UI
         public static void SetVisible(VisualElement element, bool visible) =>
             element.EnableInClassList("hidden", !visible);
     }
+
+    /// <summary>Fluent helpers to build elements in code: <c>new Button(...).WithClass("big-button")</c>.</summary>
+    public static class HudElementExtensions
+    {
+        public static T WithClass<T>(this T element, params string[] classes) where T : VisualElement
+        {
+            foreach (string name in classes) element.AddToClassList(name);
+            return element;
+        }
+
+        public static T WithWidth<T>(this T element, float width) where T : VisualElement
+        {
+            element.style.width = width;
+            return element;
+        }
+    }
 }
