@@ -2,9 +2,21 @@
 
 ## Purpose
 
-NOVAMARKET is an educational logistics simulator built in Unity. Students explore a
-distribution center (CEDI) and its surroundings, inspect facilities, vehicles and products,
-and complete logistics scenarios. The first scenario is **CEDI Medellín**.
+NOVAMARKET is an educational supply-chain game built in Unity around a distribution center
+(CEDI) in Medellín. The current game design is `Documentation/DISENO_JUEGO_V2.md`.
+
+It is a game of **roles and sectors**. The player picks a **role** (a link of the Atlas supply
+chain map: Planeador, Abastecer, Inventarios, Almacenar, Pedidos, Transporte, Última milla,
+Logística inversa) and an **industrial sector** (a campaign: cosmetics, spare parts, food,
+pharma, electronics). **This version enables only Planeador + Cosmética**; the others show as
+"Próximamente". Roles and sectors are data, so new ones are added without changing the engine.
+Roles that are not playable yet are played by the game as NPC characters.
+
+The Planeador's worlds follow the PLANEAR modules of the Atlas (1 Forecasting, 2 Demand
+management, 3 Materials MRP · DDMRP); each step of a module's flowchart is a level. The player
+computes and the game validates: raw data in the simulated **NOVA ERP** → "Descargar a hoja" →
+the **planner sheet** (an in-game spreadsheet with Spanish Excel formulas) → decision → negotiation
+→ consequence, shown in the 3D CEDI scene.
 
 - Unity: 6000.3.25f1 (Unity 6.3)
 - Render pipeline: URP 17.3.0
@@ -61,7 +73,9 @@ Assets/NOVAMARKET/
         Hud/           Hud.uxml, Hud.uss, Planning.uss, HudTheme.tss, HudPanelSettings
         Fonts/         Oswald (SIL OFL, licence in Oswald-OFL.txt) and its Oswald_SDF font asset
     Data/              ScriptableObject asset instances
-    Documentation/     Project documentation (this file, SIMULACION_PLANEACION.md: spec of the planning level)
+    Documentation/     Project documentation: this file, DISENO_JUEGO_V2.md (current game design: roles,
+                       sectors, NOVA ERP, planner sheet, worlds) and SIMULACION_PLANEACION.md (spec of
+                       the v1 season level, future boss level)
 ```
 
 Code uses the `NovaMarket.*` namespaces matching the `Scripts/` subfolders; a nested folder adds its
@@ -268,9 +282,12 @@ Layout in `UI/Hud/Hud.uxml`, styles in `Hud.uss`, scaling 1920 × 1080 reference
 `SelectionController` and the `StrategyCameraController` (`FocusOn` makes the camera glide).
 Views subscribe to the state's `Changed` events, so they refresh only when data changes.
 
-## Planning level: "Temporada de fin de año" (level I)
+## Planning level: "Temporada de fin de año" (v1, future boss level)
 
-First playable level, specified in `Documentation/SIMULACION_PLANEACION.md`. The player orders
+First playable level, specified in `Documentation/SIMULACION_PLANEACION.md`. With the v2 design it
+is kept as the base of the Planeador's **boss level** (16 weeks, whole PLANEAR lane every week);
+its "Plan de pedidos" panel will be replaced by the ERP → sheet → purchase requisition flow, and
+the engine extended (staged lead times, events with hidden distributions, trust, FVA). The player orders
 boxes of 4 real SKUs for 16 weeks (September–December) and closes each week; the results are
 compared with the Atlas reference policy played with the same seed.
 
@@ -315,12 +332,16 @@ The Oswald font has no σ, Σ, ⌈⌉, ★ or →: texts spell them out (stars a
 
 ## Not implemented yet
 
+- Start menu (role and sector), role/sector/character data, the cosmetics portfolio (~200 SKUs
+  generated from the 14 real Atlas SKUs), NOVA ERP, planner sheet and the world 1 levels
+  (first slice: 1.1 "Reunir la historia" and 1.2 "Limpiar los datos", DISENO_JUEGO_V2.md §11)
 - Concrete data types (CompanyData, ScenarioData, ... RoleData); the planning SKUs live in code
 - Forecasting, MRP and DDMRP levels (only the season planning level exists)
+- Negotiation with arguments, character trust, FVA, staged import lead times, shipment board
 - Box/drag selection, people, order effects in the world, truck-to-truck collision avoidance in the yard
 - Final art for CEDI Medellín (environment is a procedural blockout; no purchased assets)
 - Final vehicle models (current prefabs are simple shapes), characters
-- ERP, Excel integration, database
+- Database
 - AI, Mentor
 - S&OP, advanced simulation
 - Mission/level selection, saved progress and gems between levels; character art (badges are initials)

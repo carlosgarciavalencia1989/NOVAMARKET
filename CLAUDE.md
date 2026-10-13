@@ -12,9 +12,34 @@ aprendiendo Unity (di qué se tocó, dónde verlo en el Editor y por qué).
 
 ## Visión del juego
 
-Juego educativo de estrategia sobre logística y cadena de suministro. El jugador administra
-un CEDI en Medellín (valle de Aburrá) y avanza por niveles y mundos: **Pronóstico**,
-**Gestión de la demanda**, **MRP** y **DDMRP**.
+Diseño vigente: `Assets/NOVAMARKET/Documentation/DISENO_JUEGO_V2.md` (manda sobre
+`SIMULACION_PLANEACION.md`, que describe el nivel v1 "Temporada de fin de año").
+
+Juego educativo de **roles y sectores** sobre la cadena de suministro, alrededor del CEDI
+Medellín (valle de Aburrá). Al entrar, el jugador escoge:
+
+- **Rol:** un eslabón del Mapa de la cadena del Atlas. PLANEAR: Planeador. EJECUTAR: Abastecer,
+  Inventarios, Almacenar, Pedidos, Transporte y Última milla. RETORNAR: Logística inversa.
+  HABILITAR (Finanzas, Riesgo, Tecnología y datos) no se juega: son personajes.
+- **Sector:** una campaña con su empresa, SKU, proveedores y eventos (cosmética ~200 SKU, repuestos,
+  alimentos, farmacéutico, tecnología).
+
+**En esta versión solo está habilitado Planeador + Cosmética**; el resto sale como "Próximamente".
+Roles y sectores se cargan como datos, sin cambiar el motor.
+
+Los mundos del Planeador son los módulos del carril PLANEAR del Atlas: **1 Pronóstico**,
+**2 Gestión de la demanda** y **3 Materiales (MRP · DDMRP)**. Cada paso del flujograma del Atlas
+es un nivel (1.1 "Reunir la historia" = p1, 1.2 "Limpiar los datos" = p2…). El nivel v1
+"Temporada de fin de año" se conserva como base del futuro **nivel jefe** del Planeador.
+
+Principios de la v2:
+- **El jugador calcula; el juego valida.** Dato crudo en el **NOVA ERP** (ERP simulado, con su
+  equivalente SAP como dato educativo) → "Descargar a hoja" → cálculo en la **hoja del planeador**
+  (un Excel dentro del juego, fórmulas en español: `=SUMA`, `=PROMEDIO`…) → decisión →
+  negociación → consecuencia. Tolerancia de validación ±2 %. La ayuda del Atlas existe pero cuesta.
+- Andamiaje por nivel: guiado → casillas vacías → libre.
+- Los personajes tienen incentivo y sesgo (Valeria sobreestima 5–50 %) y un medidor de confianza.
+- El jugador nunca sale del juego (solo un CSV opcional al final del nivel).
 
 ### Atlas de Planeación (las fórmulas deben ser correctas)
 
@@ -26,7 +51,11 @@ siguiente, manda el Atlas: pregunta antes de asumir.
 - **Sesgo** = Σ(Fₜ − Aₜ) / ΣAₜ. Positivo = sobrepronóstico. Confirmar la convención de signo.
 - **Tracking signal** = Σ(Aₜ − Fₜ) / MAD, con MAD = Σ|Aₜ − Fₜ| / n. Alerta típica fuera de ±4.
 - **Stock de seguridad** SS = Z · σ · √LT. σ es la desviación de la demanda por periodo y LT
-  va en esos mismos periodos.
+  va en esos mismos periodos. Con lead time variable: SS = Z · √(LT · σd² + d̄² · σLT²).
+- **Limpieza de datos (p2):** un cero de un mes estacional se imputa con el promedio del mismo mes
+  en los otros años; sin estacionalidad, con el promedio de los vecinos. Atípico:
+  |D(t) − promedio| > 3 × desviación (el Atlas usa `DESVEST.P`). Ejemplo del Atlas: CV10004 jun-24
+  = 0 → 4.695 con los otros junios (con los vecinos daría 3.302).
 - **Punto de reorden** ROP = d̄ · LT + SS.
 - **EOQ** = √(2 · D · S / H). D = demanda anual, S = costo por pedido, H = costo anual de
   mantener una unidad.
@@ -58,12 +87,21 @@ siguiente, manda el Atlas: pregunta antes de asumir.
 
 | Personaje | Rol |
 |---|---|
-| Valeria | Comercial |
-| Don Hernán | Proveedor importado |
-| Julián | Jefe de bodega |
-| Marcela | Gerente financiera |
-| Andrés | Director de S&OP |
-| Sofía | Analista SAP |
+| Andrés | Director de S&OP: mentor y tutor, valida y da lecciones |
+| Valeria | Comercial: optimista, sobreestima |
+| Marcela | Finanzas: presupuesto y topes de compra, conservadora |
+| Paula | Compras y abastecimiento (futuro rol jugable "Abastecer") |
+| Don Hernán | Proveedor importado de perfume: optimista con las fechas |
+| Mateo | Logística internacional: modo de transporte y embarques |
+| Lucía | Agencia de aduanas: documentos y levante ante la DIAN |
+| Wilmer | Transporte nacional del puerto al CEDI |
+| Julián | Jefe del CEDI: recibo, posiciones y montacargas |
+| Sofía | Control de inventarios: conteos, exactitud y datos del ERP |
+
+Mientras un rol no sea jugable, sus personajes son NPC. Cada personaje se define como datos
+(rol, incentivo, sesgo, confianza) con su lógica en C# puro, separados de la interfaz, para que
+un rol pueda pasar de NPC a jugable sin rehacer el motor. Faltan los nombres de los personajes de
+Riesgo y sostenibilidad, y de Tecnología y datos.
 
 ### Recompensas
 
