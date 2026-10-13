@@ -45,6 +45,14 @@ Assets/NOVAMARKET/
             Planning/  Season planning engine, namespace NovaMarket.Simulation.Planning (PlanningSimulation,
                        PlanningSeason, DemandPlan, AtlasSuggestion, PlanningPolicies, SeasonResult,
                        PlanningLessons, PlanningOperationBridge, PlanningLevelData, catalogue and rules)
+            Campaign/  Roles, sectors and characters as plain C# (CampaignCatalog, RoleDefinition,
+                       SectorDefinition, CharacterProfile, NpcCharacter with trust)
+            Portfolio/ Sector portfolio (SalesHistoryCsv, PortfolioGenerator, SectorProfiles, LeadTimeTable,
+                       SeriesStatistics, SalesCalendar)
+            Sheet/     Planner sheet engine (Workbook, Worksheet, FormulaLexer/Parser/Shifter, SheetFunctions)
+            Erp/       NOVA ERP (NovaErp, ErpScreens, ErpTable, ErpDataSet, DataQualityInjector, DataIssue)
+            Levels/    World 1 levels (LevelSession, GatherHistoryLevel 1.1, CleanDataLevel 1.2, FormulaCard,
+                       CleaningImpact, LevelDialogue, LevelResult, ForecastWorld)
         Operation/     Scene side of the operation (CediOperationRunner, VehicleVisual, GateBarrier, RackStockDisplay)
         UI/            HUD (HudController, HudDataSource, *View classes, HudIcon, minimap) and the planning
                        level UI (PlanningLevelController, PlanningPanelView, AtlasDialogView, EventDialogView,
@@ -72,7 +80,8 @@ Assets/NOVAMARKET/
     UI/                UI assets
         Hud/           Hud.uxml, Hud.uss, Planning.uss, HudTheme.tss, HudPanelSettings
         Fonts/         Oswald (SIL OFL, licence in Oswald-OFL.txt) and its Oswald_SDF font asset
-    Data/              ScriptableObject asset instances
+    Data/              ScriptableObject asset instances: Campaign.asset (CampaignDatabase), Roles/, Sectors/
+                       (Sector_Cosmetica + Cosmetica/Historia_Atlas_Cosmetica.csv), Characters/
     Documentation/     Project documentation: this file, DISENO_JUEGO_V2.md (current game design: roles,
                        sectors, NOVA ERP, planner sheet, worlds) and SIMULACION_PLANEACION.md (spec of
                        the v1 season level, future boss level)
@@ -282,6 +291,32 @@ Layout in `UI/Hud/Hud.uxml`, styles in `Hud.uss`, scaling 1920 × 1080 reference
 `SelectionController` and the `StrategyCameraController` (`FocusOn` makes the camera glide).
 Views subscribe to the state's `Changed` events, so they refresh only when data changes.
 
+## Planner v2: campaign data, portfolio, sheet, ERP and world 1 levels
+
+Plain C# engine of DISENO_JUEGO_V2.md (the UI comes next: start menu, ERP window, sheet view).
+
+- **Campaign data** (`Data/Campaign.asset` → `CampaignDatabase.ToCatalog()`): 8 roles (links of the
+  Atlas chain map; only `planeador` playable), 5 sectors (only `cosmetica`), 10 characters. A
+  character's `linkedRoleId` is the role it performs: `CreateCast(playerRole)` returns everyone else as
+  `NpcCharacter` (trust 0–100), so a role can become playable without engine changes.
+- **Portfolio**: `Sector_Cosmetica.CreatePortfolio()` reads the 14 real Atlas SKUs (ene-23…ago-26,
+  isolated zeros already imputed by the Atlas) and `PortfolioGenerator` adds 186 synthetic SKUs
+  (seed 2026) by family, with the family template's seasonal shape, log-normal volume (top 20 % ≈ 80 %
+  of units) and six patterns. Master data follows §8.1; lead time is the sum of the §3.1 phases.
+- **Planner sheet** (`Sheet/`): Excel in Spanish (";" between arguments, decimal comma, "4.695"),
+  references A1, $A$1, `Datos!H4`, `'Serie limpia'!B3`; SUMA, PROMEDIO, ABS, SI, DESVEST.P; on-demand
+  recalculation with a version cache, circular references, Spanish errors; `Fill` (drag) moves
+  relative references and continues number series.
+- **NOVA ERP** (`Erp/`): screens with their SAP code (world 1: Facturación, Maestro de materiales);
+  billing by month includes the projection column by default (the Atlas trap); "Descargar a hoja"
+  puts months in columns C…AT, as the Atlas. `DataQualityInjector` plants problems with their
+  accepted answers (Atlas step p2 rules).
+- **Levels** (`Levels/`): `GatherHistoryLevel` (1.1, guided) and `CleanDataLevel` (1.2, empty boxes):
+  validation ±2 %, three stars (the first one is the core deliverable), gem per level, "Excel de
+  planeador" badge, Atlas help that costs the third star, formula cards, Andrés/Sofía lines and, in
+  1.2, Andrés's comparison of the level and seasonal index a model would learn. `LevelBalanceTests`
+  plays 200 seeds of each level.
+
 ## Planning level: "Temporada de fin de año" (v1, future boss level)
 
 First playable level, specified in `Documentation/SIMULACION_PLANEACION.md`. With the v2 design it
@@ -332,9 +367,8 @@ The Oswald font has no σ, Σ, ⌈⌉, ★ or →: texts spell them out (stars a
 
 ## Not implemented yet
 
-- Start menu (role and sector), role/sector/character data, the cosmetics portfolio (~200 SKUs
-  generated from the 14 real Atlas SKUs), NOVA ERP, planner sheet and the world 1 levels
-  (first slice: 1.1 "Reunir la historia" and 1.2 "Limpiar los datos", DISENO_JUEGO_V2.md §11)
+- UI of the v2 slice: start menu (role and sector), world 1 map, NOVA ERP window, planner sheet view
+  and the 1.1/1.2 level flow (the engine above is done)
 - Concrete data types (CompanyData, ScenarioData, ... RoleData); the planning SKUs live in code
 - Forecasting, MRP and DDMRP levels (only the season planning level exists)
 - Negotiation with arguments, character trust, FVA, staged import lead times, shipment board
