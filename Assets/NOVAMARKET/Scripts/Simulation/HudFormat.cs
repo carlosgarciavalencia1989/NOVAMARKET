@@ -19,6 +19,13 @@ namespace NovaMarket.Simulation
         /// <summary>Whole number with thousands separators: 1250 → "1.250".</summary>
         public static string Number(long value) => value.ToString("#,0", Format);
 
+        /// <summary>Number with a fixed count of decimals: (1234.56, 1) → "1.234,6".</summary>
+        public static string Decimal(double value, int decimals)
+        {
+            string pattern = decimals > 0 ? "#,0." + new string('0', decimals) : "#,0";
+            return Math.Round(value, decimals, MidpointRounding.AwayFromZero).ToString(pattern, Format);
+        }
+
         /// <summary>Fraction as a percentage with one decimal: 0.962 → "96,2 %".</summary>
         public static string Percent(double fraction) =>
             (fraction * 100.0).ToString("0.0", Format) + " %";
