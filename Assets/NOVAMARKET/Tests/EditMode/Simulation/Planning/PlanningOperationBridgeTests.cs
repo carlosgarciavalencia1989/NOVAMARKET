@@ -92,6 +92,25 @@ namespace NovaMarket.Tests.Simulation.Planning
         private static int Vehicles(int pallets, int perVehicle) => (pallets + perVehicle - 1) / perVehicle;
 
         [Test]
+        public void ClosingWeeksQuickly_KeepsTheTruckQueueBounded()
+        {
+            while (planning.Week < 8) Close(PlanningPolicies.AtlasOrders(planning));
+
+            Assert.AreEqual(operation.Settings.MaxScheduledTrucks, operation.ScheduledTrucks);
+        }
+
+        [Test]
+        public void NewSeason_ForgetsTheTrucksOfThePreviousOne()
+        {
+            Close(PlanningPolicies.AtlasOrders(planning));
+            Assert.Greater(operation.ScheduledTrucks, 0);
+
+            bridge.Begin(new PlanningSimulation(Seed + 1), 0);
+
+            Assert.AreEqual(0, operation.ScheduledTrucks);
+        }
+
+        [Test]
         public void ScheduledTrucks_DriveIntoTheCedi_WithTheirOrder()
         {
             Close(new[] { 30, 40, 0, 0 });

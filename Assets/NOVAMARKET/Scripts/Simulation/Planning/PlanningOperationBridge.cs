@@ -42,6 +42,7 @@ namespace NovaMarket.Simulation.Planning
             mission.SetCounter(0);
             foreach (Objective objective in mission.Objectives) mission.SetObjectiveProgress(objective.Id, 0);
             mission.AddScore(-mission.Score);
+            operation?.ClearScheduledTrucks();
 
             PublishWarehouse();
             PublishOffice();

@@ -61,6 +61,12 @@ namespace NovaMarket.Simulation
         /// <summary>Seconds between two scheduled trucks entering the highway.</summary>
         public float ScheduledTruckSpacing { get; set; } = 7f;
 
+        /// <summary>
+        /// Most scheduled trucks waiting to set off. When the player closes weeks faster than the
+        /// yard can work, the oldest waiting truck is dropped (the plan already counted its boxes).
+        /// </summary>
+        public int MaxScheduledTrucks { get; set; } = 12;
+
         /// <summary>Settings for the planning level: scheduled trucks, positions owned by the plan.</summary>
         public static CediOperationSettings ForPlanning() => new CediOperationSettings
         {

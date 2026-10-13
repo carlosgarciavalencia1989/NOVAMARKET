@@ -114,14 +114,23 @@ namespace NovaMarket.Simulation
         /// </summary>
         /// <param name="cargo">Extra line for the selection panel, e.g. "CV10009 · 52 cajas".</param>
         public void ScheduleReceiving(string supplier, string origin, string product, int pallets, string cargo = null) =>
-            scheduled.Enqueue(new TruckAgent(nextId++, VehicleKind.ReceivingTruck, CediCatalog.Plate(random), Settings,
+            Schedule(new TruckAgent(nextId++, VehicleKind.ReceivingTruck, CediCatalog.Plate(random), Settings,
                 supplier, origin, product, Math.Max(1, pallets), random.Next(2) == 0, random.Next(2) == 0, cargo));
 
         /// <summary>Queues a dispatch turbo that loads <paramref name="pallets"/> pallets for a destination.</summary>
         public void ScheduleDispatch(string destination, string product, int pallets, string cargo = null) =>
-            scheduled.Enqueue(new TruckAgent(nextId++, VehicleKind.DispatchTruck, CediCatalog.Plate(random), Settings,
+            Schedule(new TruckAgent(nextId++, VehicleKind.DispatchTruck, CediCatalog.Plate(random), Settings,
                 $"Tiendas de {destination}", destination, product, Math.Max(1, pallets), random.Next(2) == 0,
                 random.Next(2) == 0, cargo));
+
+        /// <summary>Forgets the trucks that have not set off yet (e.g. when a new season starts).</summary>
+        public void ClearScheduledTrucks() => scheduled.Clear();
+
+        private void Schedule(TruckAgent truck)
+        {
+            scheduled.Enqueue(truck);
+            while (scheduled.Count > Math.Max(1, Settings.MaxScheduledTrucks)) scheduled.Dequeue();
+        }
 
         private void SpawnTrucks()
         {
