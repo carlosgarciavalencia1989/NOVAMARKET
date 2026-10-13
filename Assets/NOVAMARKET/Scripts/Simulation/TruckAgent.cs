@@ -32,7 +32,8 @@ namespace NovaMarket.Simulation
         private float arrivedAtGateTime;
 
         internal TruckAgent(int id, VehicleKind kind, string plate, CediOperationSettings settings,
-            string partner, string place, string product, int pallets, bool fromEast, bool exitToEast)
+            string partner, string place, string product, int pallets, bool fromEast, bool exitToEast,
+            string cargo = null)
             : base(id, kind, plate, kind == VehicleKind.ReceivingTruck ? settings.TruckLength : settings.TurboLength,
                 CreateMover(fromEast), 0f)
         {
@@ -42,6 +43,7 @@ namespace NovaMarket.Simulation
             Place = place;
             Product = product;
             Pallets = pallets;
+            Cargo = cargo;
             Mover.SetPlan(new[] { new RouteLeg(CediLayout.Approach(fromEast, Length), settings.HighwaySpeed) });
         }
 
@@ -54,6 +56,9 @@ namespace NovaMarket.Simulation
         public string Place { get; }
         public string Product { get; }
         public int Pallets { get; }
+
+        /// <summary>Order behind the trip (SKU and boxes) when it comes from the planning level; else null.</summary>
+        public string Cargo { get; }
 
         /// <summary>Pallets unloaded (receiving) or loaded (dispatch) so far.</summary>
         public int PalletsHandled { get; private set; }
@@ -228,6 +233,7 @@ namespace NovaMarket.Simulation
                 new FacilityStat("Estado", Status),
                 new FacilityStat("Muelle", Dock != null && State <= TruckState.Docked ? Dock.Number.ToString() : "—")
             };
+            if (Cargo != null) stats.Insert(3, new FacilityStat(IsReceiving ? "Pedido" : "Venta", Cargo));
 
             string action = IsReceiving ? "Descargue" : "Cargue";
             string subtitle = IsReceiving ? "Camión de recibo" : "Turbo de despacho";

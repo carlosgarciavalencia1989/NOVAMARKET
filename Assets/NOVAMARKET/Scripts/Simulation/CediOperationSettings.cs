@@ -42,5 +42,31 @@ namespace NovaMarket.Simulation
 
         /// <summary>Points for each completed dispatch.</summary>
         public int PointsPerDispatch { get; set; } = 150;
+
+        /// <summary>
+        /// True: trucks arrive by themselves every few seconds (free operation). False: only the
+        /// trucks scheduled with ScheduleReceiving / ScheduleDispatch come (planning level).
+        /// </summary>
+        public bool SpawnRandomTrucks { get; set; } = true;
+
+        /// <summary>
+        /// True: put-away and picking change the occupied positions of the HUD. False: another
+        /// system (the planning level) owns the positions and the forklifts only animate.
+        /// </summary>
+        public bool TrackPositions { get; set; } = true;
+
+        /// <summary>True: each turbo that leaves counts as a dispatch of the mission counter.</summary>
+        public bool CountDispatches { get; set; } = true;
+
+        /// <summary>Seconds between two scheduled trucks entering the highway.</summary>
+        public float ScheduledTruckSpacing { get; set; } = 7f;
+
+        /// <summary>Settings for the planning level: scheduled trucks, positions owned by the plan.</summary>
+        public static CediOperationSettings ForPlanning() => new CediOperationSettings
+        {
+            SpawnRandomTrucks = false,
+            TrackPositions = false,
+            CountDispatches = false
+        };
     }
 }

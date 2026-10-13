@@ -24,8 +24,10 @@ namespace NovaMarket.Simulation
         private readonly int[] shippingIncoming = new int[CediLayout.DockZ.Length];
         private readonly FacilityInfo baseWarehouse;
         private readonly FacilityInfo baseGate;
+        private readonly Queue<TruckAgent> scheduled = new Queue<TruckAgent>();
 
         private int nextId = 1;
+        private float nextScheduledAt;
         private int receivingCount;
         private float nextReceivingAt;
         private float nextDispatchAt;
@@ -71,6 +73,9 @@ namespace NovaMarket.Simulation
         /// <summary>Pallets ready in each shipping staging lane (index = dock lane).</summary>
         public IReadOnlyList<int> ShippingStaged => shippingStaged;
 
+        /// <summary>Scheduled trucks still waiting to set off towards the CEDI.</summary>
+        public int ScheduledTrucks => scheduled.Count;
+
         public int TrucksEntered { get; private set; }
         public int TrucksExited { get; private set; }
         public double AverageGateWait => TrucksEntered == 0 ? 0 : totalGateWait / TrucksEntered;
@@ -103,8 +108,30 @@ namespace NovaMarket.Simulation
 
         // ------------------------------------------------------------------ spawning
 
+        /// <summary>
+        /// Queues a receiving truck (e.g. an order of the planning level). Scheduled trucks set off
+        /// one by one, <see cref="CediOperationSettings.ScheduledTruckSpacing"/> apart, when the gate has room.
+        /// </summary>
+        /// <param name="cargo">Extra line for the selection panel, e.g. "CV10009 · 52 cajas".</param>
+        public void ScheduleReceiving(string supplier, string origin, string product, int pallets, string cargo = null) =>
+            scheduled.Enqueue(new TruckAgent(nextId++, VehicleKind.ReceivingTruck, CediCatalog.Plate(random), Settings,
+                supplier, origin, product, Math.Max(1, pallets), random.Next(2) == 0, random.Next(2) == 0, cargo));
+
+        /// <summary>Queues a dispatch turbo that loads <paramref name="pallets"/> pallets for a destination.</summary>
+        public void ScheduleDispatch(string destination, string product, int pallets, string cargo = null) =>
+            scheduled.Enqueue(new TruckAgent(nextId++, VehicleKind.DispatchTruck, CediCatalog.Plate(random), Settings,
+                $"Tiendas de {destination}", destination, product, Math.Max(1, pallets), random.Next(2) == 0,
+                random.Next(2) == 0, cargo));
+
         private void SpawnTrucks()
         {
+            if (scheduled.Count > 0 && Time >= nextScheduledAt && InboundGate.QueueLength < Settings.MaxTrucksAtGate)
+            {
+                nextScheduledAt = Time + Settings.ScheduledTruckSpacing;
+                Add(scheduled.Dequeue());
+            }
+            if (!Settings.SpawnRandomTrucks) return;
+
             if (Time >= nextReceivingAt)
             {
                 nextReceivingAt = Time + Jitter(Settings.ReceivingInterval);
@@ -187,7 +214,7 @@ namespace NovaMarket.Simulation
         internal void OnLeftYard(TruckAgent truck)
         {
             TrucksExited++;
-            if (!truck.IsReceiving)
+            if (!truck.IsReceiving && Settings.CountDispatches)
                 state.RegisterDispatch(SampleOperationData.DispatchObjectiveId, Settings.PointsPerDispatch, now);
             facilitiesDirty = true;
         }
@@ -226,7 +253,7 @@ namespace NovaMarket.Simulation
 
         private ForkliftTask CreatePick()
         {
-            if (state.Resources.OccupiedPositions - pendingPicks <= 0) return null;
+            if (Settings.TrackPositions && state.Resources.OccupiedPositions - pendingPicks <= 0) return null;
             foreach (Dock dock in Docks.Docks)
             {
                 if (dock.Kind != DockKind.Shipping || dock.Occupant == null) continue;
@@ -244,7 +271,8 @@ namespace NovaMarket.Simulation
         private ForkliftTask CreatePutAway()
         {
             ResourceState resources = state.Resources;
-            if (resources.OccupiedPositions + pendingPutAways >= resources.PositionCapacity) return null;
+            if (Settings.TrackPositions && resources.OccupiedPositions + pendingPutAways >= resources.PositionCapacity)
+                return null;
 
             int best = -1;
             for (int lane = 0; lane < receivingStaged.Length; lane++)
@@ -270,7 +298,8 @@ namespace NovaMarket.Simulation
             else
             {
                 pendingPicks--;
-                state.Resources.SetOccupiedPositions(state.Resources.OccupiedPositions - 1);
+                if (Settings.TrackPositions)
+                    state.Resources.SetOccupiedPositions(state.Resources.OccupiedPositions - 1);
             }
             facilitiesDirty = true;
         }
@@ -280,6 +309,11 @@ namespace NovaMarket.Simulation
             if (task.Kind == ForkliftTaskKind.PutAway)
             {
                 pendingPutAways--;
+                if (!Settings.TrackPositions)
+                {
+                    facilitiesDirty = true;
+                    return;
+                }
                 bool wasCritical = state.Resources.IsStorageCritical;
                 state.Resources.SetOccupiedPositions(state.Resources.OccupiedPositions + 1);
                 if (!wasCritical && state.Resources.IsStorageCritical)
