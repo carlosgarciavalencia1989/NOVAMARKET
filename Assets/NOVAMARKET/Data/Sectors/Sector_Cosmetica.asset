@@ -21,3 +21,5 @@ MonoBehaviour:
   traits: Promociones, temporadas (madres, amor y amistad, diciembre), sets de regalo,
     lanzamientos, importados de Europa y China
   isPlayable: 1
+  realHistory: {fileID: 4900000, guid: bef72a4376910b84d8f6103a174a52ec, type: 3}
+  portfolioSeed: 2026
