@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad31143df41c7f94f85adf0eeb125dd8, type: 3}
+  m_Name: Sector_Cosmetica
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Data.SectorData
+  id: cosmetica
+  displayName: "Cosm\xE9tica"
+  description: Labiales, perfumes, cremas, sets de regalo, brochas y delineadores.
+    Parte de los 14 SKU reales del Atlas.
+  company: "NOVAMARKET Cosm\xE9tica \xB7 CEDI Medell\xEDn"
+  portfolioSize: 200
+  traits: Promociones, temporadas (madres, amor y amistad, diciembre), sets de regalo,
+    lanzamientos, importados de Europa y China
+  isPlayable: 1

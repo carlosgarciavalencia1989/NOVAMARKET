@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8afa9e77707611346a268cfec9cc5af8, type: 3}
+  m_Name: Character_Sofia
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Data.CharacterData
+  id: sofia
+  displayName: "Sof\xEDa"
+  description: "Conteos c\xEDclicos, exactitud del inventario y datos del ERP."
+  job: Control de inventarios
+  linkedRoleId: inventarios
+  incentive: "Que el inventario del sistema sea igual al f\xEDsico."
+  personality: Meticulosa. Encuentra los errores en los datos del ERP.
+  biasMin: 0
+  biasMax: 0
+  initialTrust: 50
+  badgeColor: {r: 0.16470589, g: 0.53333336, b: 0.53333336, a: 1}

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad31143df41c7f94f85adf0eeb125dd8, type: 3}
+  m_Name: Sector_Repuestos
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Data.SectorData
+  id: repuestos
+  displayName: Repuestos de motos y autos
+  description: Muestra de ~500 SKU de un portafolio real de 2.000 a 5.000.
+  company: 
+  portfolioSize: 500
+  traits: "Demanda intermitente (ADI, Croston), cola larga, ABC-XYZ, importados de
+    China, India y Jap\xF3n, costo de la moto parada"
+  isPlayable: 0

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ba69aaae50fddb439f1b29d4f581d9e, type: 3}
+  m_Name: Role_Planeador
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Data.RoleData
+  id: planeador
+  displayName: Planeador
+  description: "Planeador de demanda y abastecimiento del CEDI Medell\xEDn. Cada
+    semana es un mini ciclo de S&OP: descarga del ERP, calcula en la hoja del planeador,
+    negocia y decide."
+  lane: 0
+  covers: "Pron\xF3stico \u2192 Gesti\xF3n de la demanda \u2192 Materiales (MRP \xB7
+    DDMRP)"
+  isPlayable: 1
+  worlds:
+  - "Pron\xF3stico"
+  - "Gesti\xF3n de la demanda"
+  - "Materiales (MRP \xB7 DDMRP)"

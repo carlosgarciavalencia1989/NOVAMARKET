@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8afa9e77707611346a268cfec9cc5af8, type: 3}
+  m_Name: Character_Paula
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Data.CharacterData
+  id: paula
+  displayName: Paula
+  description: "Convierte las solicitudes de pedido en \xF3rdenes de compra y hace
+    seguimiento."
+  job: Compras y abastecimiento
+  linkedRoleId: abastecer
+  incentive: Buen precio y buenas condiciones con los proveedores.
+  personality: "Sus restricciones (MOQ, consolidaci\xF3n, precio y fechas) dependen
+    de cada proveedor y de la negociaci\xF3n."
+  biasMin: 0
+  biasMax: 0
+  initialTrust: 50
+  badgeColor: {r: 0.65882355, g: 0.5176471, b: 0.20392157, a: 1}
