@@ -129,7 +129,7 @@ namespace NovaMarket.Simulation.Levels
         {
             new LevelObjective($"Consulta en el ERP la facturación de {string.Join(", ", codes)} de ene-23 a ago-26 y descárgala",
                 QueryIsRight()),
-            new LevelObjective("Deja solo venta facturada: sin columnas de proyección", HistorySheet != null && !HasProjection()),
+            new LevelObjective("Descarga solo la demanda real", HistorySheet != null && !HasProjection()),
             new LevelObjective("Numera los periodos 1 a 44 en la fila 1 (C1:AT1)", PeriodsAreRight()),
             new LevelObjective("Total de los últimos 12 meses de cada SKU en la columna AW", TotalsAreRight(out _))
         };

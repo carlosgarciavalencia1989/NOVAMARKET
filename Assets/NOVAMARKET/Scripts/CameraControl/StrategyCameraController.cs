@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,6 +18,8 @@ namespace NovaMarket.CameraControl
         [SerializeField] private Vector3 startFocus = new Vector3(15f, 0f, 0f);
         [SerializeField] private float startYaw = 30f;
         [SerializeField] private bool edgeScrolling = true;
+        [Tooltip("Objects whose name contains this are buildings the camera stays above (generated city chunks).")]
+        [SerializeField] private string buildingNameTag = "_Buildings_";
 
         private Camera targetCamera;
         private StrategyCameraRig rig;
@@ -32,6 +35,8 @@ namespace NovaMarket.CameraControl
         private Vector3 dragAnchor;
         private float pendingZoomSteps;
         private int pendingRotationSteps;
+        private readonly List<MeshCollider> buildings = new List<MeshCollider>();
+        private float buildingLift;
 
         public StrategyCameraRig Rig => rig;
         public Camera Camera => targetCamera;
@@ -51,6 +56,7 @@ namespace NovaMarket.CameraControl
             targetCamera.fieldOfView = settings.FieldOfView;
             rig = CreateStartRig();
             CreateActions();
+            CollectBuildings();
             ApplyPose();
         }
 
@@ -183,7 +189,56 @@ namespace NovaMarket.CameraControl
                 float ground = terrain.SampleHeight(position) + terrain.transform.position.y;
                 position.y = Mathf.Max(position.y, ground + settings.GroundClearance);
             }
+
+            // Over a tower the camera rises above its roof instead of going through it: up at once
+            // (the roofs are measured a bit around the camera, so it starts rising before), down smoothly.
+            float needed = Mathf.Max(0f, RoofHeightAround(position) + settings.BuildingClearance - position.y);
+            buildingLift = Application.isPlaying
+                ? Mathf.Max(needed, Mathf.MoveTowards(buildingLift, needed, 15f * Time.unscaledDeltaTime))
+                : needed;
+            position.y += buildingLift;
             transform.SetPositionAndRotation(position, rig.Rotation);
+        }
+
+        /// <summary>
+        /// Gives the generated city buildings a collider to measure roof heights. They go on the
+        /// Ignore Raycast layer so they never block clicks on the scene.
+        /// </summary>
+        private void CollectBuildings()
+        {
+            buildings.Clear();
+            if (string.IsNullOrEmpty(buildingNameTag)) return;
+            foreach (MeshFilter filter in FindObjectsByType<MeshFilter>(FindObjectsSortMode.None))
+            {
+                if (!filter.name.Contains(buildingNameTag) || filter.sharedMesh == null) continue;
+                if (!filter.TryGetComponent(out MeshCollider collider))
+                {
+                    collider = filter.gameObject.AddComponent<MeshCollider>();
+                    collider.sharedMesh = filter.sharedMesh;
+                }
+                filter.gameObject.layer = 2; // Ignore Raycast
+                buildings.Add(collider);
+            }
+        }
+
+        /// <summary>Highest roof under the camera or within the building clearance around it (-inf when none).</summary>
+        private float RoofHeightAround(Vector3 position)
+        {
+            float reach = settings.BuildingClearance, roof = float.NegativeInfinity;
+            foreach (MeshCollider building in buildings)
+            {
+                if (building == null) continue;
+                Bounds bounds = building.bounds;
+                if (position.x < bounds.min.x - reach || position.x > bounds.max.x + reach ||
+                    position.z < bounds.min.z - reach || position.z > bounds.max.z + reach) continue;
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector3 offset = i == 0 ? Vector3.zero : Quaternion.Euler(0f, i * 90f, 0f) * new Vector3(reach, 0f, 0f);
+                    var ray = new Ray(new Vector3(position.x + offset.x, bounds.max.y + 1f, position.z + offset.z), Vector3.down);
+                    if (building.Raycast(ray, out RaycastHit hit, bounds.size.y + 2f)) roof = Mathf.Max(roof, hit.point.y);
+                }
+            }
+            return roof;
         }
     }
 }

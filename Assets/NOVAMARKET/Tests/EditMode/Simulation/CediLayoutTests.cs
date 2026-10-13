@@ -35,6 +35,39 @@ namespace NovaMarket.Tests.Simulation
                 AssertClear(route, CediLayout.TruckObstacles, margin: 1.2f);
         }
 
+        /// <summary>
+        /// The whole truck (not only its centre) keeps 1 m from the warehouse, the office and the
+        /// containers on every route, including the reverse into the dock and the docked position.
+        /// </summary>
+        [Test]
+        public void TruckFootprints_KeepAMetreFromTheBuildings()
+        {
+            var docks = new DockManager();
+            foreach ((float length, float width) in new[] { (TruckLength, 2.6f), (TurboLength, 2.5f) })
+            {
+                var routes = new List<(string name, Polyline path)>
+                {
+                    ("approach east", CediLayout.Approach(true, length)), ("approach west", CediLayout.Approach(false, length)),
+                    ("exit east", CediLayout.Exit(true, length)), ("exit west", CediLayout.Exit(false, length))
+                };
+                foreach (Dock dock in docks.Docks)
+                {
+                    routes.Add(($"to staging {dock.Number}", CediLayout.ToStaging(dock, length)));
+                    routes.Add(($"reverse {dock.Number}", CediLayout.ReverseIntoDock(dock, length)));
+                    routes.Add(($"from dock {dock.Number}", CediLayout.FromDock(dock, length)));
+                }
+                foreach ((string name, Polyline path) in routes)
+                    for (float d = 0f; d <= path.Length; d += 0.25f)
+                    {
+                        (Vector2 centre, Vector2 heading) = RouteMover.ChordPose(path, d, length);
+                        var footprint = new Footprint(centre, heading, length, width);
+                        foreach ((Vector2 min, Vector2 max) in CediLayout.TruckObstacles)
+                            Assert.IsFalse(footprint.Overlaps(min, max, CediLayout.BuildingMargin),
+                                $"{length} m truck, {name}, at {centre} comes within {CediLayout.BuildingMargin} m of {min}..{max}");
+                    }
+            }
+        }
+
         [Test]
         public void DockedTruck_TouchesTheBumpersWithItsRear()
         {

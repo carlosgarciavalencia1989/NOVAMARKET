@@ -30,7 +30,8 @@ namespace NovaMarket.Simulation
 
     /// <summary>
     /// Aisle network inside the warehouse. Forklifts drive only along these aisles, so they
-    /// never cross racks or picking stations. Routes are found with Dijkstra on a small graph.
+    /// never cross racks or picking stations. Aisles are one-way (see AisleDirection); routes are
+    /// found with Dijkstra on a small directed graph.
     /// </summary>
     public static class ForkliftNetwork
     {
@@ -51,9 +52,16 @@ namespace NovaMarket.Simulation
 
         public const float RackMinX = -11f;
         public const float RackMaxX = 3f;
+
+        /// <summary>
+        /// Rack positions forklifts work at: the ends of each row, next to the cross aisles, are left free
+        /// so a forklift lifting a pallet never stands inside a crossing.
+        /// </summary>
+        public const float SlotMinX = -9f;
+        public const float SlotMaxX = 2f;
         private const float RackFaceOffset = 0.7f;
-        private const float ReceivingPickX = -15.5f;
-        private const float ShippingDropX = 15.5f;
+        private const float ReceivingPickX = -16.4f;
+        private const float ShippingDropX = 16.9f;
 
         /// <summary>Rack rows and picking stations (min/max X-Z) forklifts must never cross.</summary>
         public static IReadOnlyList<(Vector2 min, Vector2 max)> Obstacles { get; } = new[]
@@ -73,17 +81,25 @@ namespace NovaMarket.Simulation
             new ForkliftSpot(new Vector2(ShippingDropX, CediLayout.DockZ[lane]),
                 new Vector2(ShippingLaneX, CediLayout.DockZ[lane]), $"muelle {lane + 4}");
 
-        /// <summary>Idle spots, one per forklift.</summary>
+        /// <summary>
+        /// Idle spots, one per forklift, in the corners of the receiving and shipping areas: off the
+        /// aisles, so a parked forklift never blocks the way. Reached from the bypass rows (z = ±9.5).
+        /// </summary>
         public static ForkliftSpot Park(int index)
         {
-            Vector2[] parks =
+            (Vector2 point, Vector2 access)[] parks =
             {
-                new Vector2(ShippingLaneX, -9.5f), new Vector2(WestCrossX, 11.2f),
-                new Vector2(EastCrossX, 11.2f), new Vector2(WestCrossX, -11.2f)
+                (new Vector2(ParkEastX, -BypassZ[1]), new Vector2(ShippingLaneX, -BypassZ[1])),
+                (new Vector2(ParkWestX, BypassZ[1]), new Vector2(WestCrossX, BypassZ[1])),
+                (new Vector2(ParkEastX, BypassZ[1]), new Vector2(ShippingLaneX, BypassZ[1])),
+                (new Vector2(ParkWestX, -BypassZ[1]), new Vector2(WestCrossX, -BypassZ[1]))
             };
-            Vector2 point = parks[index % parks.Length];
-            return new ForkliftSpot(point, point, "zona de espera");
+            (Vector2 point, Vector2 access) = parks[index % parks.Length];
+            return new ForkliftSpot(point, access, "zona de espera");
         }
+
+        private const float ParkWestX = -17.5f;
+        private const float ParkEastX = 17.5f;
 
         /// <summary>A rack position facing an aisle; <paramref name="northSide"/> picks the rack row across.</summary>
         public static ForkliftSpot RackSlot(int aisle, float x, bool northSide)
@@ -109,29 +125,69 @@ namespace NovaMarket.Simulation
 
             var points = new List<Vector2>(FindPath(from, to)) { to.Point };
             if (points.Count >= 2 && Vector2.DistanceSquared(points[0], points[points.Count - 1]) > 1e-4f)
-                legs.Add(new RouteLeg(new Polyline(points), speed));
+                legs.Add(new RouteLeg(new Polyline(RoundCorners(points, CornerCut)), speed));
             return legs;
         }
 
-        /// <summary>Aisle points from <paramref name="from"/>'s access to <paramref name="to"/>'s access.</summary>
+        /// <summary>How far before a corner a forklift starts turning (meters).</summary>
+        public const float CornerCut = 1.2f;
+
+        /// <summary>
+        /// Cuts each corner of the path with a short diagonal, so the forklift turns before reaching the
+        /// crossing instead of pivoting on it (its forks do not poke into the next aisle).
+        /// </summary>
+        public static List<Vector2> RoundCorners(IReadOnlyList<Vector2> points, float cut)
+        {
+            var result = new List<Vector2> { points[0] };
+            for (int i = 1; i < points.Count - 1; i++)
+            {
+                Vector2 inbound = points[i] - points[i - 1], outbound = points[i + 1] - points[i];
+                float lengthIn = inbound.Length(), lengthOut = outbound.Length();
+                if (lengthIn < 1e-3f || lengthOut < 1e-3f) continue;
+                Vector2 dirIn = inbound / lengthIn, dirOut = outbound / lengthOut;
+                if (Vector2.Dot(dirIn, dirOut) > 0.999f)
+                {
+                    result.Add(points[i]);
+                    continue;
+                }
+                float r = Math.Min(cut, Math.Min(lengthIn, lengthOut) / 2f);
+                result.Add(points[i] - dirIn * r);
+                result.Add(points[i] + dirOut * r);
+            }
+            result.Add(points[points.Count - 1]);
+            return result;
+        }
+
+        /// <summary>
+        /// Direction of travel of each rack aisle (A–E): +1 west to east, -1 east to west. With the west
+        /// cross aisle running north and the east one south, the aisles form loops, so forklifts never
+        /// meet head-on: they only follow each other or wait at a crossing.
+        /// </summary>
+        private static readonly int[] AisleDirection = { -1, 1, -1, 1, 1 };
+
+        /// <summary>Aisle points from <paramref name="from"/>'s access to <paramref name="to"/>'s access, along the one-way aisles.</summary>
         public static List<Vector2> FindPath(ForkliftSpot from, ForkliftSpot to)
         {
             var nodes = new List<Vector2>();
-            var edges = new List<(int a, int b)>();
+            var edges = new List<(int from, int to)>();
             BuildGraph(nodes, edges);
 
             int start = AddSpotNode(from, nodes, edges);
             int end = AddSpotNode(to, nodes, edges);
-            if (from.IsRackSlot && to.IsRackSlot && Math.Abs(from.AisleZ - to.AisleZ) < 0.01f)
+            if (from.IsRackSlot && to.IsRackSlot && Math.Abs(from.AisleZ - to.AisleZ) < 0.01f
+                && Math.Sign(to.Access.X - from.Access.X) == DirectionOf(from.AisleZ))
                 edges.Add((start, end));
 
             return Dijkstra(nodes, edges, start, end);
         }
 
-        private static void BuildGraph(List<Vector2> nodes, List<(int a, int b)> edges)
+        private static int DirectionOf(float aisleZ) => AisleDirection[Array.FindIndex(AisleZ, z => Math.Abs(z - aisleZ) < 0.01f)];
+
+        private static void BuildGraph(List<Vector2> nodes, List<(int from, int to)> edges)
         {
             var westZ = new List<float>(AisleZ);
             westZ.AddRange(CediLayout.DockZ);
+            westZ.AddRange(BypassZ); // parking access
             westZ.Sort();
             var eastZ = new List<float>(AisleZ);
             eastZ.AddRange(BypassZ);
@@ -140,41 +196,50 @@ namespace NovaMarket.Simulation
             laneZ.AddRange(CediLayout.DockZ);
             laneZ.Sort();
 
-            AddChain(nodes, edges, WestCrossX, westZ);
-            AddChain(nodes, edges, EastCrossX, eastZ);
-            AddChain(nodes, edges, ShippingLaneX, laneZ);
+            AddChain(nodes, edges, WestCrossX, westZ, northbound: true);
+            AddChain(nodes, edges, EastCrossX, eastZ, northbound: false);
+            AddChain(nodes, edges, ShippingLaneX, laneZ, northbound: true);
 
-            foreach (float z in AisleZ)
-                edges.Add((Index(nodes, new Vector2(WestCrossX, z)), Index(nodes, new Vector2(EastCrossX, z))));
-            foreach (float z in BypassZ)
-                edges.Add((Index(nodes, new Vector2(EastCrossX, z)), Index(nodes, new Vector2(ShippingLaneX, z))));
+            for (int i = 0; i < AisleZ.Length; i++)
+            {
+                int west = Index(nodes, new Vector2(WestCrossX, AisleZ[i])), east = Index(nodes, new Vector2(EastCrossX, AisleZ[i]));
+                edges.Add(AisleDirection[i] > 0 ? (west, east) : (east, west));
+            }
+            // Around the picking stations: east along the south bypass, west along the north one.
+            edges.Add((Index(nodes, new Vector2(EastCrossX, BypassZ[0])), Index(nodes, new Vector2(ShippingLaneX, BypassZ[0]))));
+            edges.Add((Index(nodes, new Vector2(ShippingLaneX, BypassZ[1])), Index(nodes, new Vector2(EastCrossX, BypassZ[1]))));
         }
 
-        private static void AddChain(List<Vector2> nodes, List<(int a, int b)> edges, float x, List<float> zs)
+        private static void AddChain(List<Vector2> nodes, List<(int from, int to)> edges, float x, List<float> zs, bool northbound)
         {
-            for (int i = 0; i < zs.Count; i++)
+            for (int i = 1; i < zs.Count; i++)
             {
-                int current = Index(nodes, new Vector2(x, zs[i]));
-                if (i > 0) edges.Add((Index(nodes, new Vector2(x, zs[i - 1])), current));
+                int south = Index(nodes, new Vector2(x, zs[i - 1])), north = Index(nodes, new Vector2(x, zs[i]));
+                if (south == north) continue;
+                edges.Add(northbound ? (south, north) : (north, south));
             }
         }
 
-        /// <summary>Adds the spot's access point; rack slots connect to both ends of their aisle.</summary>
-        private static int AddSpotNode(ForkliftSpot spot, List<Vector2> nodes, List<(int a, int b)> edges)
+        /// <summary>Adds the spot's access point; a rack slot sits on its aisle, in the aisle's direction.</summary>
+        private static int AddSpotNode(ForkliftSpot spot, List<Vector2> nodes, List<(int from, int to)> edges)
         {
             int existing = nodes.FindIndex(n => Vector2.DistanceSquared(n, spot.Access) < 1e-4f);
             if (existing >= 0) return existing;
+            if (!spot.IsRackSlot)
+                throw new ArgumentException($"Spot access {spot.Access} is not on the aisle network.", nameof(spot));
 
             nodes.Add(spot.Access);
             int index = nodes.Count - 1;
-            if (spot.IsRackSlot)
+            int west = Index(nodes, new Vector2(WestCrossX, spot.AisleZ)), east = Index(nodes, new Vector2(EastCrossX, spot.AisleZ));
+            if (DirectionOf(spot.AisleZ) > 0)
             {
-                edges.Add((index, Index(nodes, new Vector2(WestCrossX, spot.AisleZ))));
-                edges.Add((index, Index(nodes, new Vector2(EastCrossX, spot.AisleZ))));
+                edges.Add((west, index));
+                edges.Add((index, east));
             }
             else
             {
-                throw new ArgumentException($"Spot access {spot.Access} is not on the aisle network.", nameof(spot));
+                edges.Add((east, index));
+                edges.Add((index, west));
             }
             return index;
         }
@@ -187,7 +252,7 @@ namespace NovaMarket.Simulation
             return nodes.Count - 1;
         }
 
-        private static List<Vector2> Dijkstra(List<Vector2> nodes, List<(int a, int b)> edges, int start, int end)
+        private static List<Vector2> Dijkstra(List<Vector2> nodes, List<(int from, int to)> edges, int start, int end)
         {
             var distance = new float[nodes.Count];
             var previous = new int[nodes.Count];
@@ -208,15 +273,14 @@ namespace NovaMarket.Simulation
                 if (current < 0 || current == end) break;
                 done[current] = true;
 
-                foreach ((int a, int b) in edges)
+                foreach ((int from, int to) in edges)
                 {
-                    int next = a == current ? b : b == current ? a : -1;
-                    if (next < 0 || done[next]) continue;
-                    float candidate = distance[current] + Vector2.Distance(nodes[current], nodes[next]);
-                    if (candidate < distance[next])
+                    if (from != current || done[to]) continue;
+                    float candidate = distance[current] + Vector2.Distance(nodes[current], nodes[to]);
+                    if (candidate < distance[to])
                     {
-                        distance[next] = candidate;
-                        previous[next] = current;
+                        distance[to] = candidate;
+                        previous[to] = current;
                     }
                 }
             }

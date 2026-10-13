@@ -10,7 +10,7 @@ namespace NovaMarket.Simulation
     /// dispatches, notices and facility data), so the HUD reflects what happens in the scene.
     /// Plain C#: call <see cref="Tick"/> with the elapsed time; the scene only draws the agents.
     /// </summary>
-    public sealed class CediOperationSimulation
+    public sealed partial class CediOperationSimulation
     {
         private const string ImportObjectiveId = "import-container";
         private const float PublishInterval = 1f;
@@ -89,12 +89,19 @@ namespace NovaMarket.Simulation
             Time += deltaTime;
             SpawnTrucks();
 
+            // "Who is in my way" is recomputed every tick; a vehicle that does not drive this tick is not waiting.
+            foreach (VehicleAgent vehicle in vehicles)
+            {
+                vehicle.PreviousBlocker = vehicle.BlockedBy;
+                vehicle.BlockedBy = null;
+            }
             for (int i = 0; i < vehicles.Count; i++) vehicles[i].Tick(this, deltaTime);
             for (int i = vehicles.Count - 1; i >= 0; i--)
             {
                 if (!vehicles[i].IsFinished) continue;
                 VehicleAgent gone = vehicles[i];
                 vehicles.RemoveAt(i);
+                ForgetInTraffic(gone);
                 VehicleRemoved?.Invoke(gone);
             }
 
@@ -134,7 +141,8 @@ namespace NovaMarket.Simulation
 
         private void SpawnTrucks()
         {
-            if (scheduled.Count > 0 && Time >= nextScheduledAt && InboundGate.QueueLength < Settings.MaxTrucksAtGate)
+            if (scheduled.Count > 0 && Time >= nextScheduledAt && InboundGate.QueueLength < Settings.MaxTrucksAtGate
+                && IsSpawnClear(scheduled.Peek()))
             {
                 nextScheduledAt = Time + Settings.ScheduledTruckSpacing;
                 Add(scheduled.Dequeue());
@@ -144,13 +152,28 @@ namespace NovaMarket.Simulation
             if (Time >= nextReceivingAt)
             {
                 nextReceivingAt = Time + Jitter(Settings.ReceivingInterval);
-                if (InboundGate.QueueLength < Settings.MaxTrucksAtGate) Add(CreateReceivingTruck());
+                if (InboundGate.QueueLength < Settings.MaxTrucksAtGate) TryAdd(CreateReceivingTruck(), ref nextReceivingAt);
             }
             if (Time >= nextDispatchAt)
             {
                 nextDispatchAt = Time + Jitter(Settings.DispatchInterval);
-                if (InboundGate.QueueLength < Settings.MaxTrucksAtGate) Add(CreateDispatchTruck());
+                if (InboundGate.QueueLength < Settings.MaxTrucksAtGate) TryAdd(CreateDispatchTruck(), ref nextDispatchAt);
             }
+        }
+
+        /// <summary>A new truck appears only where it does not touch another vehicle on the highway.</summary>
+        private bool IsSpawnClear(VehicleAgent truck)
+        {
+            foreach (VehicleAgent other in vehicles)
+                if (other.FloorHeight < 0.01f && truck.Footprint.Overlaps(other.Footprint, Settings.QueueGap))
+                    return false;
+            return true;
+        }
+
+        private void TryAdd(TruckAgent truck, ref float nextAt)
+        {
+            if (IsSpawnClear(truck)) Add(truck);
+            else nextAt = Time + 2f; // try again in a moment
         }
 
         private float Jitter(float interval) => interval * (0.8f + 0.4f * (float)random.NextDouble());
@@ -339,7 +362,7 @@ namespace NovaMarket.Simulation
         private ForkliftSpot RandomRackSlot()
         {
             int aisle = random.Next(ForkliftNetwork.AisleZ.Length);
-            float x = ForkliftNetwork.RackMinX + (float)random.NextDouble() * (ForkliftNetwork.RackMaxX - ForkliftNetwork.RackMinX);
+            float x = ForkliftNetwork.SlotMinX + (float)random.NextDouble() * (ForkliftNetwork.SlotMaxX - ForkliftNetwork.SlotMinX);
             return ForkliftNetwork.RackSlot(aisle, x, random.Next(2) == 0);
         }
 

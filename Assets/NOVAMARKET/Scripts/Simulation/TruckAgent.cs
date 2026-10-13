@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -30,21 +31,27 @@ namespace NovaMarket.Simulation
         private bool barrierCleared;
         private bool waitingForDock;
         private float arrivedAtGateTime;
+        private bool waitingForManoeuvre;
+        private bool hasManoeuvre;
+        private bool readyToLeave;
 
         internal TruckAgent(int id, VehicleKind kind, string plate, CediOperationSettings settings,
             string partner, string place, string product, int pallets, bool fromEast, bool exitToEast,
             string cargo = null)
             : base(id, kind, plate, kind == VehicleKind.ReceivingTruck ? settings.TruckLength : settings.TurboLength,
-                CreateMover(fromEast), 0f)
+                CreateMover(true, kind == VehicleKind.ReceivingTruck ? settings.TruckLength : settings.TurboLength), 0f)
         {
             this.settings = settings;
-            this.exitToEast = exitToEast;
+            // Traffic flows one way past the CEDI: every truck arrives from the east and leaves to the west.
+            // The two approaches and the two exits would cross in front of the gate, where a 16 m truck
+            // waiting at the stop line already reaches the highway. The choices are kept for older callers.
+            this.exitToEast = false && exitToEast && fromEast;
             Partner = partner;
             Place = place;
             Product = product;
             Pallets = pallets;
             Cargo = cargo;
-            Mover.SetPlan(new[] { new RouteLeg(CediLayout.Approach(fromEast, Length), settings.HighwaySpeed) });
+            Mover.SetPlan(new[] { new RouteLeg(CediLayout.Approach(true, Length), settings.HighwaySpeed) });
         }
 
         public bool IsReceiving => Kind == VehicleKind.ReceivingTruck;
@@ -79,9 +86,11 @@ namespace NovaMarket.Simulation
         {
             TruckState.Approaching => "En camino a la portería",
             TruckState.AtGate when waitingForDock => "Esperando muelle libre",
+            TruckState.AtGate when waitingForManoeuvre => $"Esperando turno para maniobrar en el muelle {Dock.Number}",
             TruckState.AtGate => "Revisión de documentos en portería",
             TruckState.Entering => $"Entrando al patio hacia el muelle {Dock.Number}",
             TruckState.Reversing => $"Retrocediendo al muelle {Dock.Number}",
+            TruckState.Docked when readyToLeave => "Esperando turno para salir del muelle",
             TruckState.Docked when IsReceiving => "Descargando",
             TruckState.Docked when IsWaitingForPallets => "Esperando estibas",
             TruckState.Docked => "Cargando",
@@ -91,11 +100,11 @@ namespace NovaMarket.Simulation
             _ => "Fuera del CEDI"
         };
 
-        private static RouteMover CreateMover(bool fromEast)
+        private static RouteMover CreateMover(bool fromEast, float length)
         {
             var start = new Vector2(fromEast ? CediLayout.SpawnDistanceX : -CediLayout.SpawnDistanceX,
                 fromEast ? CediLayout.WestboundLaneZ : CediLayout.EastboundLaneZ);
-            return new RouteMover(start, new Vector2(fromEast ? -1f : 1f, 0f));
+            return new RouteMover(start, new Vector2(fromEast ? -1f : 1f, 0f), length);
         }
 
         internal override void Tick(CediOperationSimulation simulation, float deltaTime)
@@ -103,7 +112,8 @@ namespace NovaMarket.Simulation
             switch (State)
             {
                 case TruckState.Approaching:
-                    Mover.Tick(deltaTime, simulation.InboundGate.LimitFor(this, Mover.CurrentLeg?.Path.Length ?? 0f));
+                    Mover.Tick(deltaTime, simulation.TrafficLimit(this, Mover, deltaTime,
+                        simulation.InboundGate.LimitFor(this, Mover.CurrentLeg?.Path.Length ?? 0f)));
                     if (Mover.IsIdle && simulation.InboundGate.IsFirst(this))
                     {
                         State = TruckState.AtGate;
@@ -124,13 +134,23 @@ namespace NovaMarket.Simulation
                         break;
                     }
                     waitingForDock = false;
+                    // The truck enters only when its side of docks is free to manoeuvre: it waits here, at the
+                    // gate, where it is in nobody's way.
+                    if (!simulation.TryAcquireManoeuvre(Dock.Kind, this))
+                    {
+                        waitingForManoeuvre = true;
+                        break;
+                    }
+                    waitingForManoeuvre = false;
+                    hasManoeuvre = true;
                     simulation.InboundGate.Leave(this);
                     simulation.InboundGate.IsBarrierOpen = true;
                     barrierCleared = false;
                     IsInYard = true;
+                    Polyline toStaging = CediLayout.ToStaging(Dock, Length);
                     Mover.SetPlan(new[]
                     {
-                        new RouteLeg(CediLayout.ToStaging(Dock, Length), settings.YardSpeed),
+                        new RouteLeg(toStaging, settings.YardSpeed),
                         new RouteLeg(CediLayout.ReverseIntoDock(Dock, Length), settings.ReverseSpeed, reverse: true)
                     });
                     State = TruckState.Entering;
@@ -139,7 +159,8 @@ namespace NovaMarket.Simulation
 
                 case TruckState.Entering:
                 case TruckState.Reversing:
-                    Mover.Tick(deltaTime);
+                {
+                    Mover.Tick(deltaTime, simulation.TrafficLimit(this, Mover, deltaTime));
                     if (!barrierCleared && Mover.CompletedLegs == 0 && Mover.DistanceOnLeg > Length + 1f)
                     {
                         barrierCleared = true;
@@ -150,15 +171,25 @@ namespace NovaMarket.Simulation
                     {
                         State = TruckState.Docked;
                         timer = 0f;
+                        simulation.ReleaseManoeuvre(Dock.Kind, this);
+                        hasManoeuvre = false;
                     }
                     break;
+                }
 
                 case TruckState.Docked:
-                    HandlePallets(simulation, deltaTime);
+                    if (readyToLeave) TryDepart(simulation);
+                    else HandlePallets(simulation, deltaTime);
                     break;
 
                 case TruckState.Leaving:
-                    Mover.Tick(deltaTime, simulation.OutboundGate.LimitFor(this, Mover.CurrentLeg?.Path.Length ?? 0f));
+                    Mover.Tick(deltaTime, simulation.TrafficLimit(this, Mover, deltaTime,
+                        simulation.OutboundGate.LimitFor(this, Mover.CurrentLeg?.Path.Length ?? 0f)));
+                    if (hasManoeuvre && CediLayout.LeftManoeuvreArea(Position - Heading * Length / 2f))
+                    {
+                        simulation.ReleaseManoeuvre(Dock.Kind, this);
+                        hasManoeuvre = false;
+                    }
                     if (Mover.IsIdle && simulation.OutboundGate.IsFirst(this))
                     {
                         State = TruckState.ExitCheck;
@@ -177,7 +208,7 @@ namespace NovaMarket.Simulation
                     break;
 
                 case TruckState.Exiting:
-                    Mover.Tick(deltaTime);
+                    Mover.Tick(deltaTime, simulation.TrafficLimit(this, Mover, deltaTime));
                     if (!barrierCleared && Mover.DistanceOnLeg > Length + 1f)
                     {
                         barrierCleared = true;
@@ -213,6 +244,16 @@ namespace NovaMarket.Simulation
 
             if (IsReceiving) simulation.OnUnloaded(this);
             else simulation.OnLoaded(this);
+            readyToLeave = true;
+            TryDepart(simulation);
+        }
+
+        /// <summary>Pulls out of the dock once the side's manoeuvre area is free.</summary>
+        private void TryDepart(CediOperationSimulation simulation)
+        {
+            if (!simulation.TryAcquireManoeuvre(Dock.Kind, this)) return;
+            hasManoeuvre = true;
+            readyToLeave = false;
             simulation.Docks.Release(Dock);
             simulation.OutboundGate.Join(this);
             Mover.SetPlan(new[] { new RouteLeg(CediLayout.FromDock(Dock, Length), settings.YardSpeed) });

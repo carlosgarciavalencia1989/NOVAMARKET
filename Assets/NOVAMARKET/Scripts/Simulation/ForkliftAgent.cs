@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace NovaMarket.Simulation
@@ -49,11 +50,13 @@ namespace NovaMarket.Simulation
         private readonly CediOperationSettings settings;
         private readonly ForkliftSpot park;
         private ForkliftSpot spot;
+        private ForkliftSpot heldSpot;
+        private ForkliftSpot leavingSpot;
         private float timer;
 
         internal ForkliftAgent(int id, string code, CediOperationSettings settings, ForkliftSpot park)
             : base(id, VehicleKind.Forklift, code, settings.ForkliftLength,
-                new RouteMover(park.Point, new System.Numerics.Vector2(0f, 1f)), CediLayout.IndoorFloor)
+                new RouteMover(park.Point, ParkedHeading(park)), CediLayout.IndoorFloor)
         {
             this.settings = settings;
             this.park = park;
@@ -68,6 +71,7 @@ namespace NovaMarket.Simulation
 
         public override string Status => State switch
         {
+            _ when IsWaitingInTraffic => "Cediendo el paso a otro montacargas",
             ForkliftState.ToPickup =>$"Va por una estiba al {Task.Pickup.Label}",
             ForkliftState.Lifting => "Levantando estiba",
             ForkliftState.ToDrop => $"Llevando estiba al {Task.Drop.Label}",
@@ -78,13 +82,20 @@ namespace NovaMarket.Simulation
 
         internal override void Tick(CediOperationSimulation simulation, float deltaTime)
         {
+            // The spot just left is free once the forklift has driven away from its spur.
+            if (leavingSpot != null && System.Numerics.Vector2.Distance(Position, leavingSpot.Access) > SpurClearance)
+            {
+                simulation.ReleaseSpot(leavingSpot, this);
+                leavingSpot = null;
+            }
+
             switch (State)
             {
                 case ForkliftState.Idle:
                 case ForkliftState.Parking:
                     if (State == ForkliftState.Parking)
                     {
-                        Mover.Tick(deltaTime);
+                        Mover.Tick(deltaTime, simulation.TrafficLimit(this, Mover, deltaTime));
                         if (!Mover.IsIdle) break;
                         spot = park;
                         State = ForkliftState.Idle;
@@ -93,19 +104,19 @@ namespace NovaMarket.Simulation
                     if (task != null)
                     {
                         Task = task;
-                        Drive(task.Pickup);
+                        Drive(simulation, task.Pickup);
                         State = ForkliftState.ToPickup;
                     }
                     else if (spot != park)
                     {
-                        Drive(park);
+                        Drive(simulation, park);
                         State = ForkliftState.Parking;
                     }
                     break;
 
                 case ForkliftState.ToPickup:
                 case ForkliftState.ToDrop:
-                    Mover.Tick(deltaTime);
+                    Mover.Tick(deltaTime, simulation.TrafficLimit(this, Mover, deltaTime, SpotLimit(simulation)));
                     if (!Mover.IsIdle) break;
                     timer = settings.ForkHandlingSeconds;
                     State = State == ForkliftState.ToPickup ? ForkliftState.Lifting : ForkliftState.Dropping;
@@ -116,7 +127,7 @@ namespace NovaMarket.Simulation
                     if (timer > 0f) break;
                     IsCarrying = true;
                     simulation.OnPalletLifted(Task);
-                    Drive(Task.Drop);
+                    Drive(simulation, Task.Drop);
                     State = ForkliftState.ToDrop;
                     break;
 
@@ -131,10 +142,72 @@ namespace NovaMarket.Simulation
             }
         }
 
-        private void Drive(ForkliftSpot target)
+        private void Drive(CediOperationSimulation simulation, ForkliftSpot target)
         {
+            if (heldSpot != null && heldSpot != target)
+            {
+                leavingSpot = heldSpot;
+                heldSpot = null;
+            }
             Mover.SetPlan(ForkliftNetwork.Route(spot, target, settings.ForkliftSpeed));
             spot = target;
+        }
+
+        /// <summary>The wait point moved back before the first crossing on the way (a forklift never waits inside one).</summary>
+        private float BeforeFirstCrossing(CediOperationSimulation simulation, float waitAt)
+        {
+            for (float d = Math.Max(Mover.DistanceOnLeg, waitAt - SpotAskDistance - 2f); d <= waitAt; d += 0.25f)
+            {
+                (System.Numerics.Vector2 centre, System.Numerics.Vector2 heading) = Mover.PoseAhead(d);
+                Footprint body = FootprintAt(centre, heading);
+                foreach (TrafficZone zone in simulation.Zones)
+                    if (!zone.ForTrucks && zone.Touches(body)) return Math.Max(Mover.DistanceOnLeg, d - 0.5f);
+            }
+            return waitAt;
+        }
+
+        /// <summary>A parked forklift faces away from the aisle, as it drove in.</summary>
+        private static System.Numerics.Vector2 ParkedHeading(ForkliftSpot park) =>
+            System.Numerics.Vector2.DistanceSquared(park.Point, park.Access) < 1e-4f
+                ? new System.Numerics.Vector2(0f, 1f)
+                : System.Numerics.Vector2.Normalize(park.Point - park.Access);
+
+        /// <summary>True while driving to <paramref name="target"/> without having reserved it yet.</summary>
+        internal bool IsHeadingTo(ForkliftSpot target) =>
+            (State == ForkliftState.ToPickup || State == ForkliftState.ToDrop) && heldSpot != spot
+            && System.Numerics.Vector2.DistanceSquared(spot.Point, target.Point) < 1e-4f;
+
+        /// <summary>Meters left to the target spot (backing out of the previous one counts as far).</summary>
+        internal float DistanceToTarget =>
+            Mover.CurrentLeg == null ? 0f : Mover.CurrentLeg.Reverse ? float.MaxValue : Mover.CurrentLeg.Path.Length - Mover.DistanceOnLeg;
+
+        /// <summary>Distance from a spot's access at which a forklift has left its spur.</summary>
+        private const float SpurClearance = 3.5f;
+
+        /// <summary>Where a forklift waits for a busy spot: far enough for the other one to back out and turn.</summary>
+        private const float SpotWaitDistance = 6.5f;
+
+        /// <summary>How far before its wait point a forklift asks for the spot.</summary>
+        private const float SpotAskDistance = 6f;
+
+        /// <summary>
+        /// While another forklift still works at (or backs out of) the target spot, stop 6.5 m before its
+        /// access so it can back out onto the aisle and leave.
+        /// </summary>
+        private float SpotLimit(CediOperationSimulation simulation)
+        {
+            if (heldSpot == spot || Mover.CurrentLeg == null || Mover.CurrentLeg.Reverse) return float.MaxValue;
+            float spur = System.Numerics.Vector2.Distance(spot.Point, spot.Access);
+            float waitAt = Math.Max(0f, Mover.CurrentLeg.Path.Length - spur - SpotWaitDistance);
+            // Ask for the spot when getting close to it (a queue keeps the order of arrival)...
+            if (Mover.DistanceOnLeg < waitAt - SpotAskDistance) return float.MaxValue;
+            if (simulation.TryHoldSpot(spot, this))
+            {
+                heldSpot = spot;
+                return float.MaxValue;
+            }
+            // ...and wait for it before the last crossing on the way, so nobody waits inside one.
+            return BeforeFirstCrossing(simulation, waitAt);
         }
 
         public override SelectionDetails Describe()

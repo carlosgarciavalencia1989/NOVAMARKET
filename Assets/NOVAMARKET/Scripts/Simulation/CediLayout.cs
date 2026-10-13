@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -17,8 +18,11 @@ namespace NovaMarket.Simulation
         /// <summary>Dock door centres (z), shared by both faces of the warehouse.</summary>
         public static readonly float[] DockZ = { -4.5f, 0f, 4.5f };
 
-        /// <summary>|x| of the dock bumpers on the west (receiving) and east (shipping) faces.</summary>
-        public const float DockWallX = 22.6f;
+        /// <summary>
+        /// |x| where a docked truck's rear stops on the west (receiving) and east (shipping) faces: 1 m in
+        /// front of the bumpers (22.3), so the truck parks visibly at the edge of the dock.
+        /// </summary>
+        public const float DockWallX = 23.3f;
 
         public const float InboundLaneX = 2.4f;
         public const float OutboundLaneX = -2.4f;
@@ -29,8 +33,8 @@ namespace NovaMarket.Simulation
         public const float WestboundLaneZ = -57f;
         public const float SpawnDistanceX = 260f;
 
-        /// <summary>Yard road used by trucks driving in (north of the outbound queue).</summary>
-        private const float InboundYardZ = -16f;
+        /// <summary>Yard road used by trucks driving in (north of the outbound road, clear of the entrance canopy).</summary>
+        private const float InboundYardZ = -18f;
 
         /// <summary>Yard road used by trucks driving out.</summary>
         private const float OutboundYardZ = -21f;
@@ -100,16 +104,32 @@ namespace NovaMarket.Simulation
         /// <summary>From the inbound stop line through the yard to the point in front of the dock.</summary>
         public static Polyline ToStaging(Dock dock, float length)
         {
-            float s = Side(dock.Kind);
-            return new Polyline(
+            var start = new[]
+            {
                 InboundStop(length),
-                new Vector2(InboundLaneX, -19f),
-                new Vector2(InboundLaneX + s * 2.6f, InboundYardZ),
-                new Vector2(s * 40f, InboundYardZ),
-                new Vector2(s * 45f, dock.Z - 4f),
-                new Vector2(s * 48f, dock.Z - 0.5f),
+                new Vector2(InboundLaneX, InboundYardZ - 3f)
+            };
+            if (dock.Kind == DockKind.Shipping)
+                return new Polyline(start[0], start[1],
+                    new Vector2(InboundLaneX + 2.6f, InboundYardZ),
+                    new Vector2(40f, InboundYardZ),
+                    new Vector2(45f, dock.Z - 4f),
+                    new Vector2(48f, dock.Z - 0.5f),
+                    StagingCentre(dock));
+
+            // West side: between the warehouse and the office, then north past the office and the
+            // trucks parked at the receiving docks.
+            return new Polyline(start[0], start[1],
+                new Vector2(InboundLaneX - 2.6f, InboundYardZ),
+                new Vector2(-28f, InboundYardZ),
+                new Vector2(-38f, -13f),
+                new Vector2(-44f, -8f),
+                new Vector2(-47f, dock.Z - 1f),
                 StagingCentre(dock));
         }
+
+        /// <summary>True once a leaving truck's rear is on the outbound road, past the inbound road.</summary>
+        public static bool LeftManoeuvreArea(Vector2 rear) => rear.Y <= OutboundYardZ + 0.5f && Math.Abs(rear.X) <= 32f;
 
         /// <summary>Straight reverse from the staging point to the dock bumpers.</summary>
         public static Polyline ReverseIntoDock(Dock dock, float length) =>
@@ -118,26 +138,45 @@ namespace NovaMarket.Simulation
         /// <summary>From the dock, a U-turn in the yard and down the outbound lane to the stop line.</summary>
         public static Polyline FromDock(Dock dock, float length)
         {
-            float s = Side(dock.Kind);
+            if (dock.Kind == DockKind.Shipping)
+                return new Polyline(
+                    DockedCentre(dock, length),
+                    new Vector2(46f, dock.Z),
+                    new Vector2(53f, dock.Z - 5f),
+                    new Vector2(50f, -11f),
+                    new Vector2(32f, OutboundYardZ),
+                    new Vector2(1f, OutboundYardZ),
+                    new Vector2(OutboundLaneX, -23f),
+                    OutboundStop(length));
+
+            // West side: U-turn north of the office, back east under the parked trucks and down the
+            // gap between the warehouse and the office.
             return new Polyline(
                 DockedCentre(dock, length),
-                new Vector2(s * 46f, dock.Z),
-                new Vector2(s * 53f, dock.Z - 5f),
-                new Vector2(s * 50f, -11f),
-                new Vector2(s * 32f, OutboundYardZ),
-                new Vector2(dock.Kind == DockKind.Shipping ? 1f : -8f, OutboundYardZ),
+                new Vector2(-46f, dock.Z),
+                new Vector2(-53f, dock.Z - 5f),
+                new Vector2(-50f, -9.8f),
+                new Vector2(-30f, -9.8f),
+                new Vector2(-26f, -14.5f),
+                new Vector2(-26f, -18.5f),
+                new Vector2(-22f, OutboundYardZ),
+                new Vector2(-8f, OutboundYardZ),
                 new Vector2(OutboundLaneX, -23f),
                 OutboundStop(length));
         }
 
         // ------------------------------------------------------------------ obstacles (for tests and tools)
 
+        /// <summary>Clearance every truck keeps from <see cref="TruckObstacles"/> (whole footprint, meters).</summary>
+        public const float BuildingMargin = 1f;
+
         /// <summary>Areas trucks must never cross: warehouse, office and parked containers (min/max X-Z).</summary>
         public static IReadOnlyList<(Vector2 min, Vector2 max)> TruckObstacles { get; } = new[]
         {
-            (new Vector2(-22f, -13f), new Vector2(22f, 13f)),     // warehouse
-            (new Vector2(-55f, -27.5f), new Vector2(-41f, -18.5f)), // office
-            (new Vector2(70f, -18f), new Vector2(80f, 4f))         // container stacks
+            (new Vector2(-22.2f, -13f), new Vector2(22.2f, 13.2f)),    // warehouse
+            (new Vector2(-16.5f, -15f), new Vector2(-11.5f, -13f)),    // main entrance canopy
+            (new Vector2(-55.3f, -27.8f), new Vector2(-40.7f, -16.5f)), // office
+            (new Vector2(66f, -26f), new Vector2(100f, 10f))           // container yard
         };
     }
 }

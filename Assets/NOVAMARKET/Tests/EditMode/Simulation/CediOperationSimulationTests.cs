@@ -135,12 +135,68 @@ namespace NovaMarket.Tests.Simulation
             Assert.Greater(simulation.TrucksExited, 0);
         }
 
+        /// <summary>
+        /// 30 minutes of operation: no two vehicles on the same floor ever touch (trucks in the yard,
+        /// forklifts in the aisles), and nobody waits in traffic for more than a minute (no gridlock).
+        /// </summary>
+        [TestCase(7)]
+        [TestCase(11)]
+        [TestCase(23)]
+        public void Vehicles_NeverOverlap_AndNeverWaitForever(int seed)
+        {
+            simulation = new CediOperationSimulation(state, seed: seed);
+            var waiting = new Dictionary<VehicleAgent, float>();
+            for (int i = 0; i < (int)(1800f / Step); i++)
+            {
+                simulation.Tick(Step, simulation.Time);
+                IReadOnlyList<VehicleAgent> vehicles = simulation.Vehicles;
+                for (int a = 0; a < vehicles.Count; a++)
+                {
+                    VehicleAgent v = vehicles[a];
+                    waiting[v] = v.IsWaitingInTraffic ? (waiting.TryGetValue(v, out float w) ? w : 0f) + Step : 0f;
+                    Assert.Less(waiting[v], 60f, $"{v.Plate} ({v.Status}) has been waiting a minute at {v.Position}. " +
+                                       simulation.TrafficReport());
+                    for (int b = a + 1; b < vehicles.Count; b++)
+                    {
+                        VehicleAgent o = vehicles[b];
+                        if (System.Math.Abs(v.FloorHeight - o.FloorHeight) > 0.01f) continue;
+                        Assert.IsFalse(v.Footprint.Overlaps(o.Footprint),
+                            $"{simulation.Time:F1}s: {v.Plate} ({v.Status}) and {o.Plate} ({o.Status}) overlap at {v.Position} / {o.Position}");
+                    }
+                }
+            }
+        }
+
+        [Test]
+        public void TrucksOnOneSide_TakeTurnsToManoeuvre()
+        {
+            int samples = 0;
+            for (int i = 0; i < (int)(1200f / Step); i++)
+            {
+                simulation.Tick(Step, simulation.Time);
+                foreach (DockKind side in new[] { DockKind.Receiving, DockKind.Shipping })
+                {
+                    var moving = simulation.Vehicles.OfType<TruckAgent>().Where(t => t.Dock?.Kind == side &&
+                        (t.State == TruckState.Reversing || t.State == TruckState.Leaving && t.Position.Y > -16f && System.Math.Abs(t.Position.X) > 30f)).ToList();
+                    Assert.LessOrEqual(moving.Count, 1, $"{simulation.Time:F0}s: two trucks manoeuvre at the {side} docks");
+                    if (moving.Count == 1)
+                    {
+                        Assert.AreSame(moving[0], simulation.ManoeuvreHolder(side));
+                        samples++;
+                    }
+                }
+            }
+            Assert.Greater(samples, 100, "trucks did manoeuvre");
+        }
+
         [Test]
         public void Operation_KeepsUpWithArrivalsWithoutGridlock()
         {
-            Run(900f);
+            Run(1800f);
 
-            Assert.AreEqual(state.Mission.CounterTarget, state.Mission.CounterValue, "all 8 dispatches done in 15 min");
+            // With real traffic (one-way aisles, crossings, safety gaps) four forklifts move about one
+            // pallet every 4 s: dispatches keep completing and the gate keeps flowing.
+            Assert.GreaterOrEqual(state.Mission.CounterValue, 8, "the 8 dispatches of the mission are done in 30 min");
             Assert.GreaterOrEqual(simulation.TrucksExited, 20, "trucks keep flowing through the gate");
             Assert.LessOrEqual(simulation.Vehicles.OfType<TruckAgent>().Count(), 9, "no growing backlog of trucks");
         }

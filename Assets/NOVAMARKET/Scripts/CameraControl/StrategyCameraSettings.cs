@@ -29,6 +29,8 @@ namespace NovaMarket.CameraControl
         [SerializeField] private Rect focusBounds = Rect.MinMaxRect(-780f, -420f, 780f, 420f);
         [Tooltip("Minimum height of the camera above the terrain.")]
         [SerializeField] private float groundClearance = 15f;
+        [Tooltip("Minimum space between the camera and building roofs (downtown towers).")]
+        [SerializeField] private float buildingClearance = 10f;
 
         [Header("Rotation")]
         [SerializeField] private float rotationStepDegrees = 45f;
@@ -48,6 +50,7 @@ namespace NovaMarket.CameraControl
         public float EdgeScrollPixels => edgeScrollPixels;
         public Rect FocusBounds => focusBounds;
         public float GroundClearance => groundClearance;
+        public float BuildingClearance => buildingClearance;
         public float RotationStepDegrees => rotationStepDegrees;
         public float MoveSmoothTime => moveSmoothTime;
         public float ZoomSmoothTime => zoomSmoothTime;

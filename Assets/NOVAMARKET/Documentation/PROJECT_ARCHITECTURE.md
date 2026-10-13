@@ -204,7 +204,8 @@ class with all the math (covered by `StrategyCameraRigTests`).
 | Q / E | Rotate 45° left / right, eased |
 
 The focus point is clamped to the flat valley floor (x ±780, z ±420 m) and the camera keeps
-15 m above the terrain. All values are in `StrategyCameraSettings`, editable in the Inspector.
+15 m above the terrain and 10 m above building roofs (the generated `*_Buildings_*` city chunks
+get a MeshCollider on the Ignore Raycast layer at start, so they never block clicks). All values are in `StrategyCameraSettings`, editable in the Inspector.
 In the Editor, edge scrolling only works while the mouse is over the Game view.
 Right-click the component → **Apply Start View** to preview the start view in Edit mode.
 
@@ -260,16 +261,30 @@ then updates the same state as trucks and forklifts work. Panels read `Selection
   reverse to the dock, unload / load pallet by pallet, U-turn and leave through the outbound
   gate. States: `TruckState`. Routes are truck-centre polylines in `CediLayout` (right-hand
   traffic; inbound yard road z = -16, outbound z = -21), driven by `RouteMover` (accelerates,
-  brakes, reverses).
+  brakes, reverses). Trucks keep front and rear on the route (chord pose), so the body never
+  cuts a corner; routes keep `CediLayout.BuildingMargin` (1 m) from the warehouse, canopy and
+  office (`CediLayoutTests`). Trucks arrive from the east and leave to the west (one-way flow)
+  and park with the rear bumper at `DockWallX` (23.3 m, the dock bumpers).
 - **Forklifts** (4) take pallets from the receiving staging lanes to random rack slots
   (put-away, +1 position) and from racks to the shipping lanes of docked turbos (pick,
-  -1 position), driving only on the aisle graph of `ForkliftNetwork` (Dijkstra).
+  -1 position), driving only on the one-way aisle graph of `ForkliftNetwork` (directed Dijkstra, rounded
+  corners).
 - Each event updates the `OperationState`: occupied positions, trucks in the lot, dispatches
   (`RegisterDispatch` when a loaded turbo crosses the outbound barrier), the Don Hernán
   objective, notices ("Camión de Don Hernán en portería.", "Despacho a Envigado en camino.")
   and live warehouse / gate data (published once per second).
+- **Traffic** (`CediOperationSimulation.Traffic.cs`): every vehicle has a `Footprint` (oriented
+  rectangle; forklifts include the forks). Each tick `TrafficLimit` looks a braking distance
+  ahead and stops the vehicle before it comes within the gap of another one (0.3 m trucks,
+  0.7 m forklifts). On top of that: `TrafficZone` crossings take one vehicle at a time (gate
+  junction for trucks, aisle merges for forklifts); each side of docks has a manoeuvre turn
+  (taken at the gate, released when the truck docks or has left the dock area); a forklift
+  reserves the staging lane or rack face it works at, and the place it backs out to stays free.
+  If two vehicles wait for each other for 3 s, one goes first (never the one backing out); it
+  only drops the gap, bodies never touch. `TrafficReport()` explains who waits for whom.
 - Tuning (sizes, speeds, handling times, arrival intervals): `CediOperationSettings`.
-  `CediOperationSimulationTests` runs 15 minutes of operation and checks there is no gridlock.
+  `CediOperationSimulationTests` runs 30 minutes of operation with several seeds and checks that
+  no two vehicles ever overlap and nobody waits in traffic for a minute.
 
 Scene side (`Scripts/Operation/`): `CediOperationRunner` (on `Systems/Operation`; Inspector:
 simulation speed and seed) ticks the simulation, instantiates one prefab per vehicle and shows

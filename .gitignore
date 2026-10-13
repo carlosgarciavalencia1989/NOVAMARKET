@@ -69,3 +69,6 @@ crashlytics-build.properties
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Screenshots taken while developing (kept local, not versioned)
+/[Cc]apturas/

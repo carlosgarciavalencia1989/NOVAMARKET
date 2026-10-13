@@ -13,7 +13,7 @@ namespace NovaMarket.Simulation
         public float HighwaySpeed { get; set; } = 13f;
         public float YardSpeed { get; set; } = 5f;
         public float ReverseSpeed { get; set; } = 2.2f;
-        public float ForkliftSpeed { get; set; } = 4.5f;
+        public float ForkliftSpeed { get; set; } = 5.5f;
 
         /// <summary>Space between queued trucks.</summary>
         public float QueueGap { get; set; } = 4f;
@@ -32,8 +32,8 @@ namespace NovaMarket.Simulation
 
         public float FirstReceivingAt { get; set; } = 2f;
         public float FirstDispatchAt { get; set; } = 14f;
-        public float ReceivingInterval { get; set; } = 50f;
-        public float DispatchInterval { get; set; } = 38f;
+        public float ReceivingInterval { get; set; } = 70f;
+        public float DispatchInterval { get; set; } = 50f;
 
         public int MinPalletsPerTruck { get; set; } = 8;
         public int MaxPalletsPerTruck { get; set; } = 12;

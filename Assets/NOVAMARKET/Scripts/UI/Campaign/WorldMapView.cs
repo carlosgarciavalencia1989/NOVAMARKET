@@ -102,29 +102,43 @@ namespace NovaMarket.UI.Campaign
             circle.Add(HudElements.Text(boss ? "JEFE" : level.Id, "map-node-id"));
             if (!level.IsBuilt) circle.Add(new HudIcon { Kind = HudIconKind.Lock });
             node.Add(circle);
-            node.Add(HudElements.Text(level.Title, "map-node-title"));
-            node.Add(HudElements.Text(boss ? "NIVEL JEFE" : $"Paso {level.AtlasStep} del Atlas", "map-node-step"));
+            // The label sits outside the node, above or below it (chosen in LayoutNodes) so the path never crosses it.
+            VisualElement label = HudElements.Box("map-node-label");
+            label.Add(HudElements.Text(level.Title, "map-node-title"));
+            label.Add(HudElements.Text(boss ? "NIVEL JEFE" : $"Paso {level.AtlasStep} del Atlas", "map-node-step"));
+            node.Add(label);
             node.RegisterCallback<ClickEvent>(_ => Select(level));
             board.Add(node);
             nodes.Add((level, node));
         }
 
-        /// <summary>Nodes along a gentle wave from left to right; the boss at the end.</summary>
+        /// <summary>
+        /// Nodes zigzag low/high from left to right with the boss a little further away. Each label goes on
+        /// the outer side (below the low nodes, above the high ones): both neighbours of a node are on the
+        /// other side, so the path never runs over a label.
+        /// </summary>
         private void LayoutNodes()
         {
             Rect rect = board.contentRect;
             if (rect.width < 10) return;
             var centres = new List<Vector2>();
             int count = nodes.Count;
+            float bossGap = 1.45f; // the last step is wider than the others
+            float step = (rect.width - 210f) / (count - 2 + bossGap);
             for (int i = 0; i < count; i++)
             {
-                float x = Mathf.Lerp(95f, rect.width - 105f, i / (float)(count - 1));
-                float y = rect.height * 0.5f + Mathf.Sin(i * 1.15f + 0.4f) * rect.height * 0.26f - 20f;
+                bool boss = nodes[i].Level == BossLevel;
+                bool high = i % 2 == 1;
+                float x = 100f + step * (boss ? count - 2 + bossGap : i);
+                float y = rect.height * 0.5f + (high ? -1f : 1f) * rect.height * 0.2f;
                 centres.Add(new Vector2(x, y));
                 VisualElement node = nodes[i].Node;
-                float radius = nodes[i].Level == BossLevel ? 62f : 48f;
+                float radius = boss ? 62f : 48f;
                 node.style.left = x - 75f;
                 node.style.top = y - radius;
+                VisualElement label = node.Q(className: "map-node-label");
+                label.EnableInClassList("map-node-label--above", high);
+                label.EnableInClassList("map-node-label--below", !high);
             }
             path.SetPoints(centres, ForecastWorld.Levels.Count(l => l.IsBuilt) - 1);
         }
