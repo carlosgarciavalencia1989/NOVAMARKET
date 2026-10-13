@@ -30,12 +30,18 @@ Assets/NOVAMARKET/
                        NotificationFeed, FacilityDirectory, SampleOperationData, HudFormat) and the CEDI
                        operation (CediOperationSimulation, TruckAgent, ForkliftAgent, CediLayout,
                        ForkliftNetwork, RouteMover, Polyline, DockManager, GateLane, CediCatalog)
-        Operation/     Scene side of the operation (CediOperationRunner, VehicleVisual, GateBarrier)
-        UI/            HUD (HudController, HudDataSource, *View classes, HudIcon, minimap)
+            Planning/  Season planning engine, namespace NovaMarket.Simulation.Planning (PlanningSimulation,
+                       PlanningSeason, DemandPlan, AtlasSuggestion, PlanningPolicies, SeasonResult,
+                       PlanningLessons, PlanningOperationBridge, PlanningLevelData, catalogue and rules)
+        Operation/     Scene side of the operation (CediOperationRunner, VehicleVisual, GateBarrier, RackStockDisplay)
+        UI/            HUD (HudController, HudDataSource, *View classes, HudIcon, minimap) and the planning
+                       level UI (PlanningLevelController, PlanningPanelView, AtlasDialogView, EventDialogView,
+                       SeasonResultView, ModalLayer, CharacterBadge, HudElements)
         Editor/        Editor-only tools (CediEnvironmentBuilder + its .Infrastructure/.Urban parts, EnvironmentMeshes,
                        CediHudSetup + its .Hud part)
     Tests/
-        EditMode/      NUnit tests run from the Test Runner (camera rig, Simulation/, Interaction/, UI/)
+        EditMode/      NUnit tests run from the Test Runner (camera rig, Simulation/ and Simulation/Planning/,
+                       Interaction/, UI/)
     Prefabs/
         Buildings/  Characters/
         Vehicles/      Truck_Receiving, Turbo_Dispatch, Forklift (simple shapes, pivot at ground centre, front +Z)
@@ -52,13 +58,15 @@ Assets/NOVAMARKET/
     Terrain/           Generated: TerrainData, terrain layers and their textures
     Rendering/         Volume profiles (VP_CEDI_Medellin)
     UI/                UI assets
-        Hud/           Hud.uxml, Hud.uss, HudTheme.tss, HudPanelSettings
+        Hud/           Hud.uxml, Hud.uss, Planning.uss, HudTheme.tss, HudPanelSettings
         Fonts/         Oswald (SIL OFL, licence in Oswald-OFL.txt) and its Oswald_SDF font asset
     Data/              ScriptableObject asset instances
-    Documentation/     Project documentation (this file)
+    Documentation/     Project documentation (this file, SIMULACION_PLANEACION.md: spec of the planning level)
 ```
 
-Code uses the `NovaMarket.*` namespaces matching the `Scripts/` subfolders.
+Code uses the `NovaMarket.*` namespaces matching the `Scripts/` subfolders; a nested folder adds its
+name (`Scripts/Simulation/Planning/` → `NovaMarket.Simulation.Planning`, tests in
+`NovaMarket.Tests.Simulation.Planning`).
 
 Assemblies: `NovaMarket.Runtime` (everything under `Scripts/`, references `Unity.InputSystem`),
 `NovaMarket.Editor` (`Scripts/Editor/`, Editor only, references URP) and
@@ -109,8 +117,10 @@ CEDI_Medellin                      root of all scenario content
         SelectionRing              SelectionRing mesh, M_UI_SelectionRing
         MinimapCamera              MinimapRenderer: top-down orthographic camera, renders a few frames
         EventSystem                EventSystem + InputSystemUIInputModule
-        Operation                  CediOperationRunner; spawns Vehicles/ and StagedPallets_* in Play
-        HUD                        UIDocument (Hud.uxml) + HudDataSource + HudController
+        Operation                  CediOperationRunner + RackStockDisplay; spawn Vehicles/, StagedPallets_*
+                                   and RackPallets/ in Play
+        HUD                        UIDocument (Hud.uxml) + HudDataSource (scenario: SeasonPlanning) +
+                                   HudController + PlanningLevelController
     Debug
         ScaleMarkers               1 m cube, 5 m and 10 m poles
 ```
@@ -258,14 +268,59 @@ Layout in `UI/Hud/Hud.uxml`, styles in `Hud.uss`, scaling 1920 × 1080 reference
 `SelectionController` and the `StrategyCameraController` (`FocusOn` makes the camera glide).
 Views subscribe to the state's `Changed` events, so they refresh only when data changes.
 
+## Planning level: "Temporada de fin de año" (level I)
+
+First playable level, specified in `Documentation/SIMULACION_PLANEACION.md`. The player orders
+boxes of 4 real SKUs for 16 weeks (September–December) and closes each week; the results are
+compared with the Atlas reference policy played with the same seed.
+
+`HudDataSource.scenario` chooses the HUD state: `SeasonPlanning` (default; `PlanningLevelData`)
+or `SampleOperation` (the earlier illustrative S&OP numbers with random trucks).
+
+Engine (`Scripts/Simulation/Planning/`, plain C#):
+
+- `PlanningCatalog` (SKUs and monthly history), `DemandPlan` (statistical weekly mean, rack
+  capacity), `PlanningRules` (calendar, cost rates, Z = 1.65, game-over and star thresholds).
+- `PlanningSeason(seed)`: event week shift, clipped demand noise, event multipliers, purchase cap.
+  The same seed gives the same season to the player and to the reference.
+- `PlanningSimulation`: inventory, transit, costs, service level; `CloseWeek(orders)` follows the
+  spec order (orders → demand and sales → costs → arrivals → closing → events). Events
+  (`.Events` part) open an `EventDialog` that must be answered (`ResolveEvent`) before the next
+  close; after each week a character comments (`WeekComment`). Game over: cumulative service
+  below 85 % from week 4, or 3 weeks in a row with boxes on the floor.
+- `AtlasSuggestion`: periodic review with order-up-to level, with `Explain()` for the player.
+- `PlanningPolicies` (Atlas reference, scaling to the purchase cap), `SeasonResult` (stars,
+  gem, comparison) and `PlanningLessons` (automatic lessons).
+- `PlanningOperationBridge`: each arrived lot becomes a receiving truck (split above 12 pallets),
+  the week's sales become dispatch turbos (up to 7 pallets each), and the HUD shows positions
+  (boxes → pallets per SKU), budget (`SeasonBudget` minus costs), service level, closed weeks,
+  objectives and notices. The operation runs with `CediOperationSettings.ForPlanning()`: no random
+  trucks, positions owned by the plan, at most 12 trucks waiting to set off.
+- Tests in `Tests/EditMode/Simulation/Planning/`, including `PlanningBalanceTests` (200 seeds:
+  reference ≈ 92.6 % service, informed player ≈ 96.4 % and ≈ 19 % cheaper with mostly 3 stars,
+  no orders ≈ 16.7 %). Ignoring the events can end in game over (≈ 8 % of seeds for a player that
+  only copies the suggestion), which is the lesson of the level.
+
+UI (`Scripts/UI/`, styles in `UI/Hud/Planning.uss`, containers `planningPanel` and `modalLayer` in
+`Hud.uxml`): `PlanningLevelController` (on `Systems/HUD`; Inspector: `fixedSeed`, 0 = random)
+creates the season and wires `PlanningPanelView` (order plan, top centre: stock vs rack, transit
+with arrival week, plan of the next L+1 weeks with announced events marked, order field,
+"Sugerido del Atlas", "Usar todos los sugeridos", purchase cap, last comment, "Cerrar semana"),
+`AtlasDialogView`, `EventDialogView` and `SeasonResultView` (stars, gem, game over, table you vs
+Atlas, lessons, replay with a new seed). The office order "Abrir plan de pedidos" reopens the
+panel. `RackStockDisplay` (on `Systems/Operation`) puts each SKU's pallets on top of its rack row
+(RackRow_01 = labial … RackRow_04 = crema) and the overflow on the aisle floor.
+
+The Oswald font has no σ, Σ, ⌈⌉, ★ or →: texts spell them out (stars are `HudIcon` drawings).
+
 ## Not implemented yet
 
-- Concrete data types (CompanyData, ScenarioData, ... RoleData)
-- Operation numbers are illustrative; no forecasting, MRP or DDMRP drives arrivals yet
+- Concrete data types (CompanyData, ScenarioData, ... RoleData); the planning SKUs live in code
+- Forecasting, MRP and DDMRP levels (only the season planning level exists)
 - Box/drag selection, people, order effects in the world, truck-to-truck collision avoidance in the yard
 - Final art for CEDI Medellín (environment is a procedural blockout; no purchased assets)
 - Final vehicle models (current prefabs are simple shapes), characters
 - ERP, Excel integration, database
 - AI, Mentor
 - S&OP, advanced simulation
-- Missions and events
+- Mission/level selection, saved progress and gems between levels; character art (badges are initials)

@@ -84,7 +84,9 @@ Gemas con forma, color y valor distintos por nivel.
 - Todo el contenido del proyecto vive en `Assets/NOVAMARKET/`. No toques el contenido de la
   plantilla URP (`Assets/Scenes/SampleScene.unity`, `Assets/TutorialInfo/`, `Assets/Readme.asset`).
 - Los namespaces son `NovaMarket.<Carpeta>`, igual que `Scripts/<Carpeta>/` (Core, Data,
-  Interaction, CameraControl, Simulation, Operation, UI). Las pruebas usan `NovaMarket.Tests.<Carpeta>`.
+  Interaction, CameraControl, Simulation, Operation, UI). Una subcarpeta agrega su nombre
+  (`Scripts/Simulation/Planning/` → `NovaMarket.Simulation.Planning`). Las pruebas usan
+  `NovaMarket.Tests.<Carpeta>`.
 - Los tipos de datos derivan de `NovaMarket.Data.NovaDataAsset` y usan
   `[CreateAssetMenu(menuName = NovaDataAsset.MenuRoot + "<Tipo>")]`; las instancias van en
   `Assets/NOVAMARKET/Data/`.
