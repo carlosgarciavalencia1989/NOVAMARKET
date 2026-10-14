@@ -330,8 +330,8 @@
 .sheet-status {
     flex-direction: row;
     align-items: center;
-    height: 30px;
-    padding: 0 14px;
+    min-height: 30px;
+    padding: 4px 14px;
     background-color: var(--sheet-green-dark);
 }
 
@@ -340,7 +340,7 @@
     flex-shrink: 1;
     font-size: 15px;
     color: rgb(232, 244, 236);
-    overflow: hidden;
+    white-space: normal;
 }
 
 .sheet-status--error .sheet-status-text {
@@ -398,4 +398,34 @@
 .formula-field .unity-text-element,
 .cell-editor .unity-text-element {
     font-size: 16px;
+}
+
+/* Cells Andrés flagged after a delivery (badly corrected, or good data marked by mistake). Declared after
+   "marked" so a marked cell that is also flagged shows red. */
+.sheet-cell--flagged {
+    background-color: rgb(255, 214, 208);
+    border-width: 2px;
+    border-color: rgb(200, 40, 30);
+}
+
+/* Outline of what was copied (Ctrl+C), until Esc or the next copy. */
+.sheet-copy {
+    position: absolute;
+    border-width: 2px;
+    border-color: rgb(40, 120, 200);
+}
+
+/* Explanation that appears when the pointer rests on a cell with an error or a note. */
+.sheet-tooltip {
+    position: absolute;
+    max-width: 440px;
+    padding: 8px 10px;
+    background-color: rgb(255, 252, 232);
+    border-width: 1px;
+    border-color: rgb(170, 150, 90);
+    border-radius: 3px;
+    color: var(--sheet-ink);
+    font-size: 15px;
+    white-space: normal;
+    -unity-font-definition: url("project://database/Assets/NOVAMARKET/UI/Fonts/Roboto_SDF.asset");
 }

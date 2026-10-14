@@ -142,7 +142,7 @@ namespace NovaMarket.Simulation.Levels
                 new[]
                 {
                     new CardBox($"Cajas {label}", data.Billed(code)[month], $"La cantidad de {code} en {label}, en CJ."),
-                    new CardBox("Unidades por caja", sku.UnitsPerBox, "Está en el maestro de materiales, columna «UN por caja».")
+                    new CardBox("Unidades por caja", sku.UnitsPerBox, "Está en el maestro de materiales, columna «Unidades por caja».")
                 },
                 $"Unidades {label}", values => values[0] * values[1], mode);
         }

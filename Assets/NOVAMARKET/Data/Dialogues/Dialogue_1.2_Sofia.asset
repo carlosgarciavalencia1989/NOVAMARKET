@@ -25,26 +25,30 @@ MonoBehaviour:
     order: 1
     mood: 2
     text: "Te pas\xE9 la facturaci\xF3n de {skus} SKU, pero viene con problemas:
-      ceros que no son reales, un pedido raro de un cliente, meses antes de un lanzamiento
-      y algo raro con las unidades. Rev\xEDsala antes de que Andr\xE9s la use."
+      meses en cero que no son reales, un pedido raro de un cliente, meses antes
+      de que un producto saliera a la venta y un SKU que no viene en unidades. Rev\xEDsala
+      antes de que Andr\xE9s la use."
   - key: pista-FalseZero
     order: 1
     mood: 0
-    text: "Un cero aislado entre meses con venta casi siempre es un agotado o un
-      error de registro. Si el mes es fuerte para el SKU, imputa con el mismo mes
-      de los otros a\xF1os."
+    text: "Un mes en cero en medio de meses con venta casi nunca es real: fue un
+      agotado o un error al registrar. Si es un mes fuerte para ese SKU (su temporada),
+      reempl\xE1zalo por el promedio del mismo mes en los otros a\xF1os."
   - key: pista-OneOffOrder
     order: 1
     mood: 0
-    text: "Si un mes se dispara, abre el detalle de facturas de ese mes en el ERP:
-      ah\xED ves qu\xE9 cliente lo compr\xF3 y por qu\xE9."
+    text: "Si un mes se dispara, abre en el ERP el detalle de facturas de ese mes
+      (clic en la cifra): ah\xED ves qu\xE9 cliente compr\xF3 y si fue un pedido
+      que no se va a repetir."
   - key: pista-PreLaunch
     order: 1
     mood: 0
-    text: "Cuando un SKU arranca con puros ceros, revisa si ya exist\xEDa. Los meses
-      antes del lanzamiento no son demanda: se excluyen."
+    text: "Si un SKU empieza con varios meses en cero, revisa cu\xE1ndo sali\xF3
+      a la venta. Los meses antes del lanzamiento no son demanda: se dejan vac\xEDos
+      (Excluir), no en cero."
   - key: pista-UnitsInBoxes
     order: 1
     mood: 0
-    text: "Mira la columna UM. Si un SKU dice CJ y los dem\xE1s UN, est\xE1 en cajas.
-      El maestro de materiales dice cu\xE1ntas unidades trae cada caja."
+    text: "Revisa la unidad de empaque en el Maestro de materiales. Si un SKU se
+      factura en cajas (CJ) y los dem\xE1s en unidades (UN), multiplica cada mes
+      por sus unidades por caja para que toda la tabla quede en unidades."

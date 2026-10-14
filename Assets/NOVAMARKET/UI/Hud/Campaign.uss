@@ -1125,3 +1125,172 @@
 .card-box-field .unity-text-element {
     font-size: 16px;
 }
+
+/* Result of 1.2: one block per problem (where, type, action and value: yours / right) and the good cells touched. */
+.result-section {
+    margin-bottom: 6px;
+}
+
+.issue-table {
+    margin: 2px 0 6px 0;
+}
+
+.issue-row {
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.issue-row--head {
+    border-bottom-width: 1px;
+    border-color: var(--gold-dark);
+    padding-bottom: 2px;
+}
+
+.issue-row--head .issue-cell {
+    color: var(--gold-light);
+    font-size: 13px;
+}
+
+.issue-block {
+    padding: 6px 8px;
+    margin-top: 4px;
+    border-left-width: 3px;
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.issue-block--ok {
+    border-color: var(--green);
+}
+
+.issue-block--wrong {
+    border-color: var(--red);
+}
+
+.issue-cell {
+    font-size: 15px;
+    color: var(--text);
+    white-space: normal;
+    padding-right: 10px;
+}
+
+.issue-cell--where {
+    width: 250px;
+}
+
+.issue-cell--kind {
+    width: 210px;
+}
+
+.issue-cell--action {
+    width: 170px;
+}
+
+.issue-cell--value {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.issue-where {
+    flex-direction: row;
+    align-items: center;
+}
+
+.issue-where .hud-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 6px;
+    flex-shrink: 0;
+}
+
+.issue-block--ok .issue-where .hud-icon {
+    color: var(--green);
+}
+
+.issue-block--wrong .issue-where .hud-icon {
+    color: var(--red);
+}
+
+.issue-where-text {
+    font-size: 15px;
+    color: var(--text-bright);
+    -unity-font-style: bold;
+    white-space: normal;
+    flex-shrink: 1;
+}
+
+.issue-mine {
+    font-size: 15px;
+    white-space: normal;
+}
+
+.issue-mine--ok {
+    color: var(--green);
+}
+
+.issue-mine--wrong {
+    color: var(--red);
+}
+
+.issue-right {
+    font-size: 15px;
+    color: var(--green);
+    white-space: normal;
+}
+
+.issue-message {
+    margin-top: 4px;
+    font-size: 15px;
+    color: var(--text-bright);
+    white-space: normal;
+}
+
+.issue-atlas {
+    margin-top: 2px;
+    font-size: 13px;
+    color: var(--text-dim);
+    white-space: normal;
+}
+
+.good-row {
+    flex-direction: row;
+    align-items: flex-start;
+    margin: 4px 0;
+}
+
+.good-row .hud-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    color: var(--amber);
+    flex-shrink: 0;
+}
+
+.good-text {
+    flex-shrink: 1;
+    font-size: 15px;
+    color: var(--text-bright);
+    white-space: normal;
+}
+
+/* Andrés's warning before delivering with marked problems still uncorrected. */
+.deliver-dialog {
+    width: 720px;
+}
+
+.deliver-warning {
+    margin: 10px 0 4px 0;
+    padding: 8px 10px;
+    border-left-width: 3px;
+    border-color: var(--amber);
+    background-color: rgba(232, 176, 74, 0.08);
+}
+
+/* The default theme gives labels vertical margins: keep the lines of a cell together. */
+.issue-block Label,
+.issue-row Label,
+.good-row Label {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 1px;
+    padding-bottom: 1px;
+}

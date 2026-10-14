@@ -145,7 +145,8 @@ namespace NovaMarket.Tests.Simulation.Levels
             LevelResult result = level.Deliver();
             Assert.IsTrue(result.Passed);
             Assert.IsFalse(result.Criteria[1].Achieved);
-            StringAssert.Contains("acción", result.Criteria[1].Detail);
+            StringAssert.Contains("escogiste «Imputar», pero son meses antes del lanzamiento: la acción correcta es «Excluir»",
+                result.Criteria[1].Detail);
         }
 
         [Test]

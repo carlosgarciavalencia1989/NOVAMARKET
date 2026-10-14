@@ -27,6 +27,7 @@ namespace NovaMarket.UI.Sheet
         private readonly List<string> tabNames = new List<string>();
         private Workbook book;
         private bool syncingBar;
+        private string info;
 
         public SheetWindowView(VisualElement windowLayer, Action onClose)
         {
@@ -49,6 +50,10 @@ namespace NovaMarket.UI.Sheet
             toolbar.Add(HudElements.Box("sheet-tool-separator"));
             toolbar.Add(Tool("+ decimal", () => ApplyFormat(f => Decimals(f, +1))));
             toolbar.Add(Tool("− decimal", () => ApplyFormat(f => Decimals(f, -1))));
+            toolbar.Add(HudElements.Box("sheet-tool-separator"));
+            toolbar.Add(Tool("Copiar", () => WithGrid(grid.Copy)));
+            toolbar.Add(Tool("Pegar", () => WithGrid(() => grid.Paste())));
+            toolbar.Add(Tool("Pegar valores", () => WithGrid(() => grid.Paste(valuesOnly: true))));
             levelTools = HudElements.Box("sheet-level-tools");
             toolbar.Add(levelTools);
             toolbar.Add(HudElements.Text("Funciones: SUMA · PROMEDIO · ABS · SI · DESVEST.P   ·   separa con ; y usa coma decimal",
@@ -74,6 +79,12 @@ namespace NovaMarket.UI.Sheet
 
             grid = new SheetGridView();
             grid.StateChanged += UpdateBars;
+            grid.Notice += message =>
+            {
+                info = message;
+                UpdateBars();
+            };
+            grid.HoverNote = (tab, cell) => SheetErrorHelp.Explain(tab, cell, OriginalDataSheet) ?? CellNote?.Invoke(tab, cell);
             grid.SheetSwitched += _ => RebuildTabs();
             emptyMessage = HudElements.Text("La hoja está vacía. Abre NOVA ERP, haz la consulta y pulsa «Descargar a hoja»: " +
                                             "cada descarga llega como una pestaña nueva.", "sheet-empty");
@@ -98,20 +109,49 @@ namespace NovaMarket.UI.Sheet
         public bool IsVisible => !Root.ClassListContains("hidden");
         public SheetGridView Grid => grid;
 
-        /// <summary>Adds a button of the level to the toolbar ("Marcar problema" in 1.2), or removes them with null.</summary>
+        /// <summary>
+        /// The tab with the data as it came from the ERP: the explanation of a circular reference suggests
+        /// using it. Null = no suggestion.
+        /// </summary>
+        public string OriginalDataSheet { get; set; }
+
+        /// <summary>A note of the level for a cell (why Andrés flagged it), shown in the status bar and on hover.</summary>
+        public Func<Worksheet, CellAddress, string> CellNote { get; set; }
+
+        /// <summary>Puts a button of the level in the toolbar ("Marcar problema" in 1.2), or removes them with null.</summary>
         public Button SetLevelTool(string text, Action action)
         {
             levelTools.Clear();
-            if (text == null) return null;
+            return text == null ? null : AddLevelTool(text, action);
+        }
+
+        /// <summary>Adds one more button of the level to the toolbar.</summary>
+        public Button AddLevelTool(string text, Action action)
+        {
             Button button = Tool(text, action).WithClass("sheet-tool--level");
             levelTools.Add(button);
             return button;
+        }
+
+        /// <summary>A message of the level for the status bar (it stays until the next one).</summary>
+        public void SetInfo(string message)
+        {
+            info = message;
+            UpdateBars();
+        }
+
+        /// <summary>Redraws the grid and the status bar (after the level changes its notes or highlights).</summary>
+        public void RefreshNotes()
+        {
+            grid.Refresh();
+            UpdateBars();
         }
 
         public void Bind(Workbook workbook, string file)
         {
             if (book != null) book.Changed -= OnBookChanged;
             book = workbook;
+            info = null;
             book.Changed += OnBookChanged;
             fileName.text = file;
             tabNames.Clear();
@@ -139,6 +179,12 @@ namespace NovaMarket.UI.Sheet
         }
 
         private static Button Tool(string text, Action action) => new Button(action) { text = text }.WithClass("sheet-tool");
+
+        private void WithGrid(Action action)
+        {
+            action();
+            grid.Focus();
+        }
 
         private static CellFormat Decimals(CellFormat format, int delta)
         {
@@ -236,21 +282,21 @@ namespace NovaMarket.UI.Sheet
                 return;
             }
 
-            string error = sheet.FormulaError(grid.Active);
-            CellValue value = sheet.Value(grid.Active);
+            string error = SheetErrorHelp.Explain(sheet, grid.Active, OriginalDataSheet);
+            string note = CellNote?.Invoke(sheet, grid.Active);
             if (error != null)
             {
                 statusBar.EnableInClassList("sheet-status--error", true);
-                statusText.text = $"Fórmula de {grid.Active}: {error}";
+                statusText.text = error;
             }
-            else if (value.IsError)
+            else if (note != null)
             {
                 statusBar.EnableInClassList("sheet-status--error", true);
-                statusText.text = $"{grid.Active} muestra {value}: {ErrorHelp(value.Error)}";
+                statusText.text = note;
             }
             else
             {
-                statusText.text = "Listo";
+                statusText.text = info ?? "Listo";
             }
             statusStats.text = Stats(sheet, selection);
         }
@@ -279,16 +325,5 @@ namespace NovaMarket.UI.Sheet
                 : $"Promedio: {SheetNumber.Format(sum / numbers, CellFormat.Number(2))}    Recuento: {count}    " +
                   $"Suma: {SheetNumber.Format(sum, CellFormat.Number(sum == Math.Floor(sum) ? 0 : 2))}";
         }
-
-        private static string ErrorHelp(SheetError error) => error switch
-        {
-            SheetError.DivisionByZero => "una división entre cero (o un promedio sin números).",
-            SheetError.Value => "un texto donde se esperaba un número.",
-            SheetError.Reference => "una referencia a una celda u hoja que no existe.",
-            SheetError.Name => "una función que no existe. Revisa el nombre (SUMA, PROMEDIO, ABS, SI, DESVEST.P).",
-            SheetError.Circular => "la fórmula depende de sí misma (referencia circular).",
-            SheetError.Number => "un resultado que no es un número válido.",
-            _ => "la fórmula no se puede leer."
-        };
     }
 }

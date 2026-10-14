@@ -79,7 +79,8 @@ namespace NovaMarket.Simulation.Levels
         public const double VisibleDamage = 0.02;
 
         public LevelResult(LevelInfo level, IReadOnlyList<StarCriterion> criteria, bool excelBadge,
-            IReadOnlyList<DialogueLine> debrief, IReadOnlyList<string> lessons, IReadOnlyList<SkuImpact> impact = null)
+            IReadOnlyList<DialogueLine> debrief, IReadOnlyList<string> lessons, IReadOnlyList<SkuImpact> impact = null,
+            CleaningReview cleaning = null)
         {
             if (criteria == null || criteria.Count != 3) throw new ArgumentException("A level has three stars.", nameof(criteria));
             Level = level;
@@ -88,6 +89,7 @@ namespace NovaMarket.Simulation.Levels
             Debrief = debrief ?? Array.Empty<DialogueLine>();
             Lessons = lessons ?? Array.Empty<string>();
             Impact = impact ?? Array.Empty<SkuImpact>();
+            Cleaning = cleaning;
         }
 
         public LevelInfo Level { get; }
@@ -101,6 +103,9 @@ namespace NovaMarket.Simulation.Levels
         public IReadOnlyList<DialogueLine> Debrief { get; }
         public IReadOnlyList<string> Lessons { get; }
         public IReadOnlyList<SkuImpact> Impact { get; }
+
+        /// <summary>Level 1.2: one row per problem and the good months touched by mistake (null in other levels).</summary>
+        public CleaningReview Cleaning { get; }
 
         public bool EarnedGem => Passed && Level.Gem != null;
 

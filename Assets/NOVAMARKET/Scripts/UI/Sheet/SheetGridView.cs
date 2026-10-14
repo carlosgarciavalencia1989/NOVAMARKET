@@ -30,6 +30,9 @@ namespace NovaMarket.UI.Sheet
         private readonly VisualElement activeBox;
         private readonly VisualElement fillTargetBox;
         private readonly VisualElement fillHandle;
+        private readonly VisualElement copyBox;
+        private readonly Label tooltip;
+        private readonly SheetClipboard clipboard = new SheetClipboard();
         private readonly TextField editor;
         private readonly Scroller vertical;
         private readonly Scroller horizontal;
@@ -63,6 +66,9 @@ namespace NovaMarket.UI.Sheet
         private bool syncingText;
         private Vector2 lastPointer;
         private IVisualElementScheduledItem autoScroll;
+        private Worksheet copySheet;
+        private CellRange? copyRange;
+        private (int Column, int Row) hovered = (-1, -1);
 
         public SheetGridView()
         {
@@ -77,6 +83,8 @@ namespace NovaMarket.UI.Sheet
             activeBox = Overlay("sheet-active");
             fillTargetBox = Overlay("sheet-fill-target");
             fillHandle = Overlay("fill-handle");
+            copyBox = Overlay("sheet-copy");
+            copyBox.style.display = DisplayStyle.None;
 
             columnStrip = HudElements.Box("sheet-head-strip");
             rowStrip = HudElements.Box("sheet-head-strip");
@@ -98,11 +106,17 @@ namespace NovaMarket.UI.Sheet
             Add(vertical);
             Add(horizontal);
 
+            tooltip = HudElements.Text(string.Empty, "sheet-tooltip");
+            tooltip.pickingMode = PickingMode.Ignore;
+            tooltip.style.display = DisplayStyle.None;
+            Add(tooltip);
+
             RegisterCallback<GeometryChangedEvent>(_ => Refresh());
             RegisterCallback<WheelEvent>(OnWheel);
             RegisterCallback<PointerDownEvent>(OnPointerDown);
             RegisterCallback<PointerMoveEvent>(OnPointerMove);
             RegisterCallback<PointerUpEvent>(OnPointerUp);
+            RegisterCallback<PointerLeaveEvent>(_ => HideTooltip());
             RegisterCallback<KeyDownEvent>(OnKeyDown);
             RegisterCallback<NavigationMoveEvent>(StopNavigation);
             RegisterCallback<NavigationSubmitEvent>(StopNavigation);
@@ -117,6 +131,15 @@ namespace NovaMarket.UI.Sheet
         /// <summary>Cells drawn with the "marked" highlight (problems marked in level 1.2); null = none.</summary>
         public Func<Worksheet, CellAddress, bool> IsMarked { get; set; }
 
+        /// <summary>Cells drawn with the "review" highlight (what Andrés flagged after a delivery); null = none.</summary>
+        public Func<Worksheet, CellAddress, bool> IsFlagged { get; set; }
+
+        /// <summary>The explanation shown when the pointer rests on a cell (errors, flagged cells); null = nothing.</summary>
+        public Func<Worksheet, CellAddress, string> HoverNote { get; set; }
+
+        /// <summary>Raised after copying or pasting with a short message for the status bar.</summary>
+        public event Action<string> Notice;
+
         public Worksheet Sheet => sheet;
         public CellAddress Active => anchor;
         public CellRange Selection => new CellRange(anchor, cursor);
@@ -128,6 +151,7 @@ namespace NovaMarket.UI.Sheet
 
         public void SetSheet(Worksheet worksheet)
         {
+            HideTooltip();
             if (sheet != null) selections[sheet] = (anchor, cursor);
             sheet = worksheet;
             (anchor, cursor) = sheet != null && selections.TryGetValue(sheet, out var saved)
@@ -265,6 +289,7 @@ namespace NovaMarket.UI.Sheet
                     cell.EnableInClassList("sheet-cell--error", value.IsError);
                     cell.EnableInClassList("sheet-cell--center", value.IsBoolean);
                     cell.EnableInClassList("sheet-cell--marked", IsMarked != null && sheet != null && IsMarked(sheet, address));
+                    cell.EnableInClassList("sheet-cell--flagged", IsFlagged != null && sheet != null && IsFlagged(sheet, address));
                     column += span;
                 }
             }
@@ -292,6 +317,17 @@ namespace NovaMarket.UI.Sheet
             else
             {
                 fillTargetBox.style.display = DisplayStyle.None;
+            }
+
+            if (copyRange.HasValue && copySheet == sheet)
+            {
+                Rect copied = RangeRect(copyRange.Value);
+                Place(copyBox, copied.x - 1, copied.y - 1, copied.width + 2, copied.height + 2);
+                copyBox.style.display = DisplayStyle.Flex;
+            }
+            else
+            {
+                copyBox.style.display = DisplayStyle.None;
             }
 
             bool showEditor = IsEditing && editSheet == sheet;
@@ -385,6 +421,7 @@ namespace NovaMarket.UI.Sheet
         private void OnScroll(float x, float y)
         {
             if (updatingScrollers) return;
+            HideTooltip();
             scrollX = x;
             scrollY = y;
             Refresh();
@@ -392,6 +429,7 @@ namespace NovaMarket.UI.Sheet
 
         private void OnWheel(WheelEvent evt)
         {
+            HideTooltip();
             float steps = Mathf.Sign(evt.delta.y) * (evt.shiftKey ? 2 * DefaultColumnWidth : 3 * RowHeight);
             if (evt.shiftKey) scrollX += steps;
             else scrollY += steps;
@@ -418,6 +456,7 @@ namespace NovaMarket.UI.Sheet
 
         private void OnPointerDown(PointerDownEvent evt)
         {
+            HideTooltip();
             if (sheet == null || evt.button != 0 || IsInScrollers(evt.target)) return;
             Vector2 local = this.WorldToLocal(evt.position);
             (int column, int row) = Hit(local);
@@ -479,7 +518,12 @@ namespace NovaMarket.UI.Sheet
 
         private void OnPointerMove(PointerMoveEvent evt)
         {
-            if (!selecting && !filling && !picking) return;
+            if (!selecting && !filling && !picking)
+            {
+                UpdateHover(this.WorldToLocal(evt.position));
+                return;
+            }
+            HideTooltip();
             lastPointer = this.WorldToLocal(evt.position);
             autoScroll ??= schedule.Execute(AutoScroll).Every(60);
             autoScroll.Resume();
@@ -559,6 +603,94 @@ namespace NovaMarket.UI.Sheet
             return new CellRange(new CellAddress(point.Column, source.Start.Row), source.End);
         }
 
+        // ------------------------------------------------------------------ copy and paste
+
+        /// <summary>Ctrl+C: copies the selection (a whole row is trimmed to its used columns).</summary>
+        public void Copy()
+        {
+            if (sheet == null) return;
+            if (IsEditing) CommitEdit(move: false);
+            copyRange = clipboard.Copy(sheet, Selection);
+            copySheet = sheet;
+            GUIUtility.systemCopyBuffer = clipboard.Text;
+            Refresh();
+            Notice?.Invoke($"Copiaste {copyRange}. Selecciona la celda donde empieza el destino y pulsa Ctrl+V " +
+                           "(Ctrl+Shift+V pega solo los valores).");
+        }
+
+        /// <summary>
+        /// Ctrl+V (or Ctrl+Shift+V for values only): pastes at the top-left cell of the selection. Text
+        /// copied in another program (tabs between columns) is pasted as if typed.
+        /// </summary>
+        public void Paste(bool valuesOnly = false)
+        {
+            if (sheet == null) return;
+            if (IsEditing) CommitEdit(move: false);
+            CellAddress at = Selection.Start;
+            string outside = GUIUtility.systemCopyBuffer;
+            bool external = !string.IsNullOrEmpty(outside) && (!clipboard.HasContent || outside != clipboard.Text);
+            CellRange? pasted = external ? SheetClipboard.PasteText(sheet, at, outside) : clipboard.Paste(sheet, at, valuesOnly);
+            if (!pasted.HasValue)
+            {
+                Notice?.Invoke(clipboard.HasContent || external
+                    ? "No cabe ahí: lo copiado se saldría de la hoja."
+                    : "Todavía no copiaste nada: selecciona celdas o una fila y pulsa Ctrl+C.");
+                return;
+            }
+            anchor = pasted.Value.Start;
+            cursor = pasted.Value.End;
+            FitNewColumns();
+            Refresh();
+            StateChanged?.Invoke();
+            Notice?.Invoke(external ? $"Pegaste en {pasted} el texto copiado de otro programa."
+                : valuesOnly ? $"Pegaste solo los valores en {pasted}, sin fórmulas."
+                : $"Pegaste en {pasted}. Las fórmulas se movieron igual que en Excel.");
+        }
+
+        /// <summary>Forgets the dashed copy outline (Esc, as in a spreadsheet).</summary>
+        public void ClearCopyOutline()
+        {
+            copyRange = null;
+            Refresh();
+        }
+
+        // ------------------------------------------------------------------ hover note
+
+        private void UpdateHover(Vector2 local)
+        {
+            if (sheet == null || HoverNote == null || selecting || filling || picking)
+            {
+                HideTooltip();
+                return;
+            }
+            (int column, int row) = Hit(local);
+            if (column < 0 || row < 0)
+            {
+                HideTooltip();
+                return;
+            }
+            if ((column, row) != hovered)
+            {
+                hovered = (column, row);
+                string note = HoverNote(sheet, new CellAddress(column, row));
+                tooltip.text = note ?? string.Empty;
+                tooltip.style.display = string.IsNullOrEmpty(note) ? DisplayStyle.None : DisplayStyle.Flex;
+            }
+            if (tooltip.style.display == DisplayStyle.None) return;
+            // Below and to the right of the pointer, kept inside the grid.
+            float x = Mathf.Min(local.x + 16, Mathf.Max(0, layout.width - 460));
+            float y = local.y + 22 + 120 > layout.height ? local.y - 130 : local.y + 22;
+            tooltip.style.left = x;
+            tooltip.style.top = Mathf.Max(0, y);
+            tooltip.BringToFront();
+        }
+
+        private void HideTooltip()
+        {
+            hovered = (-1, -1);
+            tooltip.style.display = DisplayStyle.None;
+        }
+
         // ------------------------------------------------------------------ keyboard
 
         private void StopNavigation(EventBase evt)
@@ -572,8 +704,20 @@ namespace NovaMarket.UI.Sheet
         {
             if (sheet == null || IsEditing) return;
             bool handled = true;
+            if (evt.actionKey && (evt.keyCode == KeyCode.C || evt.keyCode == KeyCode.V))
+            {
+                if (evt.keyCode == KeyCode.C) Copy();
+                else Paste(valuesOnly: evt.shiftKey);
+                evt.StopPropagation();
+                focusController?.IgnoreEvent(evt);
+                return;
+            }
             switch (evt.keyCode)
             {
+                case KeyCode.Escape:
+                    if (copyRange.HasValue) ClearCopyOutline();
+                    else handled = false;
+                    break;
                 case KeyCode.UpArrow: Move(0, -1, evt.shiftKey); break;
                 case KeyCode.DownArrow: Move(0, 1, evt.shiftKey); break;
                 case KeyCode.LeftArrow: Move(-1, 0, evt.shiftKey); break;

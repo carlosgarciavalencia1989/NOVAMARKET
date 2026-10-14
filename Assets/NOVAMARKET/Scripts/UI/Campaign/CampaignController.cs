@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using NovaMarket.CameraControl;
 using NovaMarket.Data;
 using NovaMarket.Simulation;
@@ -51,6 +54,7 @@ namespace NovaMarket.UI.Campaign
         private PortfolioModel portfolio;
         private LevelInfo level;
         private WorkspaceWindow window;
+        private Dictionary<(string Code, int Month), string> reviewNotes;
 
         /// <summary>The level being played, or null in the menus.</summary>
         public LevelSession Session { get; private set; }
@@ -101,7 +105,7 @@ namespace NovaMarket.UI.Campaign
             markView = new IssueMarkView(modal);
             cardView = new FormulaCardView(modal);
             helpView = new AtlasHelpView(modal);
-            resultView = new LevelResultView(modal, campaign, () => StartLevel(level), ShowMap);
+            resultView = new LevelResultView(modal, campaign, () => StartLevel(level), ShowMap, KeepWorking);
 
             ShowMenu();
         }
@@ -178,8 +182,11 @@ namespace NovaMarket.UI.Campaign
             {
                 clean.MarksChanged += OnMarksChanged;
                 sheet.SetLevelTool("Marcar problema", OpenMark);
+                sheet.AddLevelTool("Quitar marca", RemoveMark);
                 sheet.Grid.IsMarked = (tab, cell) =>
                     CleanDataLevel.TryLocate(tab, cell, out string code, out int month) && clean.MarkAt(code, month) != null;
+                sheet.Grid.IsFlagged = (tab, cell) => ReviewNote(tab, cell) != null;
+                sheet.CellNote = ReviewNote;
             }
             CampaignHudData.StartLevel(Mission, Session);
 
@@ -204,19 +211,34 @@ namespace NovaMarket.UI.Campaign
             if (Session is CleanDataLevel clean) clean.MarksChanged -= OnMarksChanged;
             sheet.SetLevelTool(null, null);
             sheet.Grid.IsMarked = null;
+            sheet.Grid.IsFlagged = null;
+            sheet.CellNote = null;
+            sheet.OriginalDataSheet = null;
+            reviewNotes = null;
             Session = null;
         }
 
         private void RefreshObjectives()
         {
-            if (Session != null) CampaignHudData.Refresh(Mission, Session);
+            if (Session == null) return;
+            CampaignHudData.Refresh(Mission, Session);
+            if (Session is CleanDataLevel clean)
+            {
+                sheet.OriginalDataSheet = clean.RawSheet;
+                if (reviewNotes != null) reviewNotes = clean.ReviewNotes();
+            }
         }
 
         private void OnMarksChanged()
         {
             RefreshObjectives();
-            sheet.Grid.Refresh();
+            sheet.RefreshNotes();
         }
+
+        /// <summary>After a delivery of 1.2: why Andrés flagged a cell of the sheet, or null.</summary>
+        private string ReviewNote(Worksheet tab, CellAddress cell) =>
+            reviewNotes != null && CleanDataLevel.TryLocate(tab, cell, out string code, out int month)
+            && reviewNotes.TryGetValue((code, month), out string note) ? note : null;
 
         private void Notice(string message, NotificationSeverity severity) =>
             dataSource.State.Notifications.Push(message, severity, dataSource.Now);
@@ -231,12 +253,26 @@ namespace NovaMarket.UI.Campaign
             CellAddress cell = sheet.Grid.Active;
             if (!CleanDataLevel.TryLocate(tab, cell, out string code, out int month))
             {
-                Notice("Selecciona la celda de un mes de un SKU (en la facturación o en «Serie limpia») y pulsa «Marcar problema».",
-                    NotificationSeverity.Warning);
+                sheet.SetInfo($"{cell} no es el mes de un SKU. Selecciona la celda de un mes (en la facturación o en " +
+                              "«Serie limpia») y pulsa «Marcar problema».");
                 return;
             }
             sheet.Grid.CommitEdit(move: false);
             markView.Show(clean, code, month, tab.Display(cell), OpenCards);
+        }
+
+        /// <summary>"Quitar marca" on the active cell of the sheet (level 1.2).</summary>
+        public void RemoveMark()
+        {
+            if (!(Session is CleanDataLevel clean)) return;
+            CellAddress cell = sheet.Grid.Active;
+            if (!CleanDataLevel.TryLocate(sheet.Grid.Sheet, cell, out string code, out int month) || clean.MarkAt(code, month) == null)
+            {
+                sheet.SetInfo($"{cell} no tiene marca. Las celdas marcadas se ven en naranja.");
+                return;
+            }
+            clean.Unmark(code, month);
+            sheet.SetInfo($"Quitaste la marca de {code} {NovaMarket.Simulation.Portfolio.SalesCalendar.Label(month)}. El valor de la celda no cambió.");
         }
 
         private void OpenCards(string code, int month, DataIssueKind kind)
@@ -267,10 +303,30 @@ namespace NovaMarket.UI.Campaign
             {
                 LevelResult result = Session.Deliver();
                 bool best = Progress.Record(result);
+                // From now on the sheet shows what Andrés flagged (it follows the player's corrections).
+                if (Session is CleanDataLevel clean) reviewNotes = clean.ReviewNotes();
                 RefreshObjectives();
+                sheet.RefreshNotes();
                 dialogue.Hide();
                 resultView.Show(result, best);
-            });
+            }, (Session as CleanDataLevel)?.UncorrectedWarning());
+        }
+
+        /// <summary>"Seguir trabajando": back to «Serie limpia» on the first cell Andrés flagged.</summary>
+        private void KeepWorking()
+        {
+            if (!(Session is CleanDataLevel clean) || reviewNotes == null) return;
+            OpenSheet(CleanDataLevel.CleanSheetName);
+            if (reviewNotes.Count == 0) return;
+            (string code, int month) = reviewNotes.Keys.OrderBy(k => k.Code, StringComparer.Ordinal).ThenBy(k => k.Month).First();
+            int row = HistoryTable.FindRow(clean.CleanSheet, code);
+            if (row >= 0)
+            {
+                var cell = new CellAddress(HistoryTable.MonthColumn(month), row);
+                sheet.Grid.Select(cell, cell);
+            }
+            sheet.SetInfo($"Andrés marcó en rojo {reviewNotes.Count} {(reviewNotes.Count == 1 ? "celda" : "celdas")} para revisar. " +
+                          "Selecciona una o pasa el mouse para ver qué pasó; «Quitar marca» borra una marca que pusiste por error.");
         }
 
         // ------------------------------------------------------------------ windows

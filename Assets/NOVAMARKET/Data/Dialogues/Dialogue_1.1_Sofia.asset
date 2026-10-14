@@ -24,12 +24,12 @@ MonoBehaviour:
   - key: intro
     order: 2
     mood: 0
-    text: "Hola. Necesito la facturaci\xF3n real de {codes}, de ene-23 a ago-26.
-      S\xE1cala del NOVA ERP, pantalla Facturaci\xF3n, y desc\xE1rgala a tu hoja
-      con \xABDescargar a hoja\xBB."
+    text: "Hola. Necesito la venta real de {codes}, mes a mes, de ene-23 a ago-26.
+      S\xE1cala del NOVA ERP en la pantalla Facturaci\xF3n y p\xE1sala a tu hoja
+      con el bot\xF3n \xABDescargar a hoja\xBB."
   - key: pista-consulta
     order: 1
     mood: 0
-    text: "En Facturaci\xF3n pon los materiales que te ped\xED y el rango ene-23
-      a ago-26. Antes de descargar, revisa las opciones de la consulta: solo me sirve
-      lo que de verdad se factur\xF3."
+    text: "En Facturaci\xF3n escribe los materiales que te ped\xED y escoge de ene-23
+      a ago-26. Antes de descargar, mira las casillas de la consulta: solo me sirve
+      lo que de verdad se factur\xF3, nada de proyecciones."

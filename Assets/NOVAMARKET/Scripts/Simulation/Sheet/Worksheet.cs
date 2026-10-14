@@ -268,6 +268,65 @@ namespace NovaMarket.Simulation.Sheet
 
         public string Display(string address) => Display(CellAddress.Parse(address));
 
+        /// <summary>Writes a value as a constant (paste values); errors are written as their text.</summary>
+        public void SetValue(CellAddress address, CellValue value)
+        {
+            if (value.IsEmpty)
+            {
+                Cell cell = GetOrCreate(address);
+                cell.FormulaText = null;
+                cell.Formula = null;
+                cell.ParseError = null;
+                cell.Constant = CellValue.Empty;
+                Cleanup(address, cell);
+                book.Touch();
+                return;
+            }
+            SetConstant(address, value.IsError ? CellValue.Of(value.ToString()) : value);
+        }
+
+        /// <summary>Sets the format of one cell (keeps its content).</summary>
+        public void SetFormat(CellAddress address, CellFormat format) => SetFormat(new CellRange(address, address), format);
+
+        /// <summary>
+        /// The cells a formula reads (each cell of a range, up to <paramref name="limit"/>), with their tab.
+        /// Empty for constants.
+        /// </summary>
+        public IReadOnlyList<(string Sheet, CellAddress Cell)> Precedents(CellAddress address, int limit = 2000)
+        {
+            var found = new List<(string, CellAddress)>();
+            if (cells.TryGetValue(address, out Cell cell) && cell.Formula != null) Collect(cell.Formula, found, limit);
+            return found;
+        }
+
+        private void Collect(FormulaNode node, List<(string, CellAddress)> found, int limit)
+        {
+            if (found.Count >= limit) return;
+            switch (node)
+            {
+                case ReferenceNode reference:
+                    found.Add((reference.Sheet ?? Name, reference.Cell));
+                    break;
+                case RangeNode range:
+                    foreach (CellAddress cell in range.Range.Cells())
+                    {
+                        if (found.Count >= limit) return;
+                        found.Add((range.Sheet ?? Name, cell));
+                    }
+                    break;
+                case UnaryNode unary:
+                    Collect(unary.Operand, found, limit);
+                    break;
+                case BinaryNode binary:
+                    Collect(binary.Left, found, limit);
+                    Collect(binary.Right, found, limit);
+                    break;
+                case FunctionNode function:
+                    foreach (FormulaNode argument in function.Arguments) Collect(argument, found, limit);
+                    break;
+            }
+        }
+
         private Cell GetOrCreate(CellAddress address)
         {
             if (!cells.TryGetValue(address, out Cell cell)) cells[address] = cell = new Cell();

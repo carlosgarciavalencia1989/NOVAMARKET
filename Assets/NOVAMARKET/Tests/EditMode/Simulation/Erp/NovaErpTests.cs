@@ -106,9 +106,11 @@ namespace NovaMarket.Tests.Simulation.Erp
 
             CellValue[] row = table.Rows.Single();
             Assert.AreEqual("Europa", row[table.ColumnOf("Origen")].Text);
-            Assert.AreEqual(sku.UnitsPerBox, row[table.ColumnOf("UN por caja")].Number);
+            Assert.AreEqual(sku.UnitsPerBox, row[table.ColumnOf("Unidades por caja")].Number);
             Assert.AreEqual(sku.LeadTimeDays, row[table.ColumnOf("LT (días)")].Number);
             StringAssert.StartsWith("Don Hernán", row[table.ColumnOf("Proveedor")].Text);
+            Assert.AreEqual("UN (unidades)", row[table.ColumnOf("Unidad de facturación")].Text);
+            Assert.IsTrue(table.Notes.Any(n => n.Contains("«CJ (cajas)» se pasa a unidades")), "The master explains the units.");
         }
 
         [Test]

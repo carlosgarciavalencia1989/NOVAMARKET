@@ -150,15 +150,11 @@ namespace NovaMarket.Simulation.Levels
 
             var criteria = new[]
             {
-                new StarCriterion("Historia lista", ready, ready
-                    ? "Los 4 SKU, 44 meses de venta facturada y el total de 12 meses de cada uno."
-                    : !query ? "La consulta no tiene los SKU o los meses pedidos."
-                    : projection ? "Quedó la columna de proyección: no es venta."
-                    : "Los totales de 12 meses no cuadran."),
-                new StarCriterion("Fila de periodos 1…44", periods, periods
-                    ? "Periodos numerados con el arrastre." : "La fila 1 debe ir de 1 en C1 a 44 en AT1."),
+                new StarCriterion("Historia lista", ready, HistoryDetail(query, projection, totals)),
+                new StarCriterion("Fila de periodos 1…44", periods, PeriodsDetail()),
                 new StarCriterion("Sin ayuda del Atlas", !Help.Used, Help.Used
-                    ? $"Pediste ayuda al Atlas {Help.Topics.Count} {(Help.Topics.Count == 1 ? "vez" : "veces")}." : "Lo resolviste solo.")
+                    ? $"Usaste la solución del Atlas en {Help.Topics.Count} {(Help.Topics.Count == 1 ? "tema" : "temas")}, así que esta estrella no cuenta."
+                    : "Lo resolviste sin ver la solución del Atlas.")
             };
 
             var debrief = new List<DialogueLine>();
@@ -176,6 +172,62 @@ namespace NovaMarket.Simulation.Levels
                 "La venta es la demanda que se pudo atender: si hubo agotados, subestima lo que el mercado quería."
             };
             return new LevelResult(Info, criteria, ready && formulas, debrief, lessons);
+        }
+
+        /// <summary>The first star's detail in plain words: what is missing from the history and where.</summary>
+        private string HistoryDetail(bool query, bool projection, bool totals)
+        {
+            if (Sheet == null)
+                return "Todavía no descargaste la facturación a la hoja: ábrela en NOVA ERP → Facturación y pulsa «Descargar a hoja».";
+            if (!query)
+            {
+                List<string> listed = HistoryTable.Codes(Sheet);
+                List<string> missing = codes.Except(listed).ToList();
+                List<string> extra = listed.Except(codes).ToList();
+                var parts = new List<string>();
+                if (missing.Count > 0) parts.Add($"faltan {string.Join(", ", missing)}");
+                if (extra.Count > 0) parts.Add($"sobran {string.Join(", ", extra)}");
+                string what = parts.Count > 0 ? string.Join(" y ", parts) : "los meses no van de ene-23 a ago-26";
+                return $"La tabla de «{HistorySheet}» no es la que pidió Sofía: {what}. Repite la consulta en NOVA ERP con " +
+                       $"{string.Join(", ", codes)} de ene-23 a ago-26.";
+            }
+            if (projection)
+                return $"En «{HistorySheet}» quedó la columna de proyección ({NovaErp.ProjectionSuffix.Trim()}): es un pronóstico del " +
+                       "ERP, no venta. Bórrala o descarga otra vez sin «Incluir proyección».";
+            if (!totals)
+            {
+                var wrong = new List<string>();
+                foreach (string code in codes)
+                {
+                    int row = HistoryTable.FindRow(Sheet, code);
+                    if (row < 0) continue;
+                    var cell = new CellAddress(TotalColumn, row);
+                    CellValue value = Sheet.Value(cell);
+                    int expected = SeriesStatistics.LastMonthsTotal(Data.Billed(code));
+                    if (value.IsNumber && Tolerance.Matches(value.Number, expected)) continue;
+                    string has = value.IsEmpty ? "está vacía" : $"dice {Sheet.Display(cell)}";
+                    wrong.Add($"{code} ({cell} {has} y debe dar {HudFormat.Number(expected)})");
+                }
+                return $"El total de los últimos 12 meses no cuadra en {string.Join("; ", wrong)}. Es la suma de sep-25 a ago-26 " +
+                       "(columnas AI a AT) de cada fila.";
+            }
+            return "Tienes los SKU pedidos con sus 44 meses de venta facturada y el total de los últimos 12 meses de cada uno.";
+        }
+
+        /// <summary>The second star's detail: the first cell of row 1 that is not the right period.</summary>
+        private string PeriodsDetail()
+        {
+            if (Sheet == null) return "La fila 1 debe numerar los meses: 1 en C1, 2 en D1… hasta 44 en AT1.";
+            for (int m = 0; m < SalesCalendar.Months; m++)
+            {
+                var cell = new CellAddress(HistoryTable.MonthColumn(m), ErpTable.TitleRow);
+                CellValue value = Sheet.Value(cell);
+                if (value.IsNumber && Tolerance.Matches(value.Number, m + 1)) continue;
+                string has = value.IsEmpty ? "está vacía" : $"dice {Sheet.Display(cell)}";
+                return $"La fila 1 debe numerar los meses de 1 en C1 a 44 en AT1, pero {cell} {has} y debería decir {m + 1}. " +
+                       "Escribe 1 y 2, selecciona las dos celdas y arrastra la esquina hasta AT1.";
+            }
+            return "Numeraste los periodos de 1 a 44.";
         }
 
         protected override AtlasAnswer Explain(string topic) => topic switch

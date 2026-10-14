@@ -337,7 +337,10 @@ Plain C# engine of DISENO_JUEGO_V2.md (the UI comes next: start menu, ERP window
 - **Planner sheet** (`Sheet/`): Excel in Spanish (";" between arguments, decimal comma, "4.695"),
   references A1, $A$1, `Datos!H4`, `'Serie limpia'!B3`; SUMA, PROMEDIO, ABS, SI, DESVEST.P; on-demand
   recalculation with a version cache, circular references, Spanish errors; `Fill` (drag) moves
-  relative references and continues number series.
+  relative references and continues number series. `SheetClipboard` copies and pastes (formulas move
+  their references; values only; a whole row trims to its used columns; tab-separated text from other
+  programs). `SheetErrorHelp` explains an error in plain Spanish naming the cells (which cells read
+  each other in a circular reference, which cell an error comes from).
 - **NOVA ERP** (`Erp/`): screens with their SAP code (world 1: Facturación, Maestro de materiales);
   billing by month includes the projection column by default (the Atlas trap); "Descargar a hoja"
   puts months in columns C…AT, as the Atlas. `DataQualityInjector` plants problems with their
@@ -374,10 +377,15 @@ containers of `Hud.uxml`:
 - `AtlasHelpView`: per topic a free hint (dialogue key `pista-<topic>`) and the solved Atlas step,
   which costs the "Sin ayuda del Atlas" star.
 - `LevelResultView`: "¿Entregar a Andrés?" confirmation, then stars with the reason of each one, gem,
-  Excel badge, Andrés's review with the level / seasonal index table (1.2), lessons and "Seguir
+  Excel badge, in 1.2 a block per problem (`CleaningReview`: where, type, action and value yours /
+  right, what happened and the Atlas explanation) and the good cells marked or changed by mistake,
+  Andrés's review with the level / seasonal index table (1.2), lessons and "Seguir
   trabajando / Repetir con otros datos / Volver al mapa". `CampaignProgress` keeps the best result
   per level in PlayerPrefs (`NOVAMARKET.CampaignProgress`; Inspector toggle `saveProgress`) and the
-  map shows its stars.
+  map shows its stars. Before delivering 1.2 Andrés warns about marked problems still uncorrected
+  (`CleanDataLevel.UncorrectedWarning`); after a delivery «Serie limpia» shows in red the cells he
+  flagged (`ReviewNotes`), with the reason in the status bar and on hover, and "Quitar marca" removes
+  a mark. Texts follow one rule: full sentences saying what happened, where (SKU and month) and why.
 - `ErpWindowView`: own enterprise look (navy bar with transaction code and SAP equivalent, screen menu
   with locked screens, selection criteria with material suggestions, ALV-like grid, invoice detail per
   month, "Descargar a hoja" with a link to the tab, F8 runs the query).
@@ -385,7 +393,9 @@ containers of `Hud.uxml`:
   A B C headers and row numbers, tabs, status bar with the error explanation or sum/average/count).
   The grid draws only visible cells, edits in place or in the formula bar, picks references by
   clicking while a formula is typed (also on another tab), and drags the fill handle with
-  auto-scroll at the edges.
+  auto-scroll at the edges. Ctrl+C / Ctrl+V / Ctrl+Shift+V (values) and the toolbar buttons copy
+  and paste (also with the system clipboard); resting the pointer on a cell with an error or a note
+  shows its explanation.
 
 While a menu or window is open `StrategyCameraController.InputSuspended` keeps WASD and the wheel
 for the UI. USS note: the default theme gives labels vertical margins and lets flex children shrink;
@@ -441,7 +451,7 @@ The Oswald font has no σ, Σ, ⌈⌉, ★ or →: texts spell them out (stars a
 
 ## Not implemented yet
 
-- Sheet: copy/paste, insert rows/columns, more functions (RAIZ, SI.ERROR…), saved progress
+- Sheet: insert rows/columns, more functions (RAIZ, SI.ERROR…), saved progress
 - Concrete data types (CompanyData, ScenarioData, ... RoleData); the planning SKUs live in code
 - Forecasting, MRP and DDMRP levels (only the season planning level exists)
 - Negotiation with arguments, character trust, FVA, staged import lead times, shipment board

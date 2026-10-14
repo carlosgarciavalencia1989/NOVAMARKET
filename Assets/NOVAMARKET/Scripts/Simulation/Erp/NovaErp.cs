@@ -106,22 +106,28 @@ namespace NovaMarket.Simulation.Erp
             RequireScreen(ErpScreens.MaterialMaster);
             string[] headers =
             {
-                "Material", "Descripción", "Familia", "Proveedor", "Origen", "Modalidad", "Puerto de entrada", "LT (días)",
-                "MOQ (UN)", "UN por caja", "Costo unitario (COP)", "UM de venta"
+                "Material", "Descripción", "Unidad de facturación", "Unidades por caja", "Familia", "Proveedor", "Origen",
+                "Modalidad", "Puerto de entrada", "LT (días)", "MOQ (UN)", "Costo unitario (COP)"
             };
-            var formats = headers.Select((h, i) => i >= 7 && i <= 10 ? CellFormat.Number(0) : CellFormat.General).ToList();
+            var formats = headers.Select((h, i) => i == 3 || i >= 9 ? CellFormat.Number(0) : CellFormat.General).ToList();
             var table = new ErpTable(ErpScreens.MaterialMaster, "Maestro de materiales", headers, formats) { SheetName = "Maestro" };
             foreach (string code in codes)
             {
                 PortfolioSku sku = Data.Portfolio.Find(code);
                 if (sku == null) continue;
-                table.AddRow(CellValue.Of(sku.Code), CellValue.Of(sku.Description), CellValue.Of(sku.Family),
-                    CellValue.Of(sku.Supplier), CellValue.Of(SupplyNames.Name(sku.Origin)), CellValue.Of(SupplyNames.Name(sku.Mode)),
-                    CellValue.Of(SupplyNames.Name(sku.Port)), CellValue.Of(sku.LeadTimeDays), CellValue.Of(sku.MinimumOrderUnits),
-                    CellValue.Of(sku.UnitsPerBox), CellValue.Of(sku.UnitCost), CellValue.Of(Data.SalesUnit(code)));
+                table.AddRow(CellValue.Of(sku.Code), CellValue.Of(sku.Description), CellValue.Of(UnitName(Data.SalesUnit(code))),
+                    CellValue.Of(sku.UnitsPerBox), CellValue.Of(sku.Family), CellValue.Of(sku.Supplier),
+                    CellValue.Of(SupplyNames.Name(sku.Origin)), CellValue.Of(SupplyNames.Name(sku.Mode)), CellValue.Of(SupplyNames.Name(sku.Port)),
+                    CellValue.Of(sku.LeadTimeDays), CellValue.Of(sku.MinimumOrderUnits), CellValue.Of(sku.UnitCost));
             }
+            table.AddNote("Unidad de facturación: así sale el material en la facturación. «UN (unidades)» se usa tal cual; " +
+                          "«CJ (cajas)» se pasa a unidades multiplicando por sus «Unidades por caja».");
             return table;
         }
+
+        /// <summary>The billing unit in words: "UN (unidades)" or "CJ (cajas)".</summary>
+        public static string UnitName(string unit) =>
+            unit == ErpDataSet.Boxes ? "CJ (cajas)" : unit == ErpDataSet.Units ? "UN (unidades)" : unit;
 
         /// <summary>
         /// Invoices of one material in one month, by customer: the regular customers share the month
