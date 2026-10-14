@@ -69,13 +69,21 @@ namespace NovaMarket.Simulation.Levels
         public IReadOnlyList<int> WrongMonths { get; }
     }
 
-    /// <summary>A good month the player marked as a problem or changed in «Serie limpia».</summary>
+    /// <summary>
+    /// A good month the player marked as a problem or changed in «Serie limpia», or several consecutive
+    /// good months marked together (one range mark is one row).
+    /// </summary>
     public sealed class GoodDataReview
     {
         public GoodDataReview(string code, int month, string where, bool marked, bool changed, string message)
+            : this(code, new[] { month }, where, marked, changed, message)
+        {
+        }
+
+        public GoodDataReview(string code, IReadOnlyList<int> months, string where, bool marked, bool changed, string message)
         {
             Code = code;
-            Month = month;
+            Months = months;
             Where = where;
             Marked = marked;
             Changed = changed;
@@ -83,7 +91,11 @@ namespace NovaMarket.Simulation.Levels
         }
 
         public string Code { get; }
-        public int Month { get; }
+
+        /// <summary>The first month.</summary>
+        public int Month => Months[0];
+
+        public IReadOnlyList<int> Months { get; }
         public string Where { get; }
 
         /// <summary>The player marked this month as a problem.</summary>

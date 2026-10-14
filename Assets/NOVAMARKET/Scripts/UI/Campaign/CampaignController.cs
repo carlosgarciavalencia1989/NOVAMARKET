@@ -250,29 +250,33 @@ namespace NovaMarket.UI.Campaign
         {
             if (!(Session is CleanDataLevel clean)) return;
             Worksheet tab = sheet.Grid.Sheet;
-            CellAddress cell = sheet.Grid.Active;
-            if (!CleanDataLevel.TryLocate(tab, cell, out string code, out int month))
+            CellRange selection = sheet.Grid.Selection;
+            List<(string Code, int Month)> cells = CleanDataLevel.Locate(tab, selection);
+            if (cells.Count == 0)
             {
-                sheet.SetInfo($"{cell} no es el mes de un SKU. Selecciona la celda de un mes (en la facturación o en " +
-                              "«Serie limpia») y pulsa «Marcar problema».");
+                sheet.SetInfo($"{selection} no tiene meses de un SKU. Selecciona la celda de un mes, un rango de meses o una " +
+                              "fila (en la facturación o en «Serie limpia») y pulsa «Marcar problema».");
                 return;
             }
             sheet.Grid.CommitEdit(move: false);
-            markView.Show(clean, code, month, tab.Display(cell), OpenCards);
+            markView.Show(clean, cells, cells.Count == 1 ? tab.Display(sheet.Grid.Active) : null, OpenCards);
         }
 
-        /// <summary>"Quitar marca" on the active cell of the sheet (level 1.2).</summary>
+        /// <summary>"Quitar marca" on the selected cells of the sheet (level 1.2).</summary>
         public void RemoveMark()
         {
             if (!(Session is CleanDataLevel clean)) return;
-            CellAddress cell = sheet.Grid.Active;
-            if (!CleanDataLevel.TryLocate(sheet.Grid.Sheet, cell, out string code, out int month) || clean.MarkAt(code, month) == null)
+            CellRange selection = sheet.Grid.Selection;
+            List<(string Code, int Month)> marked = CleanDataLevel.Locate(sheet.Grid.Sheet, selection)
+                .Where(c => clean.MarkAt(c.Code, c.Month) != null).ToList();
+            if (marked.Count == 0)
             {
-                sheet.SetInfo($"{cell} no tiene marca. Las celdas marcadas se ven en naranja.");
+                sheet.SetInfo($"{selection} no tiene marcas. Las celdas marcadas se ven en naranja.");
                 return;
             }
-            clean.Unmark(code, month);
-            sheet.SetInfo($"Quitaste la marca de {code} {NovaMarket.Simulation.Portfolio.SalesCalendar.Label(month)}. El valor de la celda no cambió.");
+            clean.Unmark(marked);
+            sheet.SetInfo($"Quitaste la marca de {CleanDataLevel.Describe(marked)}. Los valores de las celdas no cambiaron " +
+                          "(Ctrl+Z vuelve a poner la marca).");
         }
 
         private void OpenCards(string code, int month, DataIssueKind kind)

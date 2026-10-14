@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NovaMarket.Simulation.Erp;
 using NovaMarket.Simulation.Levels;
 using NovaMarket.Simulation.Portfolio;
@@ -8,7 +9,7 @@ using UnityEngine.UIElements;
 namespace NovaMarket.UI.Campaign
 {
     /// <summary>
-    /// "Marcar problema" (level 1.2): for the selected cell the player chooses the kind of problem and
+    /// "Marcar problema" (level 1.2): for the selected cell or range the player chooses the kind of problem and
     /// the action (imputar, excluir, convertir), with an optional note. Marking documents the decision;
     /// the value is corrected in «Serie limpia», by hand or with a formula card.
     /// </summary>
@@ -29,6 +30,7 @@ namespace NovaMarket.UI.Campaign
         private readonly Button cardsButton;
         private readonly Button saveButton;
         private CleanDataLevel level;
+        private List<(string Code, int Month)> cells = new List<(string Code, int Month)>();
         private string code;
         private int month;
         private DataIssueKind? kind;
@@ -81,23 +83,34 @@ namespace NovaMarket.UI.Campaign
 
         public bool IsOpen => modal.IsOpen && !dialog.ClassListContains("hidden");
 
-        /// <param name="valueText">What the cell shows now.</param>
+        /// <param name="selected">The SKU-month cells of the selection: one mark covers all of them.</param>
+        /// <param name="valueText">What the cell shows now (one cell), or null for a range.</param>
         /// <param name="openCards">Opens the formula cards for the chosen kind of problem.</param>
-        public void Show(CleanDataLevel session, string sku, int monthIndex, string valueText, Action<string, int, DataIssueKind> openCards)
+        public void Show(CleanDataLevel session, IReadOnlyList<(string Code, int Month)> selected, string valueText,
+            Action<string, int, DataIssueKind> openCards)
         {
             level = session;
-            code = sku;
-            month = monthIndex;
+            cells = selected.ToList();
+            (code, month) = cells[0];
             onCards = openCards;
-            subtitle.text = $"{sku} · {SalesCalendar.Label(monthIndex)} · la celda muestra {(string.IsNullOrEmpty(valueText) ? "(vacía)" : valueText)}";
-            IssueMark mark = level.MarkAt(sku, monthIndex);
+            subtitle.text = cells.Count == 1
+                ? $"{code} · {SalesCalendar.Label(month)} · la celda muestra {(string.IsNullOrEmpty(valueText) ? "(vacía)" : valueText)}"
+                : $"{CleanDataLevel.Describe(cells)} · {cells.Count} celdas con la misma marca";
+            // The current mark shows only when every cell has the same one.
+            List<IssueMark> current = cells.Select(c => level.MarkAt(c.Code, c.Month)).ToList();
+            IssueMark mark = current[0] != null && current.All(m => m != null && m.Kind == current[0].Kind
+                && m.Action == current[0].Action && m.Note == current[0].Note) ? current[0] : null;
             kind = mark?.Kind;
             action = mark?.Action;
             note.SetValueWithoutNotify(mark?.Note ?? string.Empty);
-            removeButton.SetEnabled(mark != null);
+            removeButton.SetEnabled(current.Any(m => m != null));
             Refresh();
             modal.Show(dialog);
         }
+
+        /// <summary>The same dialog for one cell.</summary>
+        public void Show(CleanDataLevel session, string sku, int monthIndex, string valueText, Action<string, int, DataIssueKind> openCards) =>
+            Show(session, new[] { (sku, monthIndex) }, valueText, openCards);
 
         // Exposed for the Play tests (they click the same buttons as the player).
         public void ChooseKind(DataIssueKind chosen)
@@ -115,13 +128,13 @@ namespace NovaMarket.UI.Campaign
         public void Save()
         {
             if (kind == null || action == null) return;
-            level.Mark(new IssueMark(code, month, kind.Value, action.Value, note.value));
+            level.Mark(cells, kind.Value, action.Value, note.value);
             Close();
         }
 
         private void Remove()
         {
-            level.Unmark(code, month);
+            level.Unmark(cells);
             Close();
         }
 
@@ -129,7 +142,7 @@ namespace NovaMarket.UI.Campaign
         {
             if (kind == null) return;
             // With an action chosen the mark is saved too, so it is not lost on the way to the cards.
-            if (action != null) level.Mark(new IssueMark(code, month, kind.Value, action.Value, note.value));
+            if (action != null) level.Mark(cells, kind.Value, action.Value, note.value);
             modal.Hide(dialog);
             onCards?.Invoke(code, month, kind.Value);
         }

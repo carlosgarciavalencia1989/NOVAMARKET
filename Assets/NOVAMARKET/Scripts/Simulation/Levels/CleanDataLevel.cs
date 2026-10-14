@@ -143,7 +143,7 @@ namespace NovaMarket.Simulation.Levels
             if (mark == null) throw new ArgumentNullException(nameof(mark));
             IssueMark before = MarkAt(mark.Code, mark.Month);
             marks[(mark.Code, mark.Month)] = mark;
-            MarksChanged?.Invoke();
+            NotifyMarks();
             // Ctrl+Z puts back the mark that was there (or none).
             Book.History.Add($"marcar {mark.Code} {SalesCalendar.Label(mark.Month)}", () => Put(mark.Code, mark.Month, before), () => Mark(mark));
         }
@@ -153,7 +153,7 @@ namespace NovaMarket.Simulation.Levels
             IssueMark before = MarkAt(code, month);
             if (before == null) return false;
             marks.Remove((code, month));
-            MarksChanged?.Invoke();
+            NotifyMarks();
             Book.History.Add($"quitar la marca de {code} {SalesCalendar.Label(month)}", () => Mark(before), () => Unmark(code, month));
             return true;
         }
@@ -163,6 +163,120 @@ namespace NovaMarket.Simulation.Levels
             if (mark != null) Mark(mark);
             else Unmark(code, month);
         }
+
+        /// <summary>
+        /// One mark (same kind, action and note) on every cell of a selection, such as the months before
+        /// the launch: one Ctrl+Z undoes it.
+        /// </summary>
+        public void Mark(IEnumerable<(string Code, int Month)> cells, DataIssueKind kind, CorrectionAction action, string note = null)
+        {
+            List<(string Code, int Month)> list = cells.Distinct().ToList();
+            if (list.Count == 0) return;
+            Quietly(() => Book.History.Record("marcar " + Describe(list), () =>
+            {
+                foreach ((string code, int month) in list) Mark(new IssueMark(code, month, kind, action, note));
+            }));
+        }
+
+        /// <summary>Removes the marks of every cell of a selection; returns how many cells had one.</summary>
+        public int Unmark(IEnumerable<(string Code, int Month)> cells)
+        {
+            List<(string Code, int Month)> list = cells.Distinct().Where(c => MarkAt(c.Code, c.Month) != null).ToList();
+            if (list.Count == 0) return 0;
+            Quietly(() => Book.History.Record("quitar la marca de " + Describe(list), () =>
+            {
+                foreach ((string code, int month) in list) Unmark(code, month);
+            }));
+            return list.Count;
+        }
+
+        // Many marks at once raise MarksChanged once at the end.
+        private int quiet;
+        private bool changedQuietly;
+
+        private void Quietly(Action edits)
+        {
+            quiet++;
+            try
+            {
+                edits();
+            }
+            finally
+            {
+                if (--quiet == 0 && changedQuietly)
+                {
+                    changedQuietly = false;
+                    MarksChanged?.Invoke();
+                }
+            }
+        }
+
+        private void NotifyMarks()
+        {
+            if (quiet > 0) changedQuietly = true;
+            else MarksChanged?.Invoke();
+        }
+
+        /// <summary>The SKU-month cells of a selection (a range or whole rows) that can be marked, row by row.</summary>
+        public static List<(string Code, int Month)> Locate(Worksheet sheet, CellRange range)
+        {
+            var cells = new List<(string Code, int Month)>();
+            if (sheet == null) return cells;
+            int lastRow = Math.Min(range.End.Row, sheet.UsedRows - 1);
+            int lastColumn = Math.Min(range.End.Column, sheet.UsedColumns - 1);
+            for (int row = range.Start.Row; row <= lastRow; row++)
+                for (int column = range.Start.Column; column <= lastColumn; column++)
+                    if (TryLocate(sheet, new CellAddress(column, row), out string code, out int month) && !cells.Contains((code, month)))
+                        cells.Add((code, month));
+            return cells;
+        }
+
+        /// <summary>
+        /// Cells in words, joining consecutive months of a SKU: "CV10023 ene-23 a jun-23",
+        /// "CV10009, toda la fila (ene-23 a ago-26)", "CV10004 jun-24 y CV10012 dic-24".
+        /// </summary>
+        public static string Describe(IEnumerable<(string Code, int Month)> cells)
+        {
+            var parts = new List<string>();
+            foreach (IGrouping<string, int> sku in cells.GroupBy(c => c.Code, c => c.Month))
+            {
+                List<int> months = sku.Distinct().OrderBy(m => m).ToList();
+                for (int i = 0; i < months.Count;)
+                {
+                    int j = i;
+                    while (j + 1 < months.Count && months[j + 1] == months[j] + 1) j++;
+                    parts.Add(j == i ? Where(sku.Key, months[i])
+                        : j - i + 1 == SalesCalendar.Months ? $"{sku.Key}, toda la fila ({SalesCalendar.Label(0)} a {SalesCalendar.Label(SalesCalendar.Months - 1)})"
+                        : $"{sku.Key} {SalesCalendar.Label(months[i])} a {SalesCalendar.Label(months[j])}");
+                    i = j + 1;
+                }
+            }
+            return Join(parts);
+        }
+
+        /// <summary>
+        /// The player's marks as the problems they stand for: the marks on one problem of the data (the six
+        /// months before a launch) are one group, and so are consecutive good months marked the same way.
+        /// </summary>
+        private List<List<IssueMark>> MarkGroups(IEnumerable<IssueMark> source)
+        {
+            var groups = new List<List<IssueMark>>();
+            foreach (IssueMark mark in source.OrderBy(m => m.Code, StringComparer.Ordinal).ThenBy(m => m.Month))
+            {
+                List<IssueMark> last = groups.LastOrDefault();
+                IssueMark previous = last?.Last();
+                DataIssue issue = Data.IssueAt(mark.Code, mark.Month);
+                bool joins = previous != null && previous.Code == mark.Code && (issue != null
+                    ? Data.IssueAt(previous.Code, previous.Month) == issue
+                    : Data.IssueAt(previous.Code, previous.Month) == null && previous.Month == mark.Month - 1
+                      && previous.Kind == mark.Kind && previous.Action == mark.Action && previous.Note == mark.Note);
+                if (joins) last.Add(mark);
+                else groups.Add(new List<IssueMark> { mark });
+            }
+            return groups;
+        }
+
+        private static string Describe(IEnumerable<IssueMark> marks) => Describe(marks.Select(m => (m.Code, m.Month)));
 
         public IssueMark MarkAt(string code, int month) => marks.TryGetValue((code, month), out IssueMark mark) ? mark : null;
 
@@ -377,10 +491,11 @@ namespace NovaMarket.Simulation.Levels
                 parts.Add($"En {Join(values.Select(i => i.Where))} el valor que dejaste no es el del Atlas.");
 
             List<GoodDataReview> marked = review.GoodData.Where(g => g.Marked).ToList();
+            int markedMonths = marked.Sum(g => g.Months.Count);
             if (marked.Count > 0)
-                parts.Add(marked.Count == 1
+                parts.Add(markedMonths == 1
                     ? $"Marcaste como problema una celda que estaba bien: {marked[0].Where} es venta real, no un error."
-                    : $"Marcaste como problema {marked.Count} celdas que estaban bien: {Join(marked.Select(g => g.Where))} son venta real, no errores.");
+                    : $"Marcaste como problema {markedMonths} celdas que estaban bien: {Join(marked.Select(g => g.Where))} son venta real, no errores.");
             List<GoodDataReview> changed = review.GoodData.Where(g => !g.Marked).ToList();
             if (changed.Count > 0)
                 parts.Add($"Cambiaste {(changed.Count == 1 ? "un mes que estaba bien" : $"{changed.Count} meses que estaban bien")}: " +
@@ -401,10 +516,10 @@ namespace NovaMarket.Simulation.Levels
         {
             var issues = Data.Issues.Select(ReviewIssue).ToList();
             var good = new List<GoodDataReview>();
-            foreach (IssueMark mark in marks.Values.Where(m => Data.IssueAt(m.Code, m.Month) == null)
-                         .OrderBy(m => m.Code, StringComparer.Ordinal).ThenBy(m => m.Month))
-                good.Add(new GoodDataReview(mark.Code, mark.Month, Where(mark.Code, mark.Month), true,
-                    IsChanged(mark.Code, mark.Month), WhyGood(mark)));
+            // Good months marked together (a range) are one row.
+            foreach (List<IssueMark> group in MarkGroups(marks.Values.Where(m => Data.IssueAt(m.Code, m.Month) == null)))
+                good.Add(new GoodDataReview(group[0].Code, group.Select(m => m.Month).ToList(), Describe(group), true,
+                    group.Any(m => IsChanged(m.Code, m.Month)), group.Count == 1 ? WhyGood(group[0]) : WhyGood(group)));
             foreach ((string code, int month) in CleanSheet == null ? Enumerable.Empty<(string, int)>() : ChangedGoodData())
             {
                 if (MarkAt(code, month) != null) continue;
@@ -427,9 +542,12 @@ namespace NovaMarket.Simulation.Levels
         /// <summary>What Andrés says before delivering when marked problems are still uncorrected, or null.</summary>
         public string UncorrectedWarning()
         {
-            IReadOnlyList<IssueMark> pending = UncorrectedMarks();
+            // A mark on several months of one problem (the months before a launch) counts as one problem.
+            List<List<IssueMark>> pending = MarkGroups(UncorrectedMarks());
             if (pending.Count == 0) return null;
-            string list = Join(pending.Take(4).Select(m => $"{Where(m.Code, m.Month)} (sigue en {CleanText(m.Code, m.Month)})"));
+            string list = Join(pending.Take(4).Select(g => g.Count == 1
+                ? $"{Where(g[0].Code, g[0].Month)} (sigue en {CleanText(g[0].Code, g[0].Month)})"
+                : $"{Describe(g)} ({g.Count} meses todavía sin corregir)"));
             string more = pending.Count > 4 ? $" y {pending.Count - 4} más" : string.Empty;
             string count = pending.Count == 1 ? "un problema" : $"{pending.Count} problemas";
             return $"Marcaste {count}, pero todavía no escribiste el valor corregido en «{CleanSheetName}»: {list}{more}. " +
@@ -449,7 +567,9 @@ namespace NovaMarket.Simulation.Levels
                 foreach (int month in issue.WrongMonths.Count > 0 ? issue.WrongMonths : issue.Issue.Months.Take(1).ToList())
                     notes[(issue.Issue.Code, month)] = issue.Message;
             }
-            foreach (GoodDataReview good in Review().GoodData) notes[(good.Code, good.Month)] = good.Message;
+            foreach (GoodDataReview good in Review().GoodData)
+                foreach (int month in good.Months)
+                    notes[(good.Code, month)] = good.Message;
             return notes;
         }
 
@@ -587,6 +707,16 @@ namespace NovaMarket.Simulation.Levels
         };
 
         /// <summary>Why a marked month was good data.</summary>
+        /// <summary>Why several good months marked together were right.</summary>
+        private string WhyGood(List<IssueMark> group)
+        {
+            IReadOnlyList<int> raw = Data.Billed(group[0].Code);
+            List<string> values = group.Take(6).Select(m => $"{SalesCalendar.Label(m.Month)} ({Number(raw[m.Month])})").ToList();
+            string more = group.Count > 6 ? $" y {group.Count - 6} meses más" : string.Empty;
+            return $"Marcaste {Describe(group)} como «{DataIssue.Name(group[0].Kind)}», pero esos {group.Count} meses son venta " +
+                   $"real, no errores: {Join(values)}{more}.";
+        }
+
         private string WhyGood(IssueMark mark)
         {
             string where = Where(mark.Code, mark.Month);

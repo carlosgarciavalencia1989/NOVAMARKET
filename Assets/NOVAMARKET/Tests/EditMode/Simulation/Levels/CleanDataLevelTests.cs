@@ -216,6 +216,91 @@ namespace NovaMarket.Tests.Simulation.Levels
             Assert.AreEqual(3, changes);
         }
 
+        private CellRange MonthsOf(string code, int from, int to)
+        {
+            int row = HistoryTable.FindRow(level.CleanSheet, code);
+            return new CellRange(new CellAddress(HistoryTable.MonthColumn(from), row), new CellAddress(HistoryTable.MonthColumn(to), row));
+        }
+
+        [Test]
+        public void RangeMark_OnTheMonthsBeforeTheLaunch_IsOneProblem()
+        {
+            LevelPlayers.Download(level);
+            DataIssue launch = Issue(DataIssueKind.PreLaunch);
+            int first = launch.Months[0], last = launch.Months[launch.Months.Count - 1];
+            var cells = CleanDataLevel.Locate(level.CleanSheet, MonthsOf(launch.Code, first, last));
+            Assert.AreEqual(launch.Months.Count, cells.Count);
+
+            level.Mark(cells, DataIssueKind.PreLaunch, CorrectionAction.Exclude, "Antes del lanzamiento");
+
+            Assert.AreEqual(launch.Months.Count, level.Marks.Count);
+            Assert.IsTrue(launch.Months.All(m => level.MarkAt(launch.Code, m).Note == "Antes del lanzamiento"), "Same kind, action and note on every cell.");
+            string where = $"{launch.Code} {SalesCalendar.Label(first)} a {SalesCalendar.Label(last)}";
+            string warning = level.UncorrectedWarning();
+            StringAssert.StartsWith("Marcaste un problema,", warning);
+            StringAssert.Contains(where, warning);
+            Assert.AreEqual(IssueOutcome.NotCorrected, level.Review().Issues.Single(i => i.Issue == launch).Outcome);
+
+            level.CleanSheet.Clear(MonthsOf(launch.Code, first, last));
+
+            Assert.IsNull(level.UncorrectedWarning());
+            Assert.AreEqual(IssueOutcome.Correct, level.Review().Issues.Single(i => i.Issue == launch).Outcome);
+            Assert.IsEmpty(level.Review().GoodData);
+            Assert.IsTrue(level.IsFound(launch));
+            Assert.IsTrue(level.HasRightAction(launch));
+        }
+
+        [Test]
+        public void RangeMark_IsUndoneAndRemovedAtOnce()
+        {
+            LevelPlayers.Download(level);
+            int changes = 0;
+            level.MarksChanged += () => changes++;
+            var cells = CleanDataLevel.Locate(level.CleanSheet, MonthsOf("CV10004", 1, 4));
+
+            level.Mark(cells, DataIssueKind.OneOffOrder, CorrectionAction.Impute);
+            Assert.AreEqual(1, changes, "One refresh for the whole range.");
+            Assert.AreEqual(1, level.Book.History.UndoCount, "One Ctrl+Z step.");
+            Assert.AreEqual("marcar CV10004 feb-23 a may-23", level.Book.History.NextUndo);
+
+            level.Book.History.Undo();
+            Assert.AreEqual(0, level.Marks.Count);
+            level.Book.History.Redo();
+            Assert.AreEqual(4, level.Marks.Count);
+
+            Assert.AreEqual(2, level.Unmark(CleanDataLevel.Locate(level.CleanSheet, MonthsOf("CV10004", 3, 8))), "Only the marked cells count.");
+            Assert.AreEqual(2, level.Marks.Count);
+        }
+
+        [Test]
+        public void RangeMark_OnGoodMonths_IsOneRowOfTheReview()
+        {
+            LevelPlayers.Download(level);
+            level.Mark(CleanDataLevel.Locate(level.CleanSheet, MonthsOf("CV10004", 1, 3)), DataIssueKind.OneOffOrder, CorrectionAction.Impute);
+
+            GoodDataReview good = level.Review().GoodData.Single();
+            Assert.AreEqual("CV10004 feb-23 a abr-23", good.Where);
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, good.Months);
+            StringAssert.Contains("esos 3 meses son venta real", good.Message);
+            Assert.AreEqual(3, level.ReviewNotes().Count, "Each cell of the range is highlighted after delivering.");
+        }
+
+        [Test]
+        public void WholeRow_LocatesEveryMonthOfTheSku()
+        {
+            LevelPlayers.Download(level);
+            int row = HistoryTable.FindRow(level.CleanSheet, "CV10009");
+            var wholeRow = new CellRange(new CellAddress(0, row), new CellAddress(CellAddress.MaxColumns - 1, row));
+
+            var cells = CleanDataLevel.Locate(level.CleanSheet, wholeRow);
+
+            Assert.AreEqual(SalesCalendar.Months, cells.Count);
+            Assert.IsTrue(cells.All(c => c.Code == "CV10009"));
+            Assert.AreEqual("CV10009, toda la fila (ene-23 a ago-26)", CleanDataLevel.Describe(cells));
+            Assert.AreEqual("CV10004 jun-24 y CV10009 ene-23 a feb-23",
+                CleanDataLevel.Describe(new[] { ("CV10004", 17), ("CV10009", 0), ("CV10009", 1) }));
+        }
+
         [Test]
         public void MarksAndCardValues_CanBeUndoneAndRedone()
         {

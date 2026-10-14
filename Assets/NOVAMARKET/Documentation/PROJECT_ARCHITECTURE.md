@@ -374,9 +374,11 @@ containers of `Hud.uxml`:
   `MissionState` and ticks steps from the sheet; the score is `CampaignProgress.TotalPoints`).
 - `DialogueBoxView`: the characters' lines in a box at the bottom centre (badge, name, role, mood,
   "Anterior / Cerrar / Siguiente"); "Conversación" reopens the history.
-- Level 1.2: "Marcar problema" in the sheet toolbar opens `IssueMarkView` for the active cell of a
-  billing tab or «Serie limpia» (`CleanDataLevel.TryLocate`): kind, action and note; marked cells
-  turn orange. "Tarjetas de fórmula" (`FormulaCardView`) shows the Atlas formula with empty boxes,
+- Level 1.2: "Marcar problema" in the sheet toolbar opens `IssueMarkView` for the selected cell,
+  range or whole row of a billing tab or «Serie limpia» (`CleanDataLevel.Locate`): one kind, action
+  and note for every cell, saved as one undo step; marked cells turn orange. "Quitar marca" removes
+  the marks of the selection. Marks on one problem of the data (the months before a launch), or on
+  consecutive good months marked alike, count as one problem in Andrés's warning and in the review. "Tarjetas de fórmula" (`FormulaCardView`) shows the Atlas formula with empty boxes,
   marks wrong boxes with their hint and writes the result into «Serie limpia» (the "Excel de
   planeador" badge still needs the player's own formulas).
 - `AtlasHelpView`: per topic a free hint (dialogue key `pista-<topic>`) and the solved Atlas step,
