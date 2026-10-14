@@ -114,6 +114,9 @@ namespace NovaMarket.UI.Sheet
         /// <summary>Raised when the grid switches tab by itself (committing an edit started on another tab).</summary>
         public event Action<Worksheet> SheetSwitched;
 
+        /// <summary>Cells drawn with the "marked" highlight (problems marked in level 1.2); null = none.</summary>
+        public Func<Worksheet, CellAddress, bool> IsMarked { get; set; }
+
         public Worksheet Sheet => sheet;
         public CellAddress Active => anchor;
         public CellRange Selection => new CellRange(anchor, cursor);
@@ -261,6 +264,7 @@ namespace NovaMarket.UI.Sheet
                     cell.EnableInClassList("sheet-cell--number", value.IsNumber);
                     cell.EnableInClassList("sheet-cell--error", value.IsError);
                     cell.EnableInClassList("sheet-cell--center", value.IsBoolean);
+                    cell.EnableInClassList("sheet-cell--marked", IsMarked != null && sheet != null && IsMarked(sheet, address));
                     column += span;
                 }
             }

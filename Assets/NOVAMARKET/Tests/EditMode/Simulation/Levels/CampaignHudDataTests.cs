@@ -24,6 +24,11 @@ namespace NovaMarket.Tests.Simulation.Levels
             Assert.IsEmpty(mission.Objectives);
             Assert.AreEqual(250, mission.Score);
             Assert.AreEqual(1, changes);
+
+            mission.SetScore(700);
+            Assert.AreEqual(700, mission.Score, "The campaign shows the total of its best results.");
+            mission.SetScore(-5);
+            Assert.AreEqual(0, mission.Score);
         }
 
         [Test]

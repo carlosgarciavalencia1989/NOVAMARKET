@@ -52,13 +52,15 @@ Assets/NOVAMARKET/
             Sheet/     Planner sheet engine (Workbook, Worksheet, FormulaLexer/Parser/Shifter, SheetFunctions)
             Erp/       NOVA ERP (NovaErp, ErpScreens, ErpTable, ErpDataSet, DataQualityInjector, DataIssue)
             Levels/    World 1 levels (LevelSession, GatherHistoryLevel 1.1, CleanDataLevel 1.2, FormulaCard,
-                       CleaningImpact, LevelDialogue, LevelResult, ForecastWorld)
+                       CleaningImpact, LevelDialogue (DialogueBook), LevelResult, CampaignProgress,
+                       CampaignHudData, ForecastWorld)
         Operation/     Scene side of the operation (CediOperationRunner, VehicleVisual, GateBarrier, RackStockDisplay)
         UI/            HUD (HudController, HudDataSource, *View classes, HudIcon, minimap) and the planning
                        level UI (PlanningLevelController, PlanningPanelView, AtlasDialogView, EventDialogView,
                        SeasonResultView, ModalLayer, CharacterBadge, HudElements)
             Campaign/  Planner campaign UI, namespace NovaMarket.UI.Campaign (CampaignController, StartMenuView,
-                       WorldMapView, WorkspaceBarView, NpcBadge)
+                       WorldMapView, WorkspaceBarView, NpcBadge, DialogueBoxView, IssueMarkView,
+                       FormulaCardView, AtlasHelpView, LevelResultView)
             Erp/       NOVA ERP window (ErpWindowView, ErpTableView)
             Sheet/     Planner sheet window (SheetWindowView, SheetGridView)
         Editor/        Editor-only tools (CediEnvironmentBuilder + its .Infrastructure/.Urban parts, EnvironmentMeshes,
@@ -319,6 +321,13 @@ Plain C# engine of DISENO_JUEGO_V2.md (the UI comes next: start menu, ERP window
   Atlas chain map; only `planeador` playable), 5 sectors (only `cosmetica`), 10 characters. A
   character's `linkedRoleId` is the role it performs: `CreateCast(playerRole)` returns everyone else as
   `NpcCharacter` (trust 0–100), so a role can become playable without engine changes.
+- **Dialogues** (`Data/Dialogues/Dialogue_<level>_<character>.asset`, type `DialogueData`, listed in
+  `Campaign.asset`): one file per character and level with lines `key` (intro, exito, pista-<tema>,
+  impacto-…, see `DialogueKeys`), `order`, `mood` and `text` with `{placeholders}` (`{codes}`,
+  `{skus}`, `{missing}`, `{code}`, `{player}`, `{clean}`, `{month}`). Files with a `roleId` and/or
+  `sectorId` replace the general ones for that role or sector, so another sector brings its own lines
+  without code. `DialogueBook` resolves them; a missing line shows as `[level/key]` and
+  `CampaignDataTests` checks that 1.1 and 1.2 have every line they say.
 - **Portfolio**: `Sector_Cosmetica.CreatePortfolio()` reads the 14 real Atlas SKUs (ene-23…ago-26,
   isolated zeros already imputed by the Atlas) and `PortfolioGenerator` adds 186 synthetic SKUs
   (seed 2026) by family, with the family template's seasonal shape, log-normal volume (top 20 % ≈ 80 %
@@ -350,9 +359,23 @@ containers of `Hud.uxml`:
 - `WorldMapView`: world tabs (worlds 2–3 locked), level nodes 1.1–1.7 along a path (`Painter2D`,
   solid up to the last built level, dotted after) and the locked boss; a detail card (Atlas step,
   mode, characters, gem, stars) with "JUGAR NIVEL".
-- In a level: `WorkspaceBarView` (top left: NOVA ERP, Hoja del planeador, Mapa), the level checklist
-  in the objectives panel (`CampaignHudData` resets the `MissionState` and ticks steps from the sheet),
-  character lines as notices (the dialogue window comes with E8).
+- In a level: `WorkspaceBarView` (top left: NOVA ERP, Hoja del planeador, Conversación, Ayuda,
+  Entregar, Mapa) and the level checklist in the objectives panel (`CampaignHudData` resets the
+  `MissionState` and ticks steps from the sheet; the score is `CampaignProgress.TotalPoints`).
+- `DialogueBoxView`: the characters' lines in a box at the bottom centre (badge, name, role, mood,
+  "Anterior / Cerrar / Siguiente"); "Conversación" reopens the history.
+- Level 1.2: "Marcar problema" in the sheet toolbar opens `IssueMarkView` for the active cell of a
+  billing tab or «Serie limpia» (`CleanDataLevel.TryLocate`): kind, action and note; marked cells
+  turn orange. "Tarjetas de fórmula" (`FormulaCardView`) shows the Atlas formula with empty boxes,
+  marks wrong boxes with their hint and writes the result into «Serie limpia» (the "Excel de
+  planeador" badge still needs the player's own formulas).
+- `AtlasHelpView`: per topic a free hint (dialogue key `pista-<topic>`) and the solved Atlas step,
+  which costs the "Sin ayuda del Atlas" star.
+- `LevelResultView`: "¿Entregar a Andrés?" confirmation, then stars with the reason of each one, gem,
+  Excel badge, Andrés's review with the level / seasonal index table (1.2), lessons and "Seguir
+  trabajando / Repetir con otros datos / Volver al mapa". `CampaignProgress` keeps the best result
+  per level in PlayerPrefs (`NOVAMARKET.CampaignProgress`; Inspector toggle `saveProgress`) and the
+  map shows its stars.
 - `ErpWindowView`: own enterprise look (navy bar with transaction code and SAP equivalent, screen menu
   with locked screens, selection criteria with material suggestions, ALV-like grid, invoice detail per
   month, "Descargar a hoja" with a link to the tab, F8 runs the query).
@@ -416,9 +439,6 @@ The Oswald font has no σ, Σ, ⌈⌉, ★ or →: texts spell them out (stars a
 
 ## Not implemented yet
 
-- Level flow of 1.1/1.2 (E8): dialogue window for Andrés and Sofía, marking problems, formula cards,
-  Atlas help, delivery and result screen. Dialogues move from `LevelDialogue.cs` to data files per
-  character and level, so texts are edited without code and other sectors/roles bring their own
 - Sheet: copy/paste, insert rows/columns, more functions (RAIZ, SI.ERROR…), saved progress
 - Concrete data types (CompanyData, ScenarioData, ... RoleData); the planning SKUs live in code
 - Forecasting, MRP and DDMRP levels (only the season planning level exists)

@@ -155,6 +155,33 @@ namespace NovaMarket.Simulation.Levels
         public IssueMark MarkAt(string code, int month) => marks.TryGetValue((code, month), out IssueMark mark) ? mark : null;
 
         /// <summary>
+        /// The SKU and month of a cell of a billing tab or of «Serie limpia» (code in column A, month label
+        /// in row 2). False for any other cell.
+        /// </summary>
+        public static bool TryLocate(Worksheet sheet, CellAddress cell, out string code, out int month)
+        {
+            code = null;
+            month = -1;
+            if (sheet == null || cell.Row < ErpTable.FirstDataRow) return false;
+            CellValue header = sheet.Value(new CellAddress(cell.Column, ErpTable.HeaderRow));
+            CellValue material = sheet.Value(new CellAddress(HistoryTable.CodeColumn, cell.Row));
+            if (!header.IsText || !material.IsText || material.Text.Length == 0) return false;
+            month = MonthOfLabel(header.Text);
+            if (month < 0) return false;
+            code = material.Text;
+            return true;
+        }
+
+        /// <summary>Writes a value (a formula card result) into «Serie limpia» for a SKU and month.</summary>
+        public bool WriteClean(string code, int month, double value)
+        {
+            int row = HistoryTable.FindRow(CleanSheet, code);
+            if (row < 0 || month < 0 || month >= SalesCalendar.Months) return false;
+            CleanSheet.SetNumber(new CellAddress(HistoryTable.MonthColumn(month), row), value);
+            return true;
+        }
+
+        /// <summary>
         /// Formula cards for a cell and the problem type the player chose. They are built from the data
         /// for any cell, so they never reveal whether the cell really has a problem.
         /// </summary>

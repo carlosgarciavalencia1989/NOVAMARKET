@@ -745,3 +745,362 @@
 .map-node .map-node-label .map-node-title {
     margin-top: 0;
 }
+
+/* ---------------------------------------------------------------- level flow (E8) */
+
+.detail-stars .detail-star--on {
+    color: var(--gold-bright);
+}
+
+.map-node--done .map-node-circle {
+    border-color: var(--gold-bright);
+}
+
+.workspace-button--deliver {
+    background-color: rgb(110, 70, 28);
+    border-color: var(--gold-light);
+}
+
+/* Dialogue box of the characters, bottom centre, over the windows. */
+.dialogue-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 124px; /* above the resource bar */
+}
+
+.dialogue-box {
+    width: 900px;
+    padding: 14px 18px 12px 18px;
+    border-width: 2px;
+    border-color: var(--gold-light);
+    background-color: var(--panel-deep);
+}
+
+.dialogue-box--worried {
+    border-color: var(--amber);
+}
+
+.dialogue-header {
+    flex-direction: row;
+    align-items: center;
+}
+
+.dialogue-who {
+    margin-left: 12px;
+}
+
+.dialogue-name {
+    font-size: 22px;
+    color: var(--gold-bright);
+    margin: 0;
+    padding: 0;
+}
+
+.dialogue-job {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin: 0;
+    padding: 0;
+}
+
+.dialogue-counter {
+    font-size: 14px;
+    color: var(--text-dim);
+}
+
+.dialogue-text {
+    margin-top: 10px;
+    font-size: 19px;
+    white-space: normal;
+    color: var(--text-bright);
+}
+
+.dialogue-buttons {
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.dialogue-button {
+    padding: 6px 16px;
+    font-size: 16px;
+    margin-left: 8px;
+}
+
+/* Choice chips (problem type, action, card tabs). */
+.chip-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.chip {
+    margin: 0 8px 8px 0;
+    padding: 7px 14px;
+    font-size: 15px;
+}
+
+.chip.chip--on {
+    border-width: 2px;
+    border-color: var(--gold-bright);
+    background-color: var(--gold);
+    color: rgb(24, 18, 12);
+}
+
+.mark-dialog {
+    width: 760px;
+}
+
+.mark-note {
+    margin: 4px 0 0 0;
+    font-size: 15px;
+}
+
+/* Formula cards. */
+.card-dialog {
+    width: 820px;
+}
+
+.card-body {
+    margin-top: 8px;
+    padding: 12px 16px;
+    border-width: 1px;
+    border-color: var(--gold-dark);
+    background-color: var(--panel-deep);
+}
+
+.card-title {
+    font-size: 19px;
+    color: var(--gold-bright);
+}
+
+.card-formula {
+    margin-top: 4px;
+    font-size: 20px;
+    color: var(--text-bright);
+    white-space: normal;
+}
+
+.card-boxes {
+    margin-top: 10px;
+}
+
+.card-box {
+    margin-bottom: 8px;
+    padding: 4px 8px;
+    border-left-width: 4px;
+    border-color: rgba(0, 0, 0, 0);
+}
+
+.card-box--wrong {
+    border-color: var(--red);
+}
+
+.card-box--ok {
+    border-color: var(--green);
+}
+
+.card-box-line {
+    flex-direction: row;
+    align-items: center;
+}
+
+.card-box-label {
+    width: 300px;
+    font-size: 16px;
+    color: var(--text);
+}
+
+.card-box-field {
+    width: 200px;
+    font-size: 17px;
+}
+
+.card-box-hint {
+    font-size: 14px;
+    color: var(--amber);
+    white-space: normal;
+}
+
+.card-result {
+    margin-top: 6px;
+    font-size: 20px;
+    color: var(--text-dim);
+}
+
+.card-result--ok {
+    color: var(--green);
+}
+
+.card-note {
+    margin-top: 8px;
+    white-space: normal;
+}
+
+/* Help. */
+.help-topic {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 6px;
+    padding: 4px 0;
+    border-bottom-width: 1px;
+    border-color: var(--gold-dark);
+}
+
+.help-topic-name {
+    flex-grow: 1;
+    font-size: 17px;
+    color: var(--text-bright);
+}
+
+.help-topic .dialog-button {
+    margin-left: 8px;
+    font-size: 14px;
+}
+
+.help-status {
+    font-size: 14px;
+    color: var(--text-dim);
+    align-self: center;
+}
+
+/* Level result. */
+.level-result {
+    width: 1040px;
+}
+
+.result-rewards {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.result-gem,
+.result-badge {
+    width: 34px;
+    height: 34px;
+    margin: 0 6px 0 18px;
+}
+
+.result-badge {
+    color: var(--green);
+}
+
+.reward-text {
+    font-size: 16px;
+    color: var(--text-bright);
+}
+
+.result-scroll {
+    max-height: 560px;
+    margin-top: 8px;
+}
+
+.criterion {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.criterion .hud-icon {
+    width: 26px;
+    height: 26px;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.criterion--on .hud-icon {
+    color: var(--green);
+}
+
+.criterion--off .hud-icon {
+    color: var(--red);
+}
+
+.criterion--pending .hud-icon {
+    color: var(--gold);
+}
+
+.criterion-texts {
+    flex-shrink: 1;
+}
+
+.criterion-title {
+    font-size: 17px;
+    color: var(--text-bright);
+    margin: 0;
+    padding: 0;
+}
+
+.criterion-detail {
+    font-size: 14px;
+    color: var(--text-dim);
+    white-space: normal;
+    margin: 0;
+    padding: 0;
+}
+
+.review-line {
+    flex-direction: row;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.review-text {
+    margin-left: 10px;
+    flex-shrink: 1;
+    font-size: 16px;
+    white-space: normal;
+    color: var(--text-bright);
+}
+
+.result-impact {
+    margin: 4px 0 6px 48px;
+}
+
+.impact-row {
+    flex-direction: row;
+    border-bottom-width: 1px;
+    border-color: var(--gold-dark);
+}
+
+.impact-row--head .impact-cell {
+    color: var(--gold-light);
+    font-size: 13px;
+}
+
+.impact-cell {
+    width: 300px;
+    font-size: 15px;
+    color: var(--text);
+}
+
+.impact-cell--code {
+    width: 120px;
+}
+
+.lesson-line {
+    font-size: 15px;
+    white-space: normal;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+/* Text boxes inside the dialogs: dark text on a light box, like the sheet. */
+.mark-note .unity-text-field__input,
+.card-box-field .unity-text-field__input {
+    background-color: rgb(250, 247, 238);
+    border-color: var(--gold);
+    color: rgb(24, 18, 12);
+}
+
+.mark-note .unity-text-element,
+.card-box-field .unity-text-element {
+    color: rgb(24, 18, 12);
+}

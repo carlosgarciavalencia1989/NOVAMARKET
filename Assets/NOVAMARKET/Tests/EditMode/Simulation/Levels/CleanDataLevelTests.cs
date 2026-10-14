@@ -234,6 +234,27 @@ namespace NovaMarket.Tests.Simulation.Levels
         }
 
         [Test]
+        public void Cells_AreLocatedBySkuAndMonth_InTheRawAndTheCleanTabs()
+        {
+            Worksheet raw = LevelPlayers.Download(level, projection: true);
+            DataIssue zero = Issue(DataIssueKind.FalseZero, real: true);
+            int row = HistoryTable.FindRow(level.CleanSheet, zero.Code);
+            var cell = new CellAddress(HistoryTable.MonthColumn(zero.Months[0]), row);
+
+            Assert.IsTrue(CleanDataLevel.TryLocate(level.CleanSheet, cell, out string code, out int month));
+            Assert.AreEqual((zero.Code, zero.Months[0]), (code, month));
+            Assert.IsTrue(CleanDataLevel.TryLocate(raw, new CellAddress(cell.Column, HistoryTable.FindRow(raw, zero.Code)), out code, out month));
+            Assert.AreEqual(zero.Months[0], month);
+            Assert.IsFalse(CleanDataLevel.TryLocate(raw, CellAddress.Parse("A1"), out _, out _), "Title row.");
+            Assert.IsFalse(CleanDataLevel.TryLocate(raw, new CellAddress(1, row), out _, out _), "Description column.");
+            Assert.IsFalse(CleanDataLevel.TryLocate(raw, CellAddress.Parse("AU3"), out _, out _), "Projection column.");
+
+            Assert.IsTrue(level.WriteClean(zero.Code, zero.Months[0], 4695));
+            Assert.AreEqual(4695, level.CleanSheet.Value(cell).Number);
+            Assert.IsFalse(level.WriteClean("NOEXISTE", 3, 1));
+        }
+
+        [Test]
         public void CleaningImpact_ShowsWhatTheModelWouldLearn()
         {
             int[] history = LevelPlayers.Portfolio.Find("CV10001").History.ToArray();

@@ -74,9 +74,12 @@ namespace NovaMarket.Simulation
             Changed?.Invoke();
         }
 
-        public void AddScore(int points)
+        public void AddScore(int points) => SetScore(Score + points);
+
+        /// <summary>Replaces the score (the campaign shows the total of the best results of its levels).</summary>
+        public void SetScore(int points)
         {
-            Score = Math.Max(0, Score + points);
+            Score = Math.Max(0, points);
             Changed?.Invoke();
         }
 

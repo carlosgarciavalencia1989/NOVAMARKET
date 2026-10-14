@@ -20,6 +20,7 @@ namespace NovaMarket.UI.Sheet
         private readonly SheetGridView grid;
         private readonly VisualElement tabs;
         private readonly Label emptyMessage;
+        private readonly VisualElement levelTools;
         private readonly VisualElement statusBar;
         private readonly Label statusText;
         private readonly Label statusStats;
@@ -48,6 +49,8 @@ namespace NovaMarket.UI.Sheet
             toolbar.Add(HudElements.Box("sheet-tool-separator"));
             toolbar.Add(Tool("+ decimal", () => ApplyFormat(f => Decimals(f, +1))));
             toolbar.Add(Tool("− decimal", () => ApplyFormat(f => Decimals(f, -1))));
+            levelTools = HudElements.Box("sheet-level-tools");
+            toolbar.Add(levelTools);
             toolbar.Add(HudElements.Text("Funciones: SUMA · PROMEDIO · ABS · SI · DESVEST.P   ·   separa con ; y usa coma decimal",
                 "sheet-functions"));
             screen.Add(toolbar);
@@ -94,6 +97,16 @@ namespace NovaMarket.UI.Sheet
         public VisualElement Root { get; }
         public bool IsVisible => !Root.ClassListContains("hidden");
         public SheetGridView Grid => grid;
+
+        /// <summary>Adds a button of the level to the toolbar ("Marcar problema" in 1.2), or removes them with null.</summary>
+        public Button SetLevelTool(string text, Action action)
+        {
+            levelTools.Clear();
+            if (text == null) return null;
+            Button button = Tool(text, action).WithClass("sheet-tool--level");
+            levelTools.Add(button);
+            return button;
+        }
 
         public void Bind(Workbook workbook, string file)
         {

@@ -36,6 +36,9 @@ namespace NovaMarket.UI.Campaign
         private readonly List<(LevelInfo Level, VisualElement Node)> nodes = new List<(LevelInfo, VisualElement)>();
         private LevelInfo selected;
 
+        /// <summary>Best result of each level, shown in the detail card (null = nothing played).</summary>
+        public CampaignProgress Progress { get; set; }
+
         public WorldMapView(VisualElement layer, CampaignDatabase database, Action<LevelInfo> onPlay, Action onBack)
         {
             this.layer = layer;
@@ -147,6 +150,8 @@ namespace NovaMarket.UI.Campaign
         {
             selected = level;
             foreach ((LevelInfo info, VisualElement node) in nodes) node.EnableInClassList("map-node--selected", info == level);
+            foreach ((LevelInfo info, VisualElement node) in nodes)
+                node.EnableInClassList("map-node--done", Progress?.Best(info.Id)?.Stars > 0);
 
             detail.Clear();
             bool boss = level == BossLevel;
@@ -177,8 +182,12 @@ namespace NovaMarket.UI.Campaign
                 if (ColorUtility.TryParseHtmlString(level.Gem.ColorHex, out Color color)) gem.style.color = color;
                 detail.Add(Row(gem, $"{level.Gem.Name} ({level.Gem.Shape}) · {level.Gem.Points} puntos + 100 por estrella"));
                 VisualElement stars = HudElements.Box("detail-stars");
-                for (int i = 0; i < 3; i++) stars.Add(new HudIcon { Kind = HudIconKind.Service });
-                detail.Add(Row(stars, "Sin jugar"));
+                LevelRecord best = Progress?.Best(level.Id);
+                for (int i = 0; i < 3; i++)
+                    stars.Add(new HudIcon { Kind = HudIconKind.Service }.WithClass(best != null && i < best.Stars ? "detail-star--on" : "detail-star"));
+                detail.Add(Row(stars, best == null ? "Sin jugar"
+                    : best.Stars == 0 ? "Jugado, sin superar"
+                    : $"Tu mejor resultado: {best.Stars} {(best.Stars == 1 ? "estrella" : "estrellas")} · {best.Points} puntos"));
             }
 
             detail.Add(HudElements.Box("detail-spacer"));
