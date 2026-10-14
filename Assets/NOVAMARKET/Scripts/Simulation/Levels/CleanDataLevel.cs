@@ -141,15 +141,27 @@ namespace NovaMarket.Simulation.Levels
         public void Mark(IssueMark mark)
         {
             if (mark == null) throw new ArgumentNullException(nameof(mark));
+            IssueMark before = MarkAt(mark.Code, mark.Month);
             marks[(mark.Code, mark.Month)] = mark;
             MarksChanged?.Invoke();
+            // Ctrl+Z puts back the mark that was there (or none).
+            Book.History.Add($"marcar {mark.Code} {SalesCalendar.Label(mark.Month)}", () => Put(mark.Code, mark.Month, before), () => Mark(mark));
         }
 
         public bool Unmark(string code, int month)
         {
-            bool removed = marks.Remove((code, month));
-            if (removed) MarksChanged?.Invoke();
-            return removed;
+            IssueMark before = MarkAt(code, month);
+            if (before == null) return false;
+            marks.Remove((code, month));
+            MarksChanged?.Invoke();
+            Book.History.Add($"quitar la marca de {code} {SalesCalendar.Label(month)}", () => Mark(before), () => Unmark(code, month));
+            return true;
+        }
+
+        private void Put(string code, int month, IssueMark mark)
+        {
+            if (mark != null) Mark(mark);
+            else Unmark(code, month);
         }
 
         public IssueMark MarkAt(string code, int month) => marks.TryGetValue((code, month), out IssueMark mark) ? mark : null;
@@ -177,7 +189,8 @@ namespace NovaMarket.Simulation.Levels
         {
             int row = HistoryTable.FindRow(CleanSheet, code);
             if (row < 0 || month < 0 || month >= SalesCalendar.Months) return false;
-            CleanSheet.SetNumber(new CellAddress(HistoryTable.MonthColumn(month), row), value);
+            var cell = new CellAddress(HistoryTable.MonthColumn(month), row);
+            Book.History.Record($"escribir en {cell} con una tarjeta", () => CleanSheet.SetNumber(cell, value));
             return true;
         }
 

@@ -24,6 +24,8 @@ namespace NovaMarket.UI.Sheet
         private readonly VisualElement statusBar;
         private readonly Label statusText;
         private readonly Label statusStats;
+        private readonly Button undoButton;
+        private readonly Button redoButton;
         private readonly List<string> tabNames = new List<string>();
         private Workbook book;
         private bool syncingBar;
@@ -51,6 +53,11 @@ namespace NovaMarket.UI.Sheet
             toolbar.Add(Tool("+ decimal", () => ApplyFormat(f => Decimals(f, +1))));
             toolbar.Add(Tool("− decimal", () => ApplyFormat(f => Decimals(f, -1))));
             toolbar.Add(HudElements.Box("sheet-tool-separator"));
+            undoButton = Tool("Deshacer", () => WithGrid(grid.Undo));
+            redoButton = Tool("Rehacer", () => WithGrid(grid.Redo));
+            toolbar.Add(undoButton);
+            toolbar.Add(redoButton);
+            toolbar.Add(HudElements.Box("sheet-tool-separator"));
             toolbar.Add(Tool("Copiar", () => WithGrid(grid.Copy)));
             toolbar.Add(Tool("Pegar", () => WithGrid(() => grid.Paste())));
             toolbar.Add(Tool("Pegar valores", () => WithGrid(() => grid.Paste(valuesOnly: true))));
@@ -71,9 +78,14 @@ namespace NovaMarket.UI.Sheet
             });
             formulaField.RegisterValueChangedCallback(e =>
             {
-                if (!syncingBar) grid.SetEditText(e.newValue);
+                if (!syncingBar) grid.SetEditText(e.newValue, formulaField.cursorIndex);
             });
             formulaField.RegisterCallback<KeyDownEvent>(OnFormulaKeyDown, TrickleDown.TrickleDown);
+            // The cursor of the bar decides where a clicked reference goes.
+            formulaField.RegisterCallback<KeyUpEvent>(_ => grid.NoteCaret(formulaField.cursorIndex));
+            formulaField.RegisterCallback<PointerUpEvent>(_ => grid.NoteCaret(formulaField.cursorIndex), TrickleDown.TrickleDown);
+            formulaField.selectAllOnFocus = false;
+            formulaField.selectAllOnMouseUp = false;
             bar.Add(formulaField);
             screen.Add(bar);
 
@@ -149,10 +161,16 @@ namespace NovaMarket.UI.Sheet
 
         public void Bind(Workbook workbook, string file)
         {
-            if (book != null) book.Changed -= OnBookChanged;
+            if (book != null)
+            {
+                book.Changed -= OnBookChanged;
+                book.History.Changed -= UpdateHistoryButtons;
+            }
             book = workbook;
             info = null;
             book.Changed += OnBookChanged;
+            book.History.Changed += UpdateHistoryButtons;
+            UpdateHistoryButtons();
             fileName.text = file;
             tabNames.Clear();
             grid.SetSheet(book.Sheets.FirstOrDefault());
@@ -194,9 +212,18 @@ namespace NovaMarket.UI.Sheet
 
         private void ApplyFormat(Func<CellFormat, CellFormat> change)
         {
-            if (grid.Sheet == null) return;
-            grid.Sheet.SetFormat(grid.Selection, change(grid.Sheet.GetFormat(grid.Active)));
+            Worksheet sheet = grid.Sheet;
+            if (sheet == null) return;
+            CellRange selection = grid.Selection;
+            sheet.Book.History.Record($"cambiar el formato de {selection}", () => sheet.SetFormat(selection, change(sheet.GetFormat(grid.Active))));
             grid.Focus();
+        }
+
+        private void UpdateHistoryButtons()
+        {
+            SheetHistory history = book?.History;
+            undoButton.SetEnabled(history?.CanUndo == true);
+            redoButton.SetEnabled(history?.CanRedo == true);
         }
 
         // ------------------------------------------------------------------ book and tabs
@@ -247,6 +274,7 @@ namespace NovaMarket.UI.Sheet
                     grid.CommitEdit(true, 1, 0);
                     break;
                 case KeyCode.Escape:
+                case KeyCode.Z when evt.actionKey:
                     grid.CancelEdit();
                     break;
                 default:

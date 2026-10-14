@@ -20,7 +20,12 @@ namespace NovaMarket.Simulation.Sheet
         /// <summary>Raised after any edit (once per batch).</summary>
         public event Action Changed;
 
+        public Workbook() => History = new SheetHistory(this);
+
         public IReadOnlyList<Worksheet> Sheets => sheets;
+
+        /// <summary>Undo and redo of the player's edits (Ctrl+Z / Ctrl+Y).</summary>
+        public SheetHistory History { get; }
 
         /// <summary>Increases with every edit; cached values of older versions are recomputed.</summary>
         internal int Version { get; private set; }

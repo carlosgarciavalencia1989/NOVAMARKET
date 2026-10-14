@@ -190,6 +190,34 @@ namespace NovaMarket.Simulation.Sheet
             return tokens;
         }
 
+        /// <summary>
+        /// Writes function names, VERDADERO/FALSO and cell references in capitals, as Excel does on Enter
+        /// (=promedio(b3:b5) → =PROMEDIO(B3:B5)). Texts in quotes and tab names stay as typed; a formula
+        /// that cannot be read is returned unchanged.
+        /// </summary>
+        /// <param name="formula">Formula without the leading "=".</param>
+        public static string Normalize(string formula)
+        {
+            if (string.IsNullOrEmpty(formula)) return formula;
+            List<FormulaToken> tokens;
+            try
+            {
+                tokens = Tokenize(formula);
+            }
+            catch (FormulaException)
+            {
+                return formula;
+            }
+            char[] text = formula.ToCharArray();
+            foreach (FormulaToken token in tokens)
+            {
+                int from = token.Kind == TokenKind.Reference && token.SheetText != null ? token.Start + token.SheetText.Length + 1 : token.Start;
+                if (token.Kind != TokenKind.Function && token.Kind != TokenKind.Boolean && token.Kind != TokenKind.Reference) continue;
+                for (int i = from; i < token.Start + token.Length; i++) text[i] = char.ToUpperInvariant(text[i]);
+            }
+            return new string(text);
+        }
+
         private static string SheetName(string sheetText)
         {
             if (sheetText == null) return null;

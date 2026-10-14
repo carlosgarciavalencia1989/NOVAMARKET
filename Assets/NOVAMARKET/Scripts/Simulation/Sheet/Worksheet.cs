@@ -50,6 +50,7 @@ namespace NovaMarket.Simulation.Sheet
         /// </summary>
         public void SetInput(CellAddress address, string input)
         {
+            Remember(address);
             Cell cell = GetOrCreate(address);
             cell.FormulaText = null;
             cell.Formula = null;
@@ -59,7 +60,7 @@ namespace NovaMarket.Simulation.Sheet
 
             if (input.StartsWith("=") && input.Length > 1)
             {
-                cell.FormulaText = input.Substring(1);
+                cell.FormulaText = FormulaLexer.Normalize(input.Substring(1));
                 try
                 {
                     cell.Formula = FormulaParser.Parse(cell.FormulaText);
@@ -91,6 +92,7 @@ namespace NovaMarket.Simulation.Sheet
 
         private void SetConstant(CellAddress address, CellValue value)
         {
+            Remember(address);
             Cell cell = GetOrCreate(address);
             cell.FormulaText = null;
             cell.Formula = null;
@@ -104,6 +106,7 @@ namespace NovaMarket.Simulation.Sheet
         {
             foreach (CellAddress address in range.Cells())
             {
+                Remember(address);
                 Cell cell = GetOrCreate(address);
                 cell.Format = format;
                 Cleanup(address, cell);
@@ -113,7 +116,12 @@ namespace NovaMarket.Simulation.Sheet
 
         public void Clear(CellRange range)
         {
-            foreach (CellAddress address in range.Cells()) cells.Remove(address);
+            foreach (CellAddress address in range.Cells())
+            {
+                if (!cells.ContainsKey(address)) continue;
+                Remember(address);
+                cells.Remove(address);
+            }
             book.Touch();
         }
 
@@ -123,6 +131,7 @@ namespace NovaMarket.Simulation.Sheet
             cells.TryGetValue(from, out Cell source);
             if (source == null)
             {
+                Remember(to);
                 cells.Remove(to);
                 book.Touch();
                 return;
@@ -273,6 +282,7 @@ namespace NovaMarket.Simulation.Sheet
         {
             if (value.IsEmpty)
             {
+                Remember(address);
                 Cell cell = GetOrCreate(address);
                 cell.FormulaText = null;
                 cell.Formula = null;
@@ -326,6 +336,54 @@ namespace NovaMarket.Simulation.Sheet
                     break;
             }
         }
+
+        // ------------------------------------------------------------------ undo
+
+        /// <summary>A copy of one cell (content and format) kept by the undo history; null = empty cell.</summary>
+        internal sealed class CellState
+        {
+            internal string FormulaText;
+            internal FormulaNode Formula;
+            internal string ParseError;
+            internal CellValue Constant;
+            internal CellFormat Format;
+
+            internal static bool Same(CellState a, CellState b) =>
+                a == null || b == null
+                    ? a == b
+                    : a.FormulaText == b.FormulaText && a.Constant.Equals(b.Constant) && a.Format.Equals(b.Format);
+        }
+
+        internal CellState Capture(CellAddress address) =>
+            cells.TryGetValue(address, out Cell cell) && (cell.HasContent || !cell.Format.Equals(CellFormat.General))
+                ? new CellState
+                {
+                    FormulaText = cell.FormulaText, Formula = cell.Formula, ParseError = cell.ParseError,
+                    Constant = cell.Constant, Format = cell.Format
+                }
+                : null;
+
+        /// <summary>Puts a cell back as it was (undo and redo; it is not recorded again).</summary>
+        internal void Restore(CellAddress address, CellState state)
+        {
+            if (state == null)
+            {
+                cells.Remove(address);
+            }
+            else
+            {
+                Cell cell = GetOrCreate(address);
+                cell.FormulaText = state.FormulaText;
+                cell.Formula = state.Formula;
+                cell.ParseError = state.ParseError;
+                cell.Constant = state.Constant;
+                cell.Format = state.Format;
+                cell.CachedVersion = -1;
+            }
+            book.Touch();
+        }
+
+        private void Remember(CellAddress address) => book.History.Remember(this, address);
 
         private Cell GetOrCreate(CellAddress address)
         {

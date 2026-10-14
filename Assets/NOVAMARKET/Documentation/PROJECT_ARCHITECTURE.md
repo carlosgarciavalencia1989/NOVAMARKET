@@ -340,7 +340,12 @@ Plain C# engine of DISENO_JUEGO_V2.md (the UI comes next: start menu, ERP window
   relative references and continues number series. `SheetClipboard` copies and pastes (formulas move
   their references; values only; a whole row trims to its used columns; tab-separated text from other
   programs). `SheetErrorHelp` explains an error in plain Spanish naming the cells (which cells read
-  each other in a circular reference, which cell an error comes from).
+  each other in a circular reference, which cell an error comes from). `SheetHistory`
+  (`Workbook.History`) is undo/redo (Ctrl+Z / Ctrl+Y, last 100 actions): the UI wraps each action of
+  the player in `History.Record` and every cell it touches is copied before it changes; the level adds
+  its own steps (problem marks) with `History.Add`. Edits of the game (downloads, setup) are not
+  recorded. `FormulaEditing` places a clicked reference at the cursor of the formula being typed, and
+  `FormulaLexer.Normalize` writes function names and references in capitals (=promedio → =PROMEDIO).
 - **NOVA ERP** (`Erp/`): screens with their SAP code (world 1: Facturación, Maestro de materiales);
   billing by month includes the projection column by default (the Atlas trap); "Descargar a hoja"
   puts months in columns C…AT, as the Atlas. `DataQualityInjector` plants problems with their

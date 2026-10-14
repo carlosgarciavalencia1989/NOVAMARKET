@@ -217,6 +217,39 @@ namespace NovaMarket.Tests.Simulation.Levels
         }
 
         [Test]
+        public void MarksAndCardValues_CanBeUndoneAndRedone()
+        {
+            LevelPlayers.Download(level);
+            DataIssue zero = Issue(DataIssueKind.FalseZero, real: true);
+            int month = zero.Months[0];
+            SheetHistory history = level.Book.History;
+            Assert.IsFalse(history.CanUndo, "The download is not an action of the player.");
+
+            level.Mark(new IssueMark(zero.Code, month, DataIssueKind.OneOffOrder, CorrectionAction.Impute));
+            level.Mark(new IssueMark(zero.Code, month, DataIssueKind.FalseZero, CorrectionAction.Impute));
+            level.WriteClean(zero.Code, month, 4695);
+            level.Unmark(zero.Code, month);
+
+            history.Undo();
+            Assert.AreEqual(DataIssueKind.FalseZero, level.MarkAt(zero.Code, month).Kind, "Ctrl+Z brings the removed mark back.");
+            history.Undo();
+            Assert.AreEqual(0, level.CleanSheet.Value(new CellAddress(HistoryTable.MonthColumn(month), HistoryTable.FindRow(level.CleanSheet, zero.Code))).Number);
+            history.Undo();
+            Assert.AreEqual(DataIssueKind.OneOffOrder, level.MarkAt(zero.Code, month).Kind, "Re-marking goes back to the previous kind.");
+            history.Undo();
+            Assert.IsNull(level.MarkAt(zero.Code, month));
+
+            history.Redo();
+            history.Redo();
+            history.Redo();
+            Assert.AreEqual(4695, level.CleanSheet.Value(new CellAddress(HistoryTable.MonthColumn(month), HistoryTable.FindRow(level.CleanSheet, zero.Code))).Number);
+            Assert.AreEqual(DataIssueKind.FalseZero, level.MarkAt(zero.Code, month).Kind);
+            history.Redo();
+            Assert.IsNull(level.MarkAt(zero.Code, month));
+            Assert.IsFalse(history.CanRedo);
+        }
+
+        [Test]
         public void World1_ListsSevenLevels_OnlyTheFirstTwoBuilt()
         {
             Assert.AreEqual(7, ForecastWorld.Levels.Count);

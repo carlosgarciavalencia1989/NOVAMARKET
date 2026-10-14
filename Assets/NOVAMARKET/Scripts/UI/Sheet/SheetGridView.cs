@@ -20,7 +20,6 @@ namespace NovaMarket.UI.Sheet
         public const float DefaultColumnWidth = 96f;
         private const float ScrollerSize = 14f;
         private const float HandleSize = 9f;
-        private const string ReferenceStarters = "=(;+-*/^:<>&";
 
         private readonly VisualElement corner;
         private readonly VisualElement columnStrip;
@@ -61,6 +60,8 @@ namespace NovaMarket.UI.Sheet
         private Worksheet editSheet;
         private CellAddress editCell;
         private int pickStart = -1;
+        private int pickEnd = -1;
+        private int caret;
         private CellAddress pickAnchor;
         private bool picking;
         private bool syncingText;
@@ -99,6 +100,12 @@ namespace NovaMarket.UI.Sheet
             editor.style.display = DisplayStyle.None;
             editor.RegisterCallback<KeyDownEvent>(OnEditorKeyDown, TrickleDown.TrickleDown);
             editor.RegisterValueChangedCallback(e => OnEditTextChanged(e.newValue, fromBar: false));
+            // Focusing the editor after a click on a cell must not select the formula (the next key would
+            // replace it): the cursor goes back where it was, as in Excel.
+            editor.selectAllOnFocus = false;
+            editor.selectAllOnMouseUp = false;
+            editor.RegisterCallback<KeyUpEvent>(_ => NoteCaret(editor.cursorIndex));
+            editor.RegisterCallback<PointerUpEvent>(_ => NoteCaret(editor.cursorIndex), TrickleDown.TrickleDown);
             cells.Add(editor);
 
             vertical = new Scroller(0, 1, value => OnScroll(scrollX, value), SliderDirection.Vertical).WithClass("sheet-scroller");
@@ -147,7 +154,13 @@ namespace NovaMarket.UI.Sheet
         public string EditText => editor.value;
 
         /// <summary>True while a formula is being typed and a click inserts a reference.</summary>
-        public bool IsPicking => IsEditing && CanPick(editor.value);
+        public bool IsPicking => IsEditing && FormulaEditing.CanInsertReference(editor.value, caret);
+
+        /// <summary>
+        /// Where the cursor is in the formula being typed (in the cell or in the formula bar): a clicked
+        /// reference is written there.
+        /// </summary>
+        public int Caret => caret;
 
         public void SetSheet(Worksheet worksheet)
         {
@@ -577,11 +590,12 @@ namespace NovaMarket.UI.Sheet
             if (filling && fillTarget.HasValue && sheet != null)
             {
                 CellRange target = fillTarget.Value;
-                sheet.Fill(Selection, target);
+                CellRange source = Selection;
+                sheet.Book.History.Record($"arrastrar {source} hasta {target}", () => sheet.Fill(source, target));
                 anchor = target.Start;
                 cursor = target.End;
             }
-            if (picking) editor.Focus();
+            if (picking) FocusEditorAtCaret();
             selecting = filling = picking = false;
             autoScroll?.Pause();
             fillTarget = null;
@@ -629,7 +643,9 @@ namespace NovaMarket.UI.Sheet
             CellAddress at = Selection.Start;
             string outside = GUIUtility.systemCopyBuffer;
             bool external = !string.IsNullOrEmpty(outside) && (!clipboard.HasContent || outside != clipboard.Text);
-            CellRange? pasted = external ? SheetClipboard.PasteText(sheet, at, outside) : clipboard.Paste(sheet, at, valuesOnly);
+            CellRange? pasted = null;
+            sheet.Book.History.Record($"pegar en {at}", () =>
+                pasted = external ? SheetClipboard.PasteText(sheet, at, outside) : clipboard.Paste(sheet, at, valuesOnly));
             if (!pasted.HasValue)
             {
                 Notice?.Invoke(clipboard.HasContent || external
@@ -652,6 +668,48 @@ namespace NovaMarket.UI.Sheet
         {
             copyRange = null;
             Refresh();
+        }
+
+        // ------------------------------------------------------------------ undo and redo
+
+        /// <summary>Ctrl+Z: undoes the last action (writing, deleting, pasting, dragging, marks).</summary>
+        public void Undo() => Replay(redoing: false);
+
+        /// <summary>Ctrl+Y: does again the last undone action.</summary>
+        public void Redo() => Replay(redoing: true);
+
+        private void Replay(bool redoing)
+        {
+            if (sheet == null) return;
+            // An edit in progress is dropped first, as in Excel (Ctrl+Z while typing restores the cell).
+            if (IsEditing)
+            {
+                CancelEdit();
+                if (!redoing) return;
+            }
+            SheetHistory history = sheet.Book.History;
+            HistoryChange change = redoing ? history.Redo() : history.Undo();
+            if (change == null)
+            {
+                Notice?.Invoke(redoing ? "No hay nada para rehacer." : "No hay nada para deshacer.");
+                return;
+            }
+            if (change.Sheet != null && change.Cells.HasValue)
+            {
+                if (change.Sheet != sheet)
+                {
+                    SetSheet(change.Sheet);
+                    SheetSwitched?.Invoke(change.Sheet);
+                }
+                Select(change.Cells.Value.Start, change.Cells.Value.End);
+            }
+            else
+            {
+                Refresh();
+            }
+            StateChanged?.Invoke();
+            Notice?.Invoke((redoing ? "Rehiciste: " : "Deshiciste: ") + change.Label +
+                           (redoing ? "." : ". Ctrl+Y lo vuelve a hacer."));
         }
 
         // ------------------------------------------------------------------ hover note
@@ -704,10 +762,13 @@ namespace NovaMarket.UI.Sheet
         {
             if (sheet == null || IsEditing) return;
             bool handled = true;
-            if (evt.actionKey && (evt.keyCode == KeyCode.C || evt.keyCode == KeyCode.V))
+            if (evt.actionKey && (evt.keyCode == KeyCode.C || evt.keyCode == KeyCode.V || evt.keyCode == KeyCode.Z || evt.keyCode == KeyCode.Y))
             {
                 if (evt.keyCode == KeyCode.C) Copy();
-                else Paste(valuesOnly: evt.shiftKey);
+                else if (evt.keyCode == KeyCode.V) Paste(valuesOnly: evt.shiftKey);
+                // Ctrl+Z undoes and Ctrl+Y redoes; Cmd+Shift+Z also redoes, as on a Mac.
+                else if (evt.keyCode == KeyCode.Y || evt.shiftKey) Redo();
+                else Undo();
                 evt.StopPropagation();
                 focusController?.IgnoreEvent(evt);
                 return;
@@ -727,7 +788,8 @@ namespace NovaMarket.UI.Sheet
                 case KeyCode.Tab: Move(evt.shiftKey ? -1 : 1, 0, false); break;
                 case KeyCode.Delete:
                 case KeyCode.Backspace:
-                    sheet.Clear(Selection);
+                    CellRange selection = Selection;
+                    sheet.Book.History.Record($"borrar {selection}", () => sheet.Clear(selection));
                     break;
                 case KeyCode.F2: BeginEdit(sheet.GetInput(anchor)); break;
                 default:
@@ -764,21 +826,18 @@ namespace NovaMarket.UI.Sheet
             editSheet = sheet;
             editCell = anchor;
             cursor = anchor;
-            pickStart = -1;
+            pickStart = pickEnd = -1;
             syncingText = true;
             editor.SetValueWithoutNotify(text ?? string.Empty);
             syncingText = false;
+            caret = editor.value.Length;
             Refresh();
-            if (focusEditor)
-            {
-                editor.Focus();
-                editor.schedule.Execute(() => editor.SelectRange(editor.value.Length, editor.value.Length));
-            }
+            if (focusEditor) FocusEditorAtCaret();
             StateChanged?.Invoke();
         }
 
-        /// <summary>Text typed in the formula bar while editing.</summary>
-        public void SetEditText(string text)
+        /// <summary>Text typed in the formula bar while editing, with the cursor of the bar.</summary>
+        public void SetEditText(string text, int? barCaret = null)
         {
             if (!IsEditing) BeginEdit(text, focusEditor: false);
             else
@@ -788,6 +847,19 @@ namespace NovaMarket.UI.Sheet
                 syncingText = false;
                 OnEditTextChanged(text, fromBar: true);
             }
+            caret = Mathf.Clamp(barCaret ?? text.Length, 0, text.Length);
+            StateChanged?.Invoke();
+        }
+
+        /// <summary>The cursor moved (arrows, click inside the text, formula bar): a new pick goes there.</summary>
+        public void NoteCaret(int index)
+        {
+            if (!IsEditing) return;
+            int clamped = Mathf.Clamp(index, 0, editor.value.Length);
+            if (clamped == caret) return;
+            caret = clamped;
+            pickStart = pickEnd = -1;
+            StateChanged?.Invoke();
         }
 
         public void CommitEdit(bool move = true, int columns = 0, int rows = 1)
@@ -797,8 +869,8 @@ namespace NovaMarket.UI.Sheet
             CellAddress cell = editCell;
             string text = editor.value;
             editSheet = null;
-            pickStart = -1;
-            target.SetInput(cell, text);
+            pickStart = pickEnd = -1;
+            target.Book.History.Record($"escribir en {cell}", () => target.SetInput(cell, text));
             if (target != sheet)
             {
                 SetSheet(target);
@@ -816,7 +888,7 @@ namespace NovaMarket.UI.Sheet
             if (!IsEditing) return;
             Worksheet target = editSheet;
             editSheet = null;
-            pickStart = -1;
+            pickStart = pickEnd = -1;
             if (target != sheet)
             {
                 SetSheet(target);
@@ -841,6 +913,9 @@ namespace NovaMarket.UI.Sheet
                 case KeyCode.Escape:
                     CancelEdit();
                     break;
+                case KeyCode.Z when evt.actionKey:
+                    CancelEdit();
+                    break;
                 default:
                     return;
             }
@@ -851,29 +926,48 @@ namespace NovaMarket.UI.Sheet
         private void OnEditTextChanged(string text, bool fromBar)
         {
             if (syncingText) return;
-            pickStart = -1; // typing (in the cell or in the formula bar) ends the reference being picked
+            pickStart = pickEnd = -1; // typing (in the cell or in the formula bar) ends the reference being picked
+            if (!fromBar) caret = Mathf.Clamp(editor.cursorIndex, 0, text.Length);
             StateChanged?.Invoke();
         }
 
-        private static bool CanPick(string text) =>
-            !string.IsNullOrEmpty(text) && text[0] == '=' && ReferenceStarters.IndexOf(text[text.Length - 1]) >= 0;
-
-        /// <summary>Writes the clicked cell or range in the formula ('Datos'!B3 when it is on another tab).</summary>
+        /// <summary>
+        /// Writes the clicked cell or range where the cursor is ('Datos'!B3 when it is on another tab). While
+        /// the player keeps clicking or dragging, the same reference is replaced, as in Excel.
+        /// </summary>
         private void InsertReference(CellRange range)
         {
             string text = editor.value;
-            if (pickStart < 0 || pickStart > text.Length) pickStart = text.Length;
+            if (pickStart < 0 || pickStart > text.Length)
+            {
+                pickStart = caret;
+                pickEnd = caret;
+            }
             string prefix = sheet != editSheet ? FormulaLexer.QuoteSheet(sheet.Name) + "!" : string.Empty;
-            string reference = prefix + range;
+            string updated = FormulaEditing.Insert(text, pickStart, pickEnd, prefix + range, out caret);
+            pickEnd = caret;
             syncingText = true;
-            editor.SetValueWithoutNotify(text.Substring(0, pickStart) + reference);
+            editor.SetValueWithoutNotify(updated);
             syncingText = false;
             anchor = range.Start;
             cursor = range.End;
             StateChanged?.Invoke();
         }
 
+        /// <summary>Gives the focus back to the cell editor with the cursor where it was, nothing selected.</summary>
+        private void FocusEditorAtCaret()
+        {
+            editor.Focus();
+            int at = caret;
+            editor.SelectRange(at, at);
+            // The focus may arrive a frame later; place the cursor again then.
+            editor.schedule.Execute(() =>
+            {
+                if (IsEditing) editor.SelectRange(caret, caret);
+            });
+        }
+
         /// <summary>A picked reference stays replaceable until the player types again.</summary>
-        public bool AcceptsPick => IsEditing && (pickStart >= 0 || CanPick(editor.value));
+        public bool AcceptsPick => IsEditing && (pickStart >= 0 || FormulaEditing.CanInsertReference(editor.value, caret));
     }
 }
