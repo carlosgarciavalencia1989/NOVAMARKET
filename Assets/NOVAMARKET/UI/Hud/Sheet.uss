@@ -373,3 +373,29 @@
     border-color: rgb(214, 120, 0);
     -unity-font-style: bold;
 }
+
+/* ---------------------------------------------------------------- sheet font */
+
+/* Cells, headers and the formula bar use Roboto: ";" and ":" are clearly different and every digit
+   has the same width, so numbers line up. The window chrome keeps the HUD's Oswald. */
+.sheet-cell,
+.sheet-head,
+.name-box,
+.formula-field .unity-text-element,
+.cell-editor .unity-text-element {
+    -unity-font-definition: url("project://database/Assets/NOVAMARKET/UI/Fonts/Roboto_SDF.asset");
+}
+
+.sheet-cell {
+    font-size: 15px;
+}
+
+.sheet-head {
+    font-size: 13px;
+}
+
+.name-box,
+.formula-field .unity-text-element,
+.cell-editor .unity-text-element {
+    font-size: 16px;
+}

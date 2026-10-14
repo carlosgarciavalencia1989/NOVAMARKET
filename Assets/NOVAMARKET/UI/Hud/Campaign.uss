@@ -1104,3 +1104,24 @@
 .card-box-field .unity-text-element {
     color: rgb(24, 18, 12);
 }
+
+/* Formula cards use the sheet's font (Roboto) for formulas, references and numbers. */
+.card-formula,
+.card-box-label,
+.card-result,
+.card-box-field .unity-text-element {
+    -unity-font-definition: url("project://database/Assets/NOVAMARKET/UI/Fonts/Roboto_SDF.asset");
+}
+
+.card-formula,
+.card-result {
+    font-size: 18px;
+}
+
+.card-box-label {
+    font-size: 15px;
+}
+
+.card-box-field .unity-text-element {
+    font-size: 16px;
+}

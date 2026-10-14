@@ -86,7 +86,8 @@ Assets/NOVAMARKET/
     UI/                UI assets
         Hud/           Hud.uxml, Hud.uss, Planning.uss, Campaign.uss (menu, map, bar), Erp.uss, Sheet.uss,
                        HudTheme.tss, HudPanelSettings
-        Fonts/         Oswald (SIL OFL, licence in Oswald-OFL.txt) and its Oswald_SDF font asset
+        Fonts/         Oswald (HUD) and Roboto (sheet), both SIL OFL (licences in *-OFL.txt), and their
+                       *_SDF font assets (made by CediHudSetup)
     Data/              ScriptableObject asset instances: Campaign.asset (CampaignDatabase), Roles/, Sectors/
                        (Sector_Cosmetica + Cosmetica/Historia_Atlas_Cosmetica.csv), Characters/
     Documentation/     Project documentation: this file, DISENO_JUEGO_V2.md (current game design: roles,
@@ -296,7 +297,8 @@ barrier arms on their hinges. To use real models later, replace the prefabs in
 
 ## HUD
 
-UI Toolkit, Age of Empires III style: dark panels with a bevelled gold frame, Oswald font.
+UI Toolkit, Age of Empires III style: dark panels with a bevelled gold frame, Oswald font. The sheet
+cells, headers, formula bar and the formula cards use Roboto (clear ";" vs ":", same-width digits).
 Layout in `UI/Hud/Hud.uxml`, styles in `Hud.uss`, scaling 1920 × 1080 reference
 (`HudPanelSettings`). Icons are vector `HudIcon` elements drawn with Painter2D.
 

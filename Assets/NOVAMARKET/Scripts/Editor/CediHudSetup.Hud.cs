@@ -19,6 +19,8 @@ namespace NovaMarket.Editor
         private const string FontFolder = Root + "UI/Fonts";
         private const string FontSourcePath = FontFolder + "/Oswald-Variable.ttf";
         private const string FontAssetPath = FontFolder + "/Oswald_SDF.asset";
+        private const string SheetFontSourcePath = FontFolder + "/Roboto-Variable.ttf";
+        private const string SheetFontAssetPath = FontFolder + "/Roboto_SDF.asset";
         private const string HudLayoutPath = HudFolder + "/Hud.uxml";
         private const string ThemePath = HudFolder + "/HudTheme.tss";
         private const string PanelSettingsPath = HudFolder + "/HudPanelSettings.asset";
@@ -26,7 +28,7 @@ namespace NovaMarket.Editor
 
         private static void SetupHud(Transform systems, SelectionController selection)
         {
-            CreateFontAsset();
+            CreateFontAssets();
             PanelSettings panelSettings = GetPanelSettings();
 
             Transform minimapObject = GetOrCreateChild(systems, "MinimapCamera");
@@ -64,24 +66,31 @@ namespace NovaMarket.Editor
             SetField(campaign, "cameraController", Object.FindAnyObjectByType<StrategyCameraController>());
         }
 
-        /// <summary>Dynamic SDF font asset for UI Toolkit, generated from the Oswald TTF.</summary>
-        private static void CreateFontAsset()
+        /// <summary>Dynamic SDF font assets for UI Toolkit: Oswald for the HUD and Roboto for the sheet.</summary>
+        private static void CreateFontAssets()
         {
-            if (AssetDatabase.LoadAssetAtPath<FontAsset>(FontAssetPath) != null) return;
+            CreateFontAsset(FontSourcePath, FontAssetPath, "Oswald_SDF");
+            CreateFontAsset(SheetFontSourcePath, SheetFontAssetPath, "Roboto_SDF");
+        }
 
-            var font = AssetDatabase.LoadAssetAtPath<Font>(FontSourcePath);
+        private static void CreateFontAsset(string sourcePath, string assetPath, string assetName)
+        {
+            if (AssetDatabase.LoadAssetAtPath<FontAsset>(assetPath) != null) return;
+
+            var font = AssetDatabase.LoadAssetAtPath<Font>(sourcePath);
             FontAsset fontAsset = FontAsset.CreateFontAsset(font);
-            fontAsset.name = "Oswald_SDF";
-            AssetDatabase.CreateAsset(fontAsset, FontAssetPath);
+            fontAsset.name = assetName;
+            AssetDatabase.CreateAsset(fontAsset, assetPath);
 
             // The atlas texture and material must live inside the asset to be saved.
-            fontAsset.atlasTextures[0].name = "Oswald_SDF Atlas";
-            fontAsset.material.name = "Oswald_SDF Material";
+            fontAsset.atlasTextures[0].name = assetName + " Atlas";
+            fontAsset.material.name = assetName + " Material";
             AssetDatabase.AddObjectToAsset(fontAsset.atlasTextures[0], fontAsset);
             AssetDatabase.AddObjectToAsset(fontAsset.material, fontAsset);
             EditorUtility.SetDirty(fontAsset);
             AssetDatabase.SaveAssets();
             AssetDatabase.ImportAsset(HudFolder + "/Hud.uss");
+            AssetDatabase.ImportAsset(HudFolder + "/Sheet.uss");
         }
 
         private static PanelSettings GetPanelSettings()
