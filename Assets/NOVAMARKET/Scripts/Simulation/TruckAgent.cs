@@ -34,6 +34,7 @@ namespace NovaMarket.Simulation
         private bool waitingForManoeuvre;
         private bool hasManoeuvre;
         private bool readyToLeave;
+        private bool waitingForGap;
 
         internal TruckAgent(int id, VehicleKind kind, string plate, CediOperationSettings settings,
             string partner, string place, string product, int pallets, bool fromEast, bool exitToEast,
@@ -95,6 +96,7 @@ namespace NovaMarket.Simulation
             TruckState.Docked when IsWaitingForPallets => "Esperando estibas",
             TruckState.Docked => "Cargando",
             TruckState.Leaving => "Saliendo del patio",
+            TruckState.ExitCheck when waitingForGap => "Esperando un hueco en la autopista",
             TruckState.ExitCheck => "Control de salida",
             TruckState.Exiting => "Rumbo a la autopista",
             _ => "Fuera del CEDI"
@@ -200,6 +202,8 @@ namespace NovaMarket.Simulation
                 case TruckState.ExitCheck:
                     timer -= deltaTime;
                     if (timer > 0f) break;
+                    waitingForGap = !simulation.IsExitMergeClear();
+                    if (waitingForGap) break; // wait for a gap in the highway traffic
                     simulation.OutboundGate.Leave(this);
                     simulation.OutboundGate.IsBarrierOpen = true;
                     barrierCleared = false;

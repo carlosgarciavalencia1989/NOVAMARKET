@@ -137,12 +137,16 @@ namespace NovaMarket.Simulation
             UpdateZones(me, now);
 
             float lookahead = Math.Max(1.5f, mover.Speed * 1.5f + 1f);
+            limit = Math.Min(limit, RedLightLimit(me, mover, lookahead + 30f));
+            end = Math.Min(leg.Path.Length, limit);
+            CollectSharedFootprints(me, lookahead);
             VehicleAgent blocker = null;
+            bool sharedBlocked = false;
             bool waitingForZone = false;
             var reached = new List<TrafficZone>();
             float allowed = float.MaxValue;
 
-            for (float s = LookStep; blocker == null && s <= lookahead + 1e-3f; s += LookStep)
+            for (float s = LookStep; blocker == null && !sharedBlocked && s <= lookahead + 1e-3f; s += LookStep)
             {
                 float distance = Math.Min(mover.DistanceOnLeg + s, end);
                 (Vector2 centre, Vector2 heading) = mover.PoseAhead(distance);
@@ -182,6 +186,11 @@ namespace NovaMarket.Simulation
                     allowed = stopAt;
                     break;
                 }
+                if (blocker == null && sharedFootprints.Count > 0 && HitsSharedTraffic(me, ahead, now, gap))
+                {
+                    sharedBlocked = true;
+                    allowed = stopAt;
+                }
                 if (distance >= end) break;
             }
 
@@ -195,7 +204,7 @@ namespace NovaMarket.Simulation
             {
                 me.BlockedSeconds = 0f;
                 if (me.GoesFirstPast != null && !now.Overlaps(me.GoesFirstPast.Footprint, gap * 4f)) me.GoesFirstPast = null;
-                return limit;
+                return sharedBlocked ? Math.Min(allowed, limit) : limit;
             }
 
             me.BlockedSeconds = me.PreviousBlocker == blocker ? me.BlockedSeconds + deltaTime : 0f;

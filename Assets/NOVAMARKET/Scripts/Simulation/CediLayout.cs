@@ -33,6 +33,9 @@ namespace NovaMarket.Simulation
         public const float WestboundLaneZ = -57f;
         public const float SpawnDistanceX = 260f;
 
+        /// <summary>Where an outbound truck joins the westbound lane (it waits for a gap there).</summary>
+        public static readonly Vector2 ExitMergePoint = new Vector2(-6f, WestboundLaneZ);
+
         /// <summary>Yard road used by trucks driving in (north of the outbound road, clear of the entrance canopy).</summary>
         private const float InboundYardZ = -18f;
 

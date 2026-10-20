@@ -167,7 +167,7 @@ namespace NovaMarket.Simulation
             foreach (VehicleAgent other in vehicles)
                 if (other.FloorHeight < 0.01f && truck.Footprint.Overlaps(other.Footprint, Settings.QueueGap))
                     return false;
-            return true;
+            return IsSharedRoadClearFor(truck);
         }
 
         private void TryAdd(TruckAgent truck, ref float nextAt)
