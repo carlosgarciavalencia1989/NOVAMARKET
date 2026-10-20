@@ -130,7 +130,7 @@ namespace NovaMarket.UI.Campaign
         private void ShowMenu()
         {
             EndLevel();
-            Mission.Reset("NOVAMARKET · Escoge tu rol y tu sector", CampaignHudData.StepsLabel, 0);
+            Mission.Reset("Supply Chain Run · Escoge tu rol y tu sector", CampaignHudData.StepsLabel, 0);
             menu.Show();
             SetMenuMode(true);
         }

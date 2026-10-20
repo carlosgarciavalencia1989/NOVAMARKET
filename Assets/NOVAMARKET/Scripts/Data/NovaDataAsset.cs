@@ -3,7 +3,7 @@ using UnityEngine;
 namespace NovaMarket.Data
 {
     /// <summary>
-    /// Base class for every NOVAMARKET data asset (CompanyData, ScenarioData, WarehouseData,
+    /// Base class for every Supply Chain Run data asset (CompanyData, ScenarioData, WarehouseData,
     /// VehicleData, ProductData, LocationData, MissionData, EventData, RoleData...).
     /// Concrete types derive from this and add a [CreateAssetMenu] using <see cref="MenuRoot"/>.
     /// </summary>

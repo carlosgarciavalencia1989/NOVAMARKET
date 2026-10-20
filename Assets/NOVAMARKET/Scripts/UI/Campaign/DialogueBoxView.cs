@@ -94,7 +94,7 @@ namespace NovaMarket.UI.Campaign
             CharacterData character = database.FindCharacter(line.CharacterId);
             badgeSlot.Clear();
             if (character != null) badgeSlot.Add(NpcBadge.Create(character));
-            name.text = character != null ? character.DisplayName : "NOVAMARKET";
+            name.text = character != null ? character.DisplayName : "Supply Chain Run";
             job.text = character != null ? $"{character.ToProfile().Job} · {MoodName(line.Mood)}" : string.Empty;
             box.EnableInClassList("dialogue-box--worried", line.Mood == DialogueMood.Worried || line.Mood == DialogueMood.Serious);
             text.text = line.Text;

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Campaign
   m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Data.CampaignDatabase
   id: campaign
-  displayName: NOVAMARKET
+  displayName: Supply Chain Run
   description: Roles, sectores y personajes del juego.
   roles:
   - {fileID: 11400000, guid: a63106717a71c7c4d8ceac9308626728, type: 2}

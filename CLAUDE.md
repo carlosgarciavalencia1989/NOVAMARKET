@@ -1,8 +1,14 @@
 # CLAUDE.md
 
-NOVAMARKET es un simulador logístico educativo hecho en Unity. Los estudiantes recorren un
+**Supply Chain Run** es un simulador logístico educativo hecho en Unity. Los estudiantes recorren un
 centro de distribución (CEDI) y resuelven escenarios logísticos; el primer escenario es
 **CEDI Medellín**.
+
+**Nombre:** el juego se llama **Supply Chain Run**. **NOVAMARKET** es la empresa de cosmética donde
+trabaja el jugador ("NOVAMARKET Cosmética · CEDI Medellín", con su NOVA ERP) y sigue siendo el
+nombre interno del proyecto: la carpeta `Assets/NOVAMARKET/`, el repositorio, los namespaces
+`NovaMarket.*`, el menú NOVAMARKET del Editor y la clave de PlayerPrefs no cambian. En los textos
+que ve el jugador (menú, Product Name, título de la ventana, diálogos) usa "Supply Chain Run".
 
 Arquitectura completa: `Assets/NOVAMARKET/Documentation/PROJECT_ARCHITECTURE.md`. Léela antes
 de agregar sistemas y actualízala cuando cambien la estructura, las escenas o las convenciones.

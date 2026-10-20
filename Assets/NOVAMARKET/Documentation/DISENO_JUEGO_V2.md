@@ -1,7 +1,9 @@
-# NOVAMARKET: documento de diseño del juego (v2)
+# Supply Chain Run: documento de diseño del juego (v2)
 ## El planeador dentro de la cadena completa
 
 > Estado: **aprobado**. Guardado en `Assets/NOVAMARKET/Documentation/DISENO_JUEGO_V2.md`; Claude Code lo implementa por etapas. Los números marcados con *(calibrar)* son ilustrativos. Se ajustan con datos reales y con simulación.
+
+> **Nombre:** el juego se llama **Supply Chain Run**. **NOVAMARKET** es la empresa de cosmética donde trabaja el jugador ("NOVAMARKET Cosmética · CEDI Medellín", con su NOVA ERP); también sigue siendo el nombre interno del proyecto (carpeta, repositorio y código).
 
 ---
 

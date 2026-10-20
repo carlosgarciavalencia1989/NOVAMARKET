@@ -37,7 +37,7 @@ namespace NovaMarket.UI.Campaign
 
             screen = HudElements.Box("panel", "menu-screen");
             VisualElement heading = HudElements.Box("menu-heading");
-            heading.Add(HudElements.Text("NOVAMARKET", "menu-title"));
+            heading.Add(HudElements.Text("Supply Chain Run", "menu-title"));
             heading.Add(HudElements.Text("Juego de la cadena de suministro · CEDI Medellín, valle de Aburrá", "menu-subtitle"));
             screen.Add(heading);
             screen.Add(HudElements.Box("menu-rule"));

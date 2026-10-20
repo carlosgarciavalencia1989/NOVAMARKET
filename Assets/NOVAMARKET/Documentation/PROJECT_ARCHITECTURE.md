@@ -1,9 +1,15 @@
-# NOVAMARKET — Project Architecture
+# Supply Chain Run — Project Architecture
 
 ## Purpose
 
-NOVAMARKET is an educational supply-chain game built in Unity around a distribution center
+**Supply Chain Run** is an educational supply-chain game built in Unity around a distribution center
 (CEDI) in Medellín. The current game design is `Documentation/DISENO_JUEGO_V2.md`.
+
+**Naming:** "Supply Chain Run" is the player-facing game name (start menu, Player Settings Product
+Name, window title, dialogue fallback). **NOVAMARKET** is the cosmetics company the player works for
+("NOVAMARKET Cosmética · CEDI Medellín", with its NOVA ERP) and stays the internal project name: the
+`Assets/NOVAMARKET/` folder, the repository, the `NovaMarket.*` namespaces and asmdefs, the
+**NOVAMARKET** Editor menu and the `NOVAMARKET.CampaignProgress` PlayerPrefs key keep that name.
 
 It is a game of **roles and sectors**. The player picks a **role** (a link of the Atlas supply
 chain map: Planeador, Abastecer, Inventarios, Almacenar, Pedidos, Transporte, Última milla,
