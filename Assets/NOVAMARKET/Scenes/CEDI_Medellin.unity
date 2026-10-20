@@ -3375,6 +3375,76 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8089196386360826692, guid: 424b7f3db4641764182b1365a0bce4b9, type: 3}
   m_PrefabInstance: {fileID: 267885583}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &277465821
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 277465822}
+  - component: {fileID: 277465824}
+  - component: {fileID: 277465823}
+  m_Layer: 0
+  m_Name: Ambient
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &277465822
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277465821}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 995879584}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &277465823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277465821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70c320c264196f541ae00e9f84d31e7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Ambient.AmbientDebugOverlay
+  runner: {fileID: 277465824}
+  visible: 0
+  window: 5
+--- !u!114 &277465824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277465821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4495fdbbafc533c46811ae213862c626, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Ambient.AmbientTrafficRunner
+  network: {fileID: 11400000, guid: c9b829f05f1911342a9c690c093c17c1, type: 2}
+  settings: {fileID: 11400000, guid: 59e9ace9f795f524e84b106bc4a59faa, type: 2}
+  visuals: {fileID: 11400000, guid: 87578fe547513774a9daaa4584c50664, type: 2}
+  cameraController: {fileID: 773018515}
+  operation: {fileID: 391676705}
+  quality: 1
+  seed: 21
+  radiusBaseAndFactor: {x: 100, y: 1.4}
+  radiusLimits: {x: 220, y: 800}
+  headlightsOn: 0
 --- !u!1 &280993524
 GameObject:
   m_ObjectHideFlags: 0
@@ -10067,6 +10137,7 @@ MonoBehaviour:
   campaign: {fileID: 11400000, guid: 9c73f70855f5c8140a678a8ff585b22c, type: 2}
   cameraController: {fileID: 773018515}
   fixedSeed: 0
+  saveProgress: 1
 --- !u!1 &960290696
 GameObject:
   m_ObjectHideFlags: 0
@@ -10566,6 +10637,7 @@ Transform:
   - {fileID: 233674346}
   - {fileID: 939378062}
   - {fileID: 391676704}
+  - {fileID: 277465822}
   m_Father: {fileID: 1900776104}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &999757282

@@ -1,0 +1,3534 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d385881c5b50c6f44a195a40f82ff9b0, type: 3}
+  m_Name: RoadNetwork_CEDI_Medellin
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Data.RoadNetworkData
+  id: 
+  displayName: 
+  description: 
+  nodes:
+  - position: {x: -850, y: 26}
+    kind: 0
+    signalized: 0
+  - position: {x: -750, y: 26}
+    kind: 0
+    signalized: 0
+  - position: {x: -850, y: -60}
+    kind: 0
+    signalized: 0
+  - position: {x: -750, y: -60}
+    kind: 0
+    signalized: 0
+  - position: {x: -850, y: 106}
+    kind: 0
+    signalized: 0
+  - position: {x: -750, y: 106}
+    kind: 0
+    signalized: 0
+  - position: {x: -850, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: -750, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: -850, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: -750, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: -850, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: -750, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: -850, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: -750, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: -850, y: 506}
+    kind: 0
+    signalized: 0
+  - position: {x: -750, y: 506}
+    kind: 0
+    signalized: 0
+  - position: {x: -850, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: -750, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: -850, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: -750, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: -850, y: -297}
+    kind: 0
+    signalized: 0
+  - position: {x: -750, y: -297}
+    kind: 0
+    signalized: 0
+  - position: {x: -850, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: -750, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: -850, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: -750, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: -650, y: 26}
+    kind: 0
+    signalized: 0
+  - position: {x: -650, y: -60}
+    kind: 0
+    signalized: 0
+  - position: {x: -650, y: 106}
+    kind: 0
+    signalized: 0
+  - position: {x: -650, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: -650, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: -650, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: -650, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: -650, y: 506}
+    kind: 0
+    signalized: 0
+  - position: {x: -650, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: -650, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: -650, y: -297}
+    kind: 0
+    signalized: 0
+  - position: {x: -650, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: -650, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: -550, y: 26}
+    kind: 0
+    signalized: 0
+  - position: {x: -550, y: -60}
+    kind: 0
+    signalized: 0
+  - position: {x: -550, y: 106}
+    kind: 0
+    signalized: 0
+  - position: {x: -550, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: -550, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: -550, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: -550, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: -550, y: 506}
+    kind: 0
+    signalized: 0
+  - position: {x: -550, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: -550, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: -550, y: -297}
+    kind: 0
+    signalized: 0
+  - position: {x: -550, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: -550, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: -450, y: 26}
+    kind: 0
+    signalized: 0
+  - position: {x: -450, y: -60}
+    kind: 0
+    signalized: 1
+  - position: {x: -450, y: 106}
+    kind: 0
+    signalized: 1
+  - position: {x: -450, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: -450, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: -450, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: -450, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: -450, y: 506}
+    kind: 0
+    signalized: 0
+  - position: {x: -450, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: -450, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: -450, y: -297}
+    kind: 0
+    signalized: 1
+  - position: {x: -450, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: -450, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: -350, y: 26}
+    kind: 0
+    signalized: 0
+  - position: {x: -350, y: -60}
+    kind: 0
+    signalized: 0
+  - position: {x: -350, y: 106}
+    kind: 0
+    signalized: 0
+  - position: {x: -350, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: -350, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: -350, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: -350, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: -350, y: 506}
+    kind: 0
+    signalized: 0
+  - position: {x: -350, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: -350, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: -350, y: -297}
+    kind: 0
+    signalized: 0
+  - position: {x: -350, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: -350, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: -250, y: 26}
+    kind: 0
+    signalized: 0
+  - position: {x: -250, y: -60}
+    kind: 0
+    signalized: 0
+  - position: {x: -250, y: 106}
+    kind: 0
+    signalized: 0
+  - position: {x: -250, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: -250, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: -250, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: -250, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: -250, y: 506}
+    kind: 0
+    signalized: 0
+  - position: {x: -250, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: -250, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: -250, y: -297}
+    kind: 0
+    signalized: 0
+  - position: {x: -250, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: -250, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: -150, y: 26}
+    kind: 0
+    signalized: 0
+  - position: {x: -150, y: -60}
+    kind: 0
+    signalized: 1
+  - position: {x: -150, y: 106}
+    kind: 0
+    signalized: 0
+  - position: {x: -150, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: -150, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: -150, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: -150, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: -150, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: -150, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: -150, y: -297}
+    kind: 0
+    signalized: 0
+  - position: {x: -150, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: -150, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: -50, y: 106}
+    kind: 0
+    signalized: 0
+  - position: {x: -50, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: -50, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: -50, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: -50, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: -50, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: -50, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: -50, y: -297}
+    kind: 0
+    signalized: 0
+  - position: {x: -50, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: -50, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: 50, y: 106}
+    kind: 0
+    signalized: 0
+  - position: {x: 50, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: 50, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: 50, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: 50, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: 50, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: 50, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: 50, y: -297}
+    kind: 0
+    signalized: 0
+  - position: {x: 50, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: 50, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: 150, y: 106}
+    kind: 0
+    signalized: 0
+  - position: {x: 150, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: 150, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: 150, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: 150, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: 150, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: 150, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: 150, y: -297}
+    kind: 0
+    signalized: 0
+  - position: {x: 150, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: 150, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: 150, y: 26}
+    kind: 0
+    signalized: 0
+  - position: {x: 250, y: 26}
+    kind: 0
+    signalized: 0
+  - position: {x: 150, y: -60}
+    kind: 0
+    signalized: 1
+  - position: {x: 250, y: -60}
+    kind: 0
+    signalized: 0
+  - position: {x: 250, y: 106}
+    kind: 0
+    signalized: 0
+  - position: {x: 250, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: 250, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: 250, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: 250, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: 250, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: 250, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: 250, y: -297}
+    kind: 0
+    signalized: 0
+  - position: {x: 250, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: 250, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: 350, y: 26}
+    kind: 0
+    signalized: 0
+  - position: {x: 350, y: -60}
+    kind: 0
+    signalized: 0
+  - position: {x: 350, y: 106}
+    kind: 0
+    signalized: 0
+  - position: {x: 350, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: 350, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: 350, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: 350, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: 350, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: 350, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: 350, y: -297}
+    kind: 0
+    signalized: 0
+  - position: {x: 350, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: 350, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: 450, y: 26}
+    kind: 0
+    signalized: 0
+  - position: {x: 450, y: -60}
+    kind: 0
+    signalized: 1
+  - position: {x: 450, y: 106}
+    kind: 0
+    signalized: 1
+  - position: {x: 450, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: 450, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: 450, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: 450, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: 450, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: 450, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: 450, y: -297}
+    kind: 0
+    signalized: 1
+  - position: {x: 450, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: 450, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: 550, y: 26}
+    kind: 0
+    signalized: 0
+  - position: {x: 550, y: -60}
+    kind: 0
+    signalized: 0
+  - position: {x: 550, y: 106}
+    kind: 0
+    signalized: 0
+  - position: {x: 550, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: 550, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: 550, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: 550, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: 550, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: 550, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: 550, y: -297}
+    kind: 0
+    signalized: 0
+  - position: {x: 550, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: 550, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: 650, y: 26}
+    kind: 0
+    signalized: 0
+  - position: {x: 650, y: -60}
+    kind: 0
+    signalized: 0
+  - position: {x: 650, y: 106}
+    kind: 0
+    signalized: 0
+  - position: {x: 650, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: 650, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: 650, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: 650, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: 650, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: 650, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: 650, y: -297}
+    kind: 0
+    signalized: 0
+  - position: {x: 650, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: 650, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: 750, y: 26}
+    kind: 0
+    signalized: 0
+  - position: {x: 750, y: -60}
+    kind: 0
+    signalized: 0
+  - position: {x: 750, y: 106}
+    kind: 0
+    signalized: 0
+  - position: {x: 750, y: 186}
+    kind: 0
+    signalized: 0
+  - position: {x: 750, y: 266}
+    kind: 0
+    signalized: 0
+  - position: {x: 750, y: 346}
+    kind: 0
+    signalized: 0
+  - position: {x: 750, y: 426}
+    kind: 0
+    signalized: 0
+  - position: {x: 750, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: 750, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: 750, y: -297}
+    kind: 0
+    signalized: 0
+  - position: {x: 750, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: 750, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: 850, y: 26}
+    kind: 0
+    signalized: 0
+  - position: {x: 850, y: -60}
+    kind: 0
+    signalized: 0
+  - position: {x: 850, y: -217}
+    kind: 0
+    signalized: 0
+  - position: {x: 850, y: -137}
+    kind: 0
+    signalized: 0
+  - position: {x: 850, y: -297}
+    kind: 0
+    signalized: 0
+  - position: {x: 850, y: -377}
+    kind: 0
+    signalized: 0
+  - position: {x: 850, y: -457}
+    kind: 0
+    signalized: 0
+  - position: {x: -1450, y: -60}
+    kind: 1
+    signalized: 0
+  - position: {x: 1450, y: -60}
+    kind: 1
+    signalized: 0
+  roads:
+  - from: 0
+    to: 1
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 0
+    to: 2
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 3
+    to: 1
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 4
+    to: 5
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 4
+    to: 0
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 1
+    to: 5
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 6
+    to: 7
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 6
+    to: 4
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 5
+    to: 7
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 8
+    to: 9
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 8
+    to: 6
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 7
+    to: 9
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 10
+    to: 11
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 10
+    to: 8
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 9
+    to: 11
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 12
+    to: 13
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 12
+    to: 10
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 11
+    to: 13
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 15
+    to: 14
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 14
+    to: 12
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 13
+    to: 15
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 16
+    to: 17
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 19
+    to: 18
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 18
+    to: 16
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 17
+    to: 19
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 20
+    to: 21
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 16
+    to: 20
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 21
+    to: 17
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 22
+    to: 23
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 20
+    to: 22
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 23
+    to: 21
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 24
+    to: 25
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 22
+    to: 24
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 25
+    to: 23
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 1
+    to: 26
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 27
+    to: 26
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 5
+    to: 28
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 26
+    to: 28
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 7
+    to: 29
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 28
+    to: 29
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 9
+    to: 30
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 29
+    to: 30
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 11
+    to: 31
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 30
+    to: 31
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 13
+    to: 32
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 31
+    to: 32
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 33
+    to: 15
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 32
+    to: 33
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 17
+    to: 34
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 35
+    to: 19
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 34
+    to: 35
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 21
+    to: 36
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 36
+    to: 34
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 23
+    to: 37
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 37
+    to: 36
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 25
+    to: 38
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 38
+    to: 37
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 26
+    to: 39
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 40
+    to: 39
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 28
+    to: 41
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 39
+    to: 41
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 29
+    to: 42
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 41
+    to: 42
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 30
+    to: 43
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 42
+    to: 43
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 31
+    to: 44
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 43
+    to: 44
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 32
+    to: 45
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 44
+    to: 45
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 46
+    to: 33
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 45
+    to: 46
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 34
+    to: 47
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 48
+    to: 35
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 47
+    to: 48
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 36
+    to: 49
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 49
+    to: 47
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 37
+    to: 50
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 50
+    to: 49
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 38
+    to: 51
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 51
+    to: 50
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 39
+    to: 52
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 53
+    to: 52
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 41
+    to: 54
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 52
+    to: 54
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 42
+    to: 55
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 54
+    to: 55
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 43
+    to: 56
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 55
+    to: 56
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 44
+    to: 57
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 56
+    to: 57
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 45
+    to: 58
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 57
+    to: 58
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 59
+    to: 46
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 58
+    to: 59
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 47
+    to: 60
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 61
+    to: 48
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 60
+    to: 61
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 49
+    to: 62
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 62
+    to: 60
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 50
+    to: 63
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 63
+    to: 62
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 51
+    to: 64
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 64
+    to: 63
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 52
+    to: 65
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 66
+    to: 65
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 54
+    to: 67
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 65
+    to: 67
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 55
+    to: 68
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 67
+    to: 68
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 56
+    to: 69
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 68
+    to: 69
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 57
+    to: 70
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 69
+    to: 70
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 58
+    to: 71
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 70
+    to: 71
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 72
+    to: 59
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 71
+    to: 72
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 60
+    to: 73
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 74
+    to: 61
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 73
+    to: 74
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 62
+    to: 75
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 75
+    to: 73
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 63
+    to: 76
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 76
+    to: 75
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 64
+    to: 77
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 77
+    to: 76
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 65
+    to: 78
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 79
+    to: 78
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 67
+    to: 80
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 78
+    to: 80
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 68
+    to: 81
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 80
+    to: 81
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 69
+    to: 82
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 81
+    to: 82
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 70
+    to: 83
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 82
+    to: 83
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 71
+    to: 84
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 83
+    to: 84
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 85
+    to: 72
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 84
+    to: 85
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 73
+    to: 86
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 87
+    to: 74
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 86
+    to: 87
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 75
+    to: 88
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 88
+    to: 86
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 76
+    to: 89
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 89
+    to: 88
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 77
+    to: 90
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 90
+    to: 89
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 78
+    to: 91
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 92
+    to: 91
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 80
+    to: 93
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 91
+    to: 93
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 81
+    to: 94
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 93
+    to: 94
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 82
+    to: 95
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 94
+    to: 95
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 83
+    to: 96
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 95
+    to: 96
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 97
+    to: 84
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 96
+    to: 97
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 86
+    to: 98
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 99
+    to: 87
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 98
+    to: 99
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 88
+    to: 100
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 100
+    to: 98
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 89
+    to: 101
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 101
+    to: 100
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 90
+    to: 102
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 102
+    to: 101
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 93
+    to: 103
+    roadClass: 2
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 13.9
+    centreShift: -3
+  - from: 94
+    to: 104
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 103
+    to: 104
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 95
+    to: 105
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 104
+    to: 105
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 96
+    to: 106
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 105
+    to: 106
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 107
+    to: 97
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 106
+    to: 107
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 98
+    to: 108
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 109
+    to: 99
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 108
+    to: 109
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 100
+    to: 110
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 110
+    to: 108
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 101
+    to: 111
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 111
+    to: 110
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 102
+    to: 112
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 112
+    to: 111
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 103
+    to: 113
+    roadClass: 2
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 13.9
+    centreShift: -3
+  - from: 104
+    to: 114
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 113
+    to: 114
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 105
+    to: 115
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 114
+    to: 115
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 106
+    to: 116
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 115
+    to: 116
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 117
+    to: 107
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 116
+    to: 117
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 108
+    to: 118
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 119
+    to: 109
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 118
+    to: 119
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 110
+    to: 120
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 120
+    to: 118
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 111
+    to: 121
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 121
+    to: 120
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 112
+    to: 122
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 122
+    to: 121
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 113
+    to: 123
+    roadClass: 2
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 13.9
+    centreShift: -3
+  - from: 114
+    to: 124
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 123
+    to: 124
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 115
+    to: 125
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 124
+    to: 125
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 116
+    to: 126
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 125
+    to: 126
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 127
+    to: 117
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 126
+    to: 127
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 118
+    to: 128
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 129
+    to: 119
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 128
+    to: 129
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 120
+    to: 130
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 130
+    to: 128
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 121
+    to: 131
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 131
+    to: 130
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 122
+    to: 132
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 132
+    to: 131
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 133
+    to: 134
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 133
+    to: 135
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 136
+    to: 134
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 123
+    to: 137
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 123
+    to: 133
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 134
+    to: 137
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 124
+    to: 138
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 137
+    to: 138
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 125
+    to: 139
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 138
+    to: 139
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 126
+    to: 140
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 139
+    to: 140
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 141
+    to: 127
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 140
+    to: 141
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 128
+    to: 142
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 143
+    to: 129
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 142
+    to: 143
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 130
+    to: 144
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 144
+    to: 142
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 131
+    to: 145
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 145
+    to: 144
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 132
+    to: 146
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 146
+    to: 145
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 134
+    to: 147
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 148
+    to: 147
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 137
+    to: 149
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 147
+    to: 149
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 138
+    to: 150
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 149
+    to: 150
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 139
+    to: 151
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 150
+    to: 151
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 140
+    to: 152
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 151
+    to: 152
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 153
+    to: 141
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 152
+    to: 153
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 142
+    to: 154
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 155
+    to: 143
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 154
+    to: 155
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 144
+    to: 156
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 156
+    to: 154
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 145
+    to: 157
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 157
+    to: 156
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 146
+    to: 158
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 158
+    to: 157
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 147
+    to: 159
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 160
+    to: 159
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 149
+    to: 161
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 159
+    to: 161
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 150
+    to: 162
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 161
+    to: 162
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 151
+    to: 163
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 162
+    to: 163
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 152
+    to: 164
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 163
+    to: 164
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 165
+    to: 153
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 164
+    to: 165
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 154
+    to: 166
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 167
+    to: 155
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 166
+    to: 167
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 156
+    to: 168
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 168
+    to: 166
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 157
+    to: 169
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 169
+    to: 168
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 158
+    to: 170
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 170
+    to: 169
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 159
+    to: 171
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 172
+    to: 171
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 161
+    to: 173
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 171
+    to: 173
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 162
+    to: 174
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 173
+    to: 174
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 163
+    to: 175
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 174
+    to: 175
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 164
+    to: 176
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 175
+    to: 176
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 177
+    to: 165
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 176
+    to: 177
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 166
+    to: 178
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 179
+    to: 167
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 178
+    to: 179
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 168
+    to: 180
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 180
+    to: 178
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 169
+    to: 181
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 181
+    to: 180
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 170
+    to: 182
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 182
+    to: 181
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 171
+    to: 183
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 184
+    to: 183
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 173
+    to: 185
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 183
+    to: 185
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 174
+    to: 186
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 185
+    to: 186
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 175
+    to: 187
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 186
+    to: 187
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 176
+    to: 188
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 187
+    to: 188
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 189
+    to: 177
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 188
+    to: 189
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 178
+    to: 190
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 191
+    to: 179
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 190
+    to: 191
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 180
+    to: 192
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 192
+    to: 190
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 181
+    to: 193
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 193
+    to: 192
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 182
+    to: 194
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 194
+    to: 193
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 183
+    to: 195
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 196
+    to: 195
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 185
+    to: 197
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 195
+    to: 197
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 186
+    to: 198
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 197
+    to: 198
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 187
+    to: 199
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 198
+    to: 199
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 188
+    to: 200
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 199
+    to: 200
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 201
+    to: 189
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 200
+    to: 201
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 190
+    to: 202
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 203
+    to: 191
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 202
+    to: 203
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 192
+    to: 204
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 204
+    to: 202
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 193
+    to: 205
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 205
+    to: 204
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 194
+    to: 206
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 206
+    to: 205
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 207
+    to: 195
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 208
+    to: 207
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 202
+    to: 209
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 210
+    to: 203
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 209
+    to: 210
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 204
+    to: 211
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 211
+    to: 209
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 205
+    to: 212
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 212
+    to: 211
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 206
+    to: 213
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 213
+    to: 212
+    roadClass: 1
+    twoWay: 0
+    halfWidth: 3
+    speedLimit: 11.1
+    centreShift: -3
+  - from: 53
+    to: 61
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 92
+    to: 99
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 135
+    to: 129
+    roadClass: 1
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 11.1
+    centreShift: 0
+  - from: 160
+    to: 167
+    roadClass: 2
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 13.9
+    centreShift: 0
+  - from: 214
+    to: 2
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  - from: 2
+    to: 3
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  - from: 3
+    to: 27
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  - from: 27
+    to: 40
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  - from: 40
+    to: 53
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  - from: 53
+    to: 66
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  - from: 66
+    to: 79
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  - from: 79
+    to: 92
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  - from: 92
+    to: 135
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  - from: 135
+    to: 136
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  - from: 136
+    to: 148
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  - from: 148
+    to: 160
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  - from: 160
+    to: 172
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  - from: 172
+    to: 184
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  - from: 184
+    to: 196
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  - from: 196
+    to: 208
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  - from: 208
+    to: 215
+    roadClass: 3
+    twoWay: 1
+    halfWidth: 6
+    speedLimit: 16.7
+    centreShift: 0
+  busStops:
+  - point: {x: -330, y: -60}
+    direction: {x: 1, y: 0}
+    halfLength: 0
+  - point: {x: -330, y: -60}
+    direction: {x: -1, y: 0}
+    halfLength: 0
+  - point: {x: 330, y: -60}
+    direction: {x: 1, y: 0}
+    halfLength: 0
+  - point: {x: 330, y: -60}
+    direction: {x: -1, y: 0}
+    halfLength: 0
+  - point: {x: -800, y: 106}
+    direction: {x: 1, y: 0}
+    halfLength: 0
+  - point: {x: -800, y: 106}
+    direction: {x: -1, y: 0}
+    halfLength: 0
+  - point: {x: -700, y: 106}
+    direction: {x: 1, y: 0}
+    halfLength: 0
+  - point: {x: -700, y: 106}
+    direction: {x: -1, y: 0}
+    halfLength: 0
+  - point: {x: -600, y: 106}
+    direction: {x: 1, y: 0}
+    halfLength: 0
+  - point: {x: -600, y: 106}
+    direction: {x: -1, y: 0}
+    halfLength: 0
+  - point: {x: -450, y: -17}
+    direction: {x: 0, y: 1}
+    halfLength: 0
+  - point: {x: -450, y: -17}
+    direction: {x: 0, y: -1}
+    halfLength: 0
+  - point: {x: -450, y: 66}
+    direction: {x: 0, y: 1}
+    halfLength: 0
+  - point: {x: -450, y: 66}
+    direction: {x: 0, y: -1}
+    halfLength: 0
+  - point: {x: -450, y: 226}
+    direction: {x: 0, y: 1}
+    halfLength: 0
+  - point: {x: -450, y: 226}
+    direction: {x: 0, y: -1}
+    halfLength: 0
+  - point: {x: -450, y: 386}
+    direction: {x: 0, y: 1}
+    halfLength: 0
+  - point: {x: -450, y: 386}
+    direction: {x: 0, y: -1}
+    halfLength: 0
+  - point: {x: -450, y: -177}
+    direction: {x: 0, y: 1}
+    halfLength: 0
+  - point: {x: -450, y: -177}
+    direction: {x: 0, y: -1}
+    halfLength: 0
+  - point: {x: -450, y: -257}
+    direction: {x: 0, y: 1}
+    halfLength: 0
+  - point: {x: -450, y: -257}
+    direction: {x: 0, y: -1}
+    halfLength: 0
+  - point: {x: -450, y: -417}
+    direction: {x: 0, y: 1}
+    halfLength: 0
+  - point: {x: -450, y: -417}
+    direction: {x: 0, y: -1}
+    halfLength: 0
+  - point: {x: -400, y: -297}
+    direction: {x: 1, y: 0}
+    halfLength: 0
+  - point: {x: -400, y: -297}
+    direction: {x: -1, y: 0}
+    halfLength: 0
+  - point: {x: -300, y: -297}
+    direction: {x: 1, y: 0}
+    halfLength: 0
+  - point: {x: -300, y: -297}
+    direction: {x: -1, y: 0}
+    halfLength: 0
+  - point: {x: -200, y: -297}
+    direction: {x: 1, y: 0}
+    halfLength: 0
+  - point: {x: -200, y: -297}
+    direction: {x: -1, y: 0}
+    halfLength: 0
+  - point: {x: 0, y: -297}
+    direction: {x: 1, y: 0}
+    halfLength: 0
+  - point: {x: 0, y: -297}
+    direction: {x: -1, y: 0}
+    halfLength: 0
+  - point: {x: 200, y: 106}
+    direction: {x: 1, y: 0}
+    halfLength: 0
+  - point: {x: 200, y: 106}
+    direction: {x: -1, y: 0}
+    halfLength: 0
+  - point: {x: 300, y: 106}
+    direction: {x: 1, y: 0}
+    halfLength: 0
+  - point: {x: 300, y: 106}
+    direction: {x: -1, y: 0}
+    halfLength: 0
+  - point: {x: 450, y: -17}
+    direction: {x: 0, y: 1}
+    halfLength: 0
+  - point: {x: 450, y: -17}
+    direction: {x: 0, y: -1}
+    halfLength: 0
+  - point: {x: 450, y: 66}
+    direction: {x: 0, y: 1}
+    halfLength: 0
+  - point: {x: 450, y: 66}
+    direction: {x: 0, y: -1}
+    halfLength: 0
+  - point: {x: 450, y: 226}
+    direction: {x: 0, y: 1}
+    halfLength: 0
+  - point: {x: 450, y: 226}
+    direction: {x: 0, y: -1}
+    halfLength: 0
+  - point: {x: 450, y: 386}
+    direction: {x: 0, y: 1}
+    halfLength: 0
+  - point: {x: 450, y: 386}
+    direction: {x: 0, y: -1}
+    halfLength: 0
+  - point: {x: 400, y: -297}
+    direction: {x: 1, y: 0}
+    halfLength: 0
+  - point: {x: 400, y: -297}
+    direction: {x: -1, y: 0}
+    halfLength: 0
+  - point: {x: 450, y: -337}
+    direction: {x: 0, y: 1}
+    halfLength: 0
+  - point: {x: 450, y: -337}
+    direction: {x: 0, y: -1}
+    halfLength: 0
+  - point: {x: 500, y: 106}
+    direction: {x: 1, y: 0}
+    halfLength: 0
+  - point: {x: 500, y: 106}
+    direction: {x: -1, y: 0}
+    halfLength: 0
+  - point: {x: 600, y: 106}
+    direction: {x: 1, y: 0}
+    halfLength: 0
+  - point: {x: 600, y: 106}
+    direction: {x: -1, y: 0}
+    halfLength: 0
+  - point: {x: 700, y: 106}
+    direction: {x: 1, y: 0}
+    halfLength: 0
+  - point: {x: 700, y: 106}
+    direction: {x: -1, y: 0}
+    halfLength: 0
+  - point: {x: 800, y: -297}
+    direction: {x: 1, y: 0}
+    halfLength: 0
+  - point: {x: 800, y: -297}
+    direction: {x: -1, y: 0}
+    halfLength: 0
+  - point: {x: 450, y: -98.5}
+    direction: {x: 0, y: -1}
+    halfLength: 0
+  - point: {x: 450, y: -98.5}
+    direction: {x: 0, y: 1}
+    halfLength: 0
+  keepClear:
+  - point: {x: -2, y: -57}
+    direction: {x: -1, y: 0}
+    halfLength: 15

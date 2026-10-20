@@ -28,7 +28,7 @@ namespace NovaMarket.Simulation.Ambient
         public float StuckRemovalSeconds { get; set; } = 120f;
 
         /// <summary>The highway counts this many times its length when choosing where a vehicle appears.</summary>
-        public float HighwaySpawnWeight { get; set; } = 2f;
+        public float HighwaySpawnWeight { get; set; } = 3f;
 
         public static int VariantCount => 8;
     }

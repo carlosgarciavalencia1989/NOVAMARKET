@@ -60,5 +60,35 @@ namespace NovaMarket.Tests.Simulation.Ambient
             Assert.Greater(traffic.Vehicles.Count, 80);
             TestContext.WriteLine($"overtaking ticks near the gate: {overtakes}");
         }
+
+        /// <summary>The network exported from the scene's street grid, with the camera at its start view and zoomed out.</summary>
+        [TestCase(150f)]
+        [TestCase(450f)]
+        public void ExportedValleyNetwork_WithTheCedi_ThreeMinutesWithoutTouchingOrJams(float cameraDistance)
+        {
+            var data = UnityEditor.AssetDatabase.LoadAssetAtPath<NovaMarket.Data.RoadNetworkData>(
+                "Assets/NOVAMARKET/Data/Ambient/RoadNetwork_CEDI_Medellin.asset");
+            Assert.IsNotNull(data, "run NOVAMARKET → Ambient → Setup Ambient Traffic");
+            RoadNetwork network = RoadNetwork.Build(data.ToDefinition());
+            var cedi = new CediOperationSimulation(SampleOperationData.Create(), seed: 3);
+            var traffic = new AmbientTraffic(network, new AmbientTrafficSettings { VehicleCount = 120 }, 3);
+            traffic.SharedVehicles = cedi;
+            cedi.SharedRoad = traffic;
+            float radius = UnityEngine.Mathf.Clamp(100f + 1.4f * cameraDistance, 220f, 800f); // as the scene runner
+
+            float worstStop = 0f;
+            for (int i = 0; i < 180f / Step; i++)
+            {
+                traffic.Tick(Step, new Vector2(0f, -20f), radius);
+                cedi.Tick(Step, cedi.Time);
+                if (i % 2 == 0)
+                    AmbientTrafficTests.AssertApart(traffic.Vehicles.Select(v => v.Footprint)
+                        .Concat(cedi.Vehicles.Where(v => v.FloorHeight < 0.01f).Select(v => v.Footprint)).ToList(), $"t = {cedi.Time:F1}");
+                foreach (AmbientVehicle v in traffic.Vehicles) worstStop = System.Math.Max(worstStop, v.StoppedSeconds);
+            }
+            Assert.AreEqual(0, traffic.StuckRemovals);
+            Assert.Less(worstStop, 120f);
+            Assert.Greater(traffic.Vehicles.Count, 110);
+        }
     }
 }

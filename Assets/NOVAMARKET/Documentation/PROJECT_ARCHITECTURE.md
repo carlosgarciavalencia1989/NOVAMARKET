@@ -475,3 +475,46 @@ The Oswald font has no σ, Σ, ⌈⌉, ★ or →: texts spell them out (stars a
 - AI, Mentor
 - S&OP, advanced simulation
 - Mission/level selection, saved progress and gems between levels; character art (badges are initials)
+
+## Scene life: ambient traffic (work in progress)
+
+Approved plan (4 stages): 0 common base, 1 traffic (1a–1d), 2 metro, 3 people and CEDI operators,
+4 wind, smoke, lights and ambient sound (temporary sound placeholders until the Kenney CC0 packs
+arrive). Behaviour is separated from the visual model so the basic shapes can be swapped for
+Kenney / Quaternius / Synty / Mixamo packs without touching the logic.
+
+- **Logic (plain C#, `Scripts/Simulation/Ambient/`, namespace `NovaMarket.Simulation.Ambient`):**
+  `CityRoadLayout` turns the street grid into a `RoadNetworkDefinition` (highway, two-way streets,
+  one-way 6 m half streets with their lane shifted onto the asphalt, avenues x = ±450 and
+  z = 106 / −297, bridges, lights at the highway bridges and avenue crossings, bus stops, the
+  "do not block" box at the CEDI gate). `RoadNetwork` builds lanes, turn movements and crossings
+  (`TrafficSignal`, priority + "PARE", conflicts). `AmbientTraffic` drives cars, taxis, motos (35 %),
+  buses and trucks inside a circle around the camera: car following, crossing bookings, giving way,
+  moto filtering and moto box at lights, buses at stops, overtaking parked vehicles through the
+  opposite lane. Tests in `Tests/EditMode/Simulation/Ambient/`.
+- **CEDI link (stage 1d):** `ISharedRoad` / `ISharedRoadVehicles` (`Scripts/Simulation/SharedRoad.cs`);
+  `CediOperationSimulation.SharedRoad.cs` makes CEDI trucks brake for traffic, stop at red lights,
+  spawn only on a free road and wait for a gap before leaving the gate.
+- **Data:** `RoadNetworkData` (exported by **NOVAMARKET → Ambient → Export Road Network**, also run
+  by the environment rebuild), `AmbientSettingsData` (Low 60 / Medium 120 / High 200 vehicles,
+  vehicle mix), `AmbientVisualProfile` (prefab and colours per vehicle kind, traffic light, bus stop).
+  All in `Data/Ambient/`.
+- **Scene (`Scripts/Ambient/`, namespace `NovaMarket.Ambient`):** `AmbientTrafficRunner` on
+  `Systems/Ambient` (simulation at 20 steps/s, models interpolated in between, one loop for all
+  views, `ViewPool` reuse), `AmbientVehicleView` (pose, wheels, brake lights, moto lean; `Model` child
+  to fix pivots of other packs), `TrafficLightView`, `AmbientDebugOverlay` (**F3**: FPS and ms).
+  Prefabs in `Prefabs/Vehicles/Ambient/` and `Prefabs/Environment/` have two LODs, no colliders
+  (traffic is not selectable). **NOVAMARKET → Ambient → Setup Ambient Traffic** rebuilds all of it.
+
+**Status (2026-10-19): stage 1 in progress, sub-stages 1a–1d implemented and tested** (371+ EditMode
+tests green; the exported valley network runs 3 min with the CEDI without touching or jams).
+Measured in the Editor (Game view 1920×888, start view): 0 vehicles 139 FPS, 60 → 119, 120 → 117,
+200 → 99; logic ≈1.9 ms per step at 120 vehicles.
+
+**Next, to resume:**
+1. Enter Play and check the corrected car colours (the palette index always gave black before).
+2. Final screenshots (start view, junction x = 150 with moto box, bus stop x = 330, junction
+   x = −150) and run all EditMode tests again.
+3. Mark stage 1 done (commit without "wip"), update CLAUDE.md (new `Scripts/Ambient/` folder) and
+   show the user captures, FPS and how to test (Play, F3, quality in `Systems/Ambient`).
+4. Then stage 2 (metro): take the trains out of the `Metro_Line` mesh and drive them as agents.

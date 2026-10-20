@@ -136,6 +136,8 @@ namespace NovaMarket.Simulation.Ambient
                 float s = 14f + (float)random.NextDouble() * (lane.Length - 28f);
                 float distance = Vector2.Distance(lane.PointAt(s), Focus);
                 if (distance > Radius || !anywhere && distance < Radius * 0.72f) continue;
+                // At the edge, most new vehicles drive inwards (those driving out would leave at once).
+                if (!anywhere && Vector2.Dot(lane.Direction, Focus - lane.PointAt(s)) < 0f && random.NextDouble() < 0.85) continue;
                 if (!IsSpawnPlaceFree(lane, s)) continue;
 
                 AmbientVehicleKind kind = PickKind();

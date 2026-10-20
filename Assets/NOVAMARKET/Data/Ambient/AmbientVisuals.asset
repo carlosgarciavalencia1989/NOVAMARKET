@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c528ea78dc6645847883095a16a98614, type: 3}
+  m_Name: AmbientVisuals
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Data.AmbientVisualProfile
+  id: 
+  displayName: 
+  description: 
+  vehicles:
+  - kind: 0
+    prefabs:
+    - {fileID: 8440851296168989972, guid: 1342a345af8f1a1449250e2fff55cee4, type: 3}
+    bodyColours:
+    - {fileID: 2100000, guid: 35be2c9d26ba64e41819b7f49619a9a5, type: 2}
+    - {fileID: 2100000, guid: 2e333c3366fefae498e8d7688c28642d, type: 2}
+    - {fileID: 2100000, guid: 367370f5ca630324b91912348a3256d4, type: 2}
+    - {fileID: 2100000, guid: 48a7a27ef39b09e49b3848a686990efc, type: 2}
+    - {fileID: 2100000, guid: 3cd10b82c68c3b34289dbcb92b517754, type: 2}
+    - {fileID: 2100000, guid: 61a7e8161c6631747b7c062877f378be, type: 2}
+    - {fileID: 2100000, guid: 014e07bca5a225246a2fc107eff67146, type: 2}
+  - kind: 1
+    prefabs:
+    - {fileID: 4984390333397180168, guid: ab49b57cbb5c3984d90e088c773b51ee, type: 3}
+    bodyColours:
+    - {fileID: 2100000, guid: 3e784c4d2d1bc4a448da5968a76d2249, type: 2}
+  - kind: 2
+    prefabs:
+    - {fileID: 6241621032978212775, guid: 51a25307db4ea6f42923a7c4e61e6b2f, type: 3}
+    bodyColours:
+    - {fileID: 2100000, guid: 8ffb29fbf7f3e5a4f9cf4d774a4a45ed, type: 2}
+    - {fileID: 2100000, guid: 7612be72121e3f841a194b03a3fe22fc, type: 2}
+    - {fileID: 2100000, guid: a3737b2ac6bde1f4e843274987d59609, type: 2}
+    - {fileID: 2100000, guid: 4b5b32764f14f954dadf55316436c17e, type: 2}
+  - kind: 3
+    prefabs:
+    - {fileID: 917169455835094815, guid: def2ddd028c848240bea00428a68af79, type: 3}
+    bodyColours:
+    - {fileID: 2100000, guid: e2760beaf1112e248b21e2837eb41bf7, type: 2}
+    - {fileID: 2100000, guid: 8714b9dd4aac143489393ff6b6779570, type: 2}
+    - {fileID: 2100000, guid: 142285567d35f93498560a2aa503ce67, type: 2}
+  - kind: 4
+    prefabs:
+    - {fileID: 9147374592925007812, guid: 59fecf4f59e801041ac09ae86cea211c, type: 3}
+    bodyColours:
+    - {fileID: 2100000, guid: 4ac626102b82dcc418b7a905452a8403, type: 2}
+    - {fileID: 2100000, guid: f0bca73717a9d6e459fe1ba058ab58bc, type: 2}
+    - {fileID: 2100000, guid: 9c7138a1f6f649548ace22d5f7f12261, type: 2}
+  trafficLightPrefab: {fileID: 3285883153685891505, guid: 6616c559b9013d64599da47b43ae241c, type: 3}
+  busStopPrefab: {fileID: 6826115903677471349, guid: 16f288d18d0feee46b575bf886fcb3b6, type: 3}
