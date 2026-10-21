@@ -55,4 +55,5 @@ MonoBehaviour:
     - {fileID: 2100000, guid: f0bca73717a9d6e459fe1ba058ab58bc, type: 2}
     - {fileID: 2100000, guid: 9c7138a1f6f649548ace22d5f7f12261, type: 2}
   trafficLightPrefab: {fileID: 3285883153685891505, guid: 6616c559b9013d64599da47b43ae241c, type: 3}
+  metroTrainPrefab: {fileID: 2284027385753143695, guid: 4414505607d29d24d9d92932f167838c, type: 3}
   busStopPrefab: {fileID: 6826115903677471349, guid: 16f288d18d0feee46b575bf886fcb3b6, type: 3}

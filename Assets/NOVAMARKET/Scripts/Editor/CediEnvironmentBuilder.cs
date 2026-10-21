@@ -86,6 +86,7 @@ namespace NovaMarket.Editor
             SetupLighting();
             SetupVolume();
             ExportRoadNetwork(); // the traffic follows the streets just built
+            ExportMetroLine();
 
             EditorUtility.SetDirty(terrainData);
             AssetDatabase.SaveAssets();

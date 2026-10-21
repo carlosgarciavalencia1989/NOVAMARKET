@@ -66,6 +66,10 @@ namespace NovaMarket.Editor
             var overlay = GetOrAdd<AmbientDebugOverlay>(ambient.gameObject);
             SetField(overlay, "runner", runner);
 
+            var metro = GetOrAdd<MetroRunner>(ambient.gameObject);
+            SetField(metro, "line", CediEnvironmentBuilder.ExportMetroLine());
+            SetField(metro, "visuals", visuals);
+
             AssetDatabase.SaveAssets();
             EditorSceneManager.MarkSceneDirty(scene);
             Debug.Log("Ambient traffic set up (Systems/Ambient).");
@@ -91,6 +95,7 @@ namespace NovaMarket.Editor
             GameObject truck = SavePrefab(BuildTruck(), AmbientPrefabFolder + "/Truck_City.prefab");
             GameObject light = SavePrefab(BuildTrafficLight(), FurniturePrefabFolder + "/TrafficLight_Approach.prefab");
             GameObject shelter = SavePrefab(BuildBusStop(), FurniturePrefabFolder + "/BusStop_Shelter.prefab");
+            GameObject train = SavePrefab(BuildMetroTrain(3), AmbientPrefabFolder + "/Metro_Train.prefab");
 
             AmbientVisualProfile profile = LoadOrCreate<AmbientVisualProfile>(AmbientDataFolder + "/AmbientVisuals.asset");
             var serialized = new SerializedObject(profile);
@@ -128,6 +133,7 @@ namespace NovaMarket.Editor
             }
             serialized.FindProperty("trafficLightPrefab").objectReferenceValue = light;
             serialized.FindProperty("busStopPrefab").objectReferenceValue = shelter;
+            serialized.FindProperty("metroTrainPrefab").objectReferenceValue = train;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(profile);
             return profile;
@@ -274,6 +280,70 @@ namespace NovaMarket.Editor
             serialized.FindProperty("leanPivot").objectReferenceValue = lean;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             return p.Root;
+        }
+
+        // ------------------------------------------------------------------ metro train (pivot on the rails, front +Z)
+
+        /// <summary>
+        /// Medellín-style metro unit: grey cars with a green stripe and dark windows, four doors per side
+        /// and car, bogies under each end. Must match the simulation's car length (22 m) and gap (1 m).
+        /// </summary>
+        private static GameObject BuildMetroTrain(int cars)
+        {
+            const float carLength = 22f, gap = 1f, width = 3f, floor = 0.66f;
+            var root = new GameObject("Metro_Train");
+            Transform model = Child(root.transform, "Model");
+            Transform lod0 = Child(model, "LOD0");
+            Transform lod1 = Child(model, "LOD1");
+            Material body = VehicleMaterial("M_Metro_Body", new Color(0.82f, 0.83f, 0.83f));
+            Material stripe = VehicleMaterial("M_Metro_Accent", new Color(0.3f, 0.46f, 0.4f));
+            Material doorClosed = VehicleMaterial("M_Metro_Door", new Color(0.7f, 0.71f, 0.72f));
+            Material doorOpen = Emissive("M_Metro_DoorOpen", new Color(0.35f, 0.3f, 0.22f), 0.6f);
+            var doors = new System.Collections.Generic.List<Renderer>();
+
+            float total = cars * carLength + (cars - 1) * gap;
+            for (int c = 0; c < cars; c++)
+            {
+                float z = -total / 2f + carLength / 2f + c * (carLength + gap);
+                Transform car = Child(lod0, $"Car_{c + 1}");
+                car.localPosition = new Vector3(0f, 0f, z);
+                Piece(car, "Body", new Vector3(0f, floor + 1.85f, 0f), new Vector3(width, 3.7f, carLength), body);
+                Piece(car, "Windows", new Vector3(0f, floor + 2.3f, 0f), new Vector3(width + 0.06f, 1.2f, carLength - 1.4f), Glass(), false);
+                Piece(car, "Stripe", new Vector3(0f, floor + 0.75f, 0f), new Vector3(width + 0.06f, 0.36f, carLength + 0.04f), stripe, false);
+                Piece(car, "Roof", new Vector3(0f, floor + 3.8f, 0f), new Vector3(width - 0.4f, 0.2f, carLength - 2f), Dark(), false);
+                foreach (float bz in new[] { -7.5f, 7.5f })
+                    Piece(car, "Bogie", new Vector3(0f, 0.35f, bz), new Vector3(2.4f, 0.5f, 2.8f), Dark(), false);
+                foreach (float side in new[] { -1f, 1f })
+                foreach (float dz in new[] { -7.5f, -2.5f, 2.5f, 7.5f })
+                    doors.Add(Piece(car, "Door", new Vector3(side * (width / 2f + 0.04f), floor + 1.25f, dz),
+                        new Vector3(0.04f, 2.3f, 1.4f), doorClosed, false));
+                Piece(lod1, $"Car_{c + 1}", new Vector3(0f, floor + 1.85f, z), new Vector3(width, 3.7f, carLength), body, false);
+            }
+            foreach (float end in new[] { -1f, 1f })
+            {
+                float z = end * (total / 2f + 0.02f);
+                Piece(lod0, "Windshield", new Vector3(0f, floor + 2.6f, z), new Vector3(width - 0.4f, 1.3f, 0.05f), Glass(), false);
+                foreach (float x in new[] { -0.9f, 0.9f })
+                    Piece(lod0, "Headlight", new Vector3(x, floor + 0.9f, z), new Vector3(0.3f, 0.18f, 0.05f),
+                        Emissive("M_Light_HeadOn", new Color(1f, 0.95f, 0.8f), 4f), false);
+            }
+
+            var group = model.gameObject.AddComponent<LODGroup>();
+            group.SetLODs(new[]
+            {
+                new LOD(0.03f, lod0.GetComponentsInChildren<Renderer>()),
+                new LOD(0.002f, lod1.GetComponentsInChildren<Renderer>())
+            });
+            group.RecalculateBounds();
+
+            var view = root.AddComponent<MetroTrainView>();
+            var serialized = new SerializedObject(view);
+            serialized.FindProperty("model").objectReferenceValue = model;
+            SetArray(serialized.FindProperty("doors"), doors.ToArray());
+            serialized.FindProperty("doorClosed").objectReferenceValue = doorClosed;
+            serialized.FindProperty("doorOpen").objectReferenceValue = doorOpen;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            return root;
         }
 
         // ------------------------------------------------------------------ street furniture

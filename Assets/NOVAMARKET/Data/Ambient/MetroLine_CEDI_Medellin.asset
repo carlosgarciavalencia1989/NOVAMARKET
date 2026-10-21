@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9dd7ad767632a94398a95d81f6ecc6d, type: 3}
+  m_Name: MetroLine_CEDI_Medellin
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Data.MetroLineData
+  id: 
+  displayName: 
+  description: 
+  westEnd: -1450
+  eastEnd: 1450
+  eastboundZ: -85.9
+  westboundZ: -82.1
+  railHeight: 11.639999
+  stationX:
+  - -330
+  - 420
+  platformHalfLength: 60
+  trains: 4
+  cars: 3
+  cruiseSpeed: 20
+  dwellSeconds: 25
+  turnbackSeconds: 30

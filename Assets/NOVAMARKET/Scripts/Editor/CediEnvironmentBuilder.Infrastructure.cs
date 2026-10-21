@@ -6,7 +6,8 @@ namespace NovaMarket.Editor
     /// <summary>
     /// Transport corridor parallel to the highway, as in the Aburrá valley: the canalised
     /// Medellín river (a concrete trapezoidal channel sunk through terrain holes) and the
-    /// elevated metro line on a viaduct, with two stations and two parked trains.
+    /// elevated metro line on a viaduct with two stations (the trains are scene objects driven by the
+    /// metro simulation, see MetroRunner).
     /// </summary>
     public static partial class CediEnvironmentBuilder
     {
@@ -76,15 +77,7 @@ namespace NovaMarket.Editor
             water.SetFloat("_Smoothness", 0.85f);
 
             BuildRiver(parent, new[] { concrete, walkway, stained, water });
-            BuildMetro(parent, new[]
-            {
-                concrete,
-                CreateMaterial("M_Metro_Track", new Color(0.33f, 0.31f, 0.29f)),
-                CreateMaterial("M_Metro_StationRoof", new Color(0.86f, 0.85f, 0.82f)),
-                CreateMaterial("M_Metro_Train_Body", new Color(0.82f, 0.83f, 0.83f)),
-                CreateMaterial("M_Metro_Train_Windows", new Color(0.16f, 0.18f, 0.20f)),
-                CreateMaterial("M_Metro_Train_Accent", new Color(0.30f, 0.46f, 0.40f))
-            });
+            BuildMetro(parent, MetroMaterials());
         }
 
         // ------------------------------------------------------------------ river
@@ -176,9 +169,6 @@ namespace NovaMarket.Editor
 
             foreach (float x in MetroStationX) AddStation(b, x, concrete, roof, track);
 
-            AddTrain(b, MetroStationX[1] - 12f, 3, 1.9f);
-            AddTrain(b, -60f, 3, -1.9f);
-
             CreateMeshObject(parent, "Metro_Line", b, materials, InfrastructureMeshFolder, new Vector3(0f, 0f, MetroZ), true);
         }
 
@@ -214,23 +204,6 @@ namespace NovaMarket.Editor
             // Stair and elevator tower down to the walkway between metro and river.
             b.AddBox(V(x + 20f, (MetroDeckTop + 3f) / 2f, -halfWidth - 3f), Vector3.right, Vector3.forward, 5f,
                 (MetroDeckTop + 3f) / 2f, 3f, concrete, roof);
-        }
-
-        /// <summary>Metro unit of several cars on the track at local z <paramref name="trackZ"/>.</summary>
-        private static void AddTrain(MeshBuilder b, float startX, int cars, float trackZ)
-        {
-            const int body = 3, windows = 4, accent = 5;
-            const float carHalfLength = 11f, halfWidth = 1.5f, gap = 1f;
-            float floor = MetroDeckTop + 0.9f;
-            for (int i = 0; i < cars; i++)
-            {
-                float x = startX + i * (2f * carHalfLength + gap);
-                b.AddBox(V(x, floor + 1.85f, trackZ), Vector3.right, Vector3.forward, carHalfLength, 1.85f, halfWidth, body, body);
-                b.AddBox(V(x, floor + 2.25f, trackZ), Vector3.right, Vector3.forward, carHalfLength - 0.6f, 0.65f,
-                    halfWidth + 0.03f, windows, body);
-                b.AddBox(V(x, floor + 0.75f, trackZ), Vector3.right, Vector3.forward, carHalfLength + 0.02f, 0.18f,
-                    halfWidth + 0.03f, accent, body);
-            }
         }
 
         // ------------------------------------------------------------------ shared

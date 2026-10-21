@@ -28,11 +28,14 @@ namespace NovaMarket.Data
         [Header("Street furniture")]
         [Tooltip("Traffic light of one approach (pole, arm, head, stop lines), pivot at the moto stop line, +Z = traffic direction.")]
         [SerializeField] private GameObject trafficLightPrefab;
+        [Tooltip("Metro train (all its cars), pivot at the train centre on top of the rails, +Z = front. Needs a MetroTrainView.")]
+        [SerializeField] private GameObject metroTrainPrefab;
         [Tooltip("Bus shelter, pivot on the kerb, +Z = traffic direction.")]
         [SerializeField] private GameObject busStopPrefab;
 
         public GameObject TrafficLightPrefab => trafficLightPrefab;
         public GameObject BusStopPrefab => busStopPrefab;
+        public GameObject MetroTrainPrefab => metroTrainPrefab;
 
         /// <summary>The prefab for a vehicle kind and variant (null when the kind has none).</summary>
         public GameObject PrefabFor(AmbientVehicleKind kind, int variant)

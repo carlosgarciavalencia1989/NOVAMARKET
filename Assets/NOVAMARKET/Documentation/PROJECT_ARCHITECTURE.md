@@ -491,14 +491,25 @@ Kenney / Quaternius / Synty / Mixamo packs without touching the logic.
   (`TrafficSignal`, priority + "PARE", conflicts). `AmbientTraffic` drives cars, taxis, motos (35 %),
   buses and trucks inside a circle around the camera: car following, crossing bookings, giving way,
   moto filtering and moto box at lights, buses at stops, overtaking parked vehicles through the
-  opposite lane. At lights the last 5 s of each green belong to left turners (straight and right
-  wait), so they are not starved by a steady oncoming flow; a vehicle may wait up to two light
+  opposite lane. At lights the last 8 s of each green belong to left turners (straight and right
+  wait, and give up a booking they can still stop for), so they are not starved by a steady oncoming
+  flow. Without lights a moto filtering at the side of a lane waits 3.5 m back with the cars (long
+  vehicles turning in sweep that corner); a vehicle may wait up to two light
   cycles at a busy crossing (the safety valve removes one stuck 120 s out of close view; the tests
   check it is never needed). Tests in `Tests/EditMode/Simulation/Ambient/`.
 - **CEDI link (stage 1d):** `ISharedRoad` / `ISharedRoadVehicles` (`Scripts/Simulation/SharedRoad.cs`);
   `CediOperationSimulation.SharedRoad.cs` makes CEDI trucks brake for traffic, stop at red lights,
   spawn only on a free road and wait for a gap before leaving the gate. They appear and vanish at
-  x = ±300 (`CediLayout.SpawnDistanceX`), halfway between two crossings, never inside one.
+  x = ±300 (`CediLayout.SpawnDistanceX`), halfway between two crossings, never inside one. While a
+  truck moves through the gate box (turning in or pulling out) no traffic enters it.
+- **Metro (stage 2):** `MetroLine` (plain C#, `MetroLineDefinition` + `MetroSettings`) runs 4 trains of
+  3 cars on the viaduct: right-hand running (eastbound on the south track), they brake to stop centred
+  on each platform (x = −330 and 420), stand 25 s with the doors open, keep 150 m from the train ahead
+  and at each end of the line (x = ±1450) wait 30 s and return on the other track. `MetroLineData`
+  (geometry exported by **NOVAMARKET → Ambient → Export Metro Line**, service values editable),
+  `MetroRunner` + `MetroTrainView` on `Systems/Ambient` (prefab `Prefabs/Vehicles/Ambient/Metro_Train`,
+  doors change material while open). The trains are no longer part of the `Metro_Line` mesh:
+  **NOVAMARKET → Environment → Rebuild Metro Line Only** rebuilds just the viaduct.
 - **Data:** `RoadNetworkData` (exported by **NOVAMARKET → Ambient → Export Road Network**, also run
   by the environment rebuild), `AmbientSettingsData` (Low 60 / Medium 120 / High 200 vehicles,
   vehicle mix), `AmbientVisualProfile` (prefab and colours per vehicle kind, traffic light, bus stop).
@@ -510,7 +521,7 @@ Kenney / Quaternius / Synty / Mixamo packs without touching the logic.
   Prefabs in `Prefabs/Vehicles/Ambient/` and `Prefabs/Environment/` have two LODs, no colliders
   (traffic is not selectable). **NOVAMARKET → Ambient → Setup Ambient Traffic** rebuilds all of it.
 
-**Status (2026-10-20): stages 0 and 1 (1a–1d) done**, waiting for the author's approval before
-stage 2 (metro: take the trains out of the `Metro_Line` mesh and drive them as agents with stops).
+**Status (2026-10-20): stages 0, 1 (traffic) and 2 (metro) done**, waiting for the author's approval
+before stage 3 (people on sidewalks, plazas and stations; operators in the CEDI).
 Measured in the Editor (Game view 1920×888, start view): 0 vehicles 139 FPS, 60 → 119, 120 → 117,
 200 → 99; logic ≈1.9 ms per step at 120 vehicles, models ≈0.3 ms per frame.
