@@ -453,13 +453,15 @@ namespace NovaMarket.Editor
         private static Material HeadOff() => VehicleMaterial("M_Light_HeadOff", new Color(0.85f, 0.85f, 0.8f));
         private static Material LampOff() => VehicleMaterial("M_Signal_LampOff", new Color(0.1f, 0.1f, 0.1f));
 
-        /// <summary>Lit material that glows (the bloom of the Global Volume makes it shine).</summary>
+        /// <summary>
+        /// A lamp that looks switched on whatever the sun does: URP Unlit at full colour (dimmer when
+        /// <paramref name="intensity"/> &lt; 1). Unlit needs no emission keyword, which Lit materials lost on save.
+        /// </summary>
         private static Material Emissive(string name, Color colour, float intensity)
         {
             Material material = VehicleMaterial(name, colour);
-            material.EnableKeyword("_EMISSION");
-            material.SetColor("_EmissionColor", colour * intensity);
-            material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
+            material.shader = Shader.Find("Universal Render Pipeline/Unlit");
+            material.SetColor("_BaseColor", colour * Mathf.Min(1f, intensity));
             EditorUtility.SetDirty(material);
             return material;
         }
