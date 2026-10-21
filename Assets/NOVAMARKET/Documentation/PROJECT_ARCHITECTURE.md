@@ -476,7 +476,7 @@ The Oswald font has no σ, Σ, ⌈⌉, ★ or →: texts spell them out (stars a
 - S&OP, advanced simulation
 - Mission/level selection, saved progress and gems between levels; character art (badges are initials)
 
-## Scene life: ambient traffic (work in progress)
+## Scene life: ambient traffic
 
 Approved plan (4 stages): 0 common base, 1 traffic (1a–1d), 2 metro, 3 people and CEDI operators,
 4 wind, smoke, lights and ambient sound (temporary sound placeholders until the Kenney CC0 packs
@@ -491,10 +491,14 @@ Kenney / Quaternius / Synty / Mixamo packs without touching the logic.
   (`TrafficSignal`, priority + "PARE", conflicts). `AmbientTraffic` drives cars, taxis, motos (35 %),
   buses and trucks inside a circle around the camera: car following, crossing bookings, giving way,
   moto filtering and moto box at lights, buses at stops, overtaking parked vehicles through the
-  opposite lane. Tests in `Tests/EditMode/Simulation/Ambient/`.
+  opposite lane. At lights the last 5 s of each green belong to left turners (straight and right
+  wait), so they are not starved by a steady oncoming flow; a vehicle may wait up to two light
+  cycles at a busy crossing (the safety valve removes one stuck 120 s out of close view; the tests
+  check it is never needed). Tests in `Tests/EditMode/Simulation/Ambient/`.
 - **CEDI link (stage 1d):** `ISharedRoad` / `ISharedRoadVehicles` (`Scripts/Simulation/SharedRoad.cs`);
   `CediOperationSimulation.SharedRoad.cs` makes CEDI trucks brake for traffic, stop at red lights,
-  spawn only on a free road and wait for a gap before leaving the gate.
+  spawn only on a free road and wait for a gap before leaving the gate. They appear and vanish at
+  x = ±300 (`CediLayout.SpawnDistanceX`), halfway between two crossings, never inside one.
 - **Data:** `RoadNetworkData` (exported by **NOVAMARKET → Ambient → Export Road Network**, also run
   by the environment rebuild), `AmbientSettingsData` (Low 60 / Medium 120 / High 200 vehicles,
   vehicle mix), `AmbientVisualProfile` (prefab and colours per vehicle kind, traffic light, bus stop).
@@ -506,15 +510,7 @@ Kenney / Quaternius / Synty / Mixamo packs without touching the logic.
   Prefabs in `Prefabs/Vehicles/Ambient/` and `Prefabs/Environment/` have two LODs, no colliders
   (traffic is not selectable). **NOVAMARKET → Ambient → Setup Ambient Traffic** rebuilds all of it.
 
-**Status (2026-10-19): stage 1 in progress, sub-stages 1a–1d implemented and tested** (371+ EditMode
-tests green; the exported valley network runs 3 min with the CEDI without touching or jams).
+**Status (2026-10-20): stages 0 and 1 (1a–1d) done**, waiting for the author's approval before
+stage 2 (metro: take the trains out of the `Metro_Line` mesh and drive them as agents with stops).
 Measured in the Editor (Game view 1920×888, start view): 0 vehicles 139 FPS, 60 → 119, 120 → 117,
-200 → 99; logic ≈1.9 ms per step at 120 vehicles.
-
-**Next, to resume:**
-1. Enter Play and check the corrected car colours (the palette index always gave black before).
-2. Final screenshots (start view, junction x = 150 with moto box, bus stop x = 330, junction
-   x = −150) and run all EditMode tests again.
-3. Mark stage 1 done (commit without "wip"), update CLAUDE.md (new `Scripts/Ambient/` folder) and
-   show the user captures, FPS and how to test (Play, F3, quality in `Systems/Ambient`).
-4. Then stage 2 (metro): take the trains out of the `Metro_Line` mesh and drive them as agents.
+200 → 99; logic ≈1.9 ms per step at 120 vehicles, models ≈0.3 ms per frame.

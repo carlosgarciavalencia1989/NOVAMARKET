@@ -92,6 +92,18 @@ namespace NovaMarket.Tests.Simulation.Ambient
         }
 
         [Test]
+        public void Signal_GreenLeft_CountsDownDuringGreenOnly()
+        {
+            var signal = new TrafficSignal(30f, 20f);
+
+            Assert.AreEqual(30f, signal.GreenLeft(0, 0.0), 1e-3f);
+            Assert.AreEqual(4f, signal.GreenLeft(0, 26.0), 1e-3f);
+            Assert.AreEqual(0f, signal.GreenLeft(0, 31.0), "amber");
+            Assert.AreEqual(20f, signal.GreenLeft(1, 35.0), 1e-3f, "cross green starts after amber and all-red");
+            Assert.AreEqual(0f, signal.GreenLeft(1, 10.0));
+        }
+
+        [Test]
         public void CityLayout_HalfStreetsAreOneWayOnTheirAsphalt()
         {
             RoadNetwork network = RoadNetwork.Build(TestNetworks.City());

@@ -17,6 +17,9 @@ namespace NovaMarket.Simulation.Ambient
         /// <summary>A driver who sees amber stops if this braking (m/s²) is enough; otherwise crosses.</summary>
         private const float AmberDecel = 4f;
 
+        /// <summary>Last seconds of each green reserved for left turners (they wait for a gap in the oncoming flow).</summary>
+        private const float LeftTurnSeconds = 5f;
+
         private const float MaxDecel = 7f;
         private const float ReactionSeconds = 0.5f;
         private const float MutualWaitSeconds = 5f;
@@ -465,6 +468,8 @@ namespace NovaMarket.Simulation.Ambient
                 bool canStop = v.Speed * v.Speed / (2f * AmberDecel) < toLine - 0.5f;
                 bool waitingAtLine = v.Speed < 0.5f && toLine < 1f && movement.Priority > 0;
                 if (aspect == SignalAspect.Amber && canStop && !waitingAtLine) return false;
+                // The last seconds of green belong to the left turners: straight on and right wait if they can.
+                if (movement.Priority == 0 && InLeftTurnTime(movement.From) && (canStop || v.Speed < 0.5f)) return false;
             }
             else if (movement.From.HasStopSign && !v.StoppedAtSign) return false;
 
@@ -488,6 +493,14 @@ namespace NovaMarket.Simulation.Ambient
             return HasExitSpace(v, movement);
         }
 
+        private bool InLeftTurnTime(TrafficLane lane)
+        {
+            TrafficSignal signal = lane.EndJunction?.Signal;
+            if (signal == null) return false;
+            float left = signal.GreenLeft(lane.SignalGroup, Time);
+            return left > 0f && left < LeftTurnSeconds;
+        }
+
         /// <summary>True while the vehicle's rear is less than <paramref name="clearance"/> past the end of <paramref name="lane"/>.</summary>
         private static bool IsStillBeside(AmbientVehicle vehicle, TrafficLane lane, float clearance)
         {
@@ -507,9 +520,9 @@ namespace NovaMarket.Simulation.Ambient
                 // One standing in a queue behind someone else cannot come now (e.g. behind a left turner).
                 if (other.Speed < 1f && !IsFirstInLane(other, lane)) continue;
                 float distance = lane.Length - other.Front;
-                // On amber, one that stands or can still stop will stop.
-                if (AspectFor(lane) == SignalAspect.Amber
-                    && (other.Speed < 0.5f || other.Speed * other.Speed / (2f * AmberDecel) < distance - 0.5f)) continue;
+                // On amber (or in the left turners' last seconds of green), one that stands or can still stop will stop.
+                bool willStop = other.Speed < 0.5f || other.Speed * other.Speed / (2f * AmberDecel) < distance - 0.5f;
+                if (willStop && (AspectFor(lane) == SignalAspect.Amber || movement.Priority == 0 && InLeftTurnTime(lane))) continue;
                 if (distance < 6f + other.Speed * 3.5f) return true;
             }
             if (movement.Turn == TurnKind.Straight)

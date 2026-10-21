@@ -38,14 +38,27 @@ namespace NovaMarket.Simulation.Ambient
 
         public SignalAspect AspectFor(int group, double time)
         {
+            float local = LocalTime(group, time, out float green);
+            if (local < green) return SignalAspect.Green;
+            return local < green + Amber ? SignalAspect.Amber : SignalAspect.Red;
+        }
+
+        /// <summary>Seconds of green the group still has (0 when it is not green).</summary>
+        public float GreenLeft(int group, double time)
+        {
+            float local = LocalTime(group, time, out float green);
+            return local < green ? green - local : 0f;
+        }
+
+        /// <summary>Seconds since the group's green started (0 … cycle), and its green length.</summary>
+        private float LocalTime(int group, double time, out float green)
+        {
             float t = (float)((time + Offset) % Cycle);
             if (t < 0f) t += Cycle;
             float start = group == 0 ? 0f : MainGreen + Amber + AllRed;
-            float green = group == 0 ? MainGreen : CrossGreen;
+            green = group == 0 ? MainGreen : CrossGreen;
             float local = t - start;
-            if (local < 0f) local += Cycle;
-            if (local < green) return SignalAspect.Green;
-            return local < green + Amber ? SignalAspect.Amber : SignalAspect.Red;
+            return local < 0f ? local + Cycle : local;
         }
     }
 }

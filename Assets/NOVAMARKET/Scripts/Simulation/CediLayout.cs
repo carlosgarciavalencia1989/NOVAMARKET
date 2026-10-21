@@ -31,7 +31,11 @@ namespace NovaMarket.Simulation
 
         public const float EastboundLaneZ = -63f;
         public const float WestboundLaneZ = -57f;
-        public const float SpawnDistanceX = 260f;
+        /// <summary>
+        /// Where trucks appear and vanish on the highway: halfway between the crossings at x = 250 and 350,
+        /// so a truck never appears inside a crossing of the city traffic.
+        /// </summary>
+        public const float SpawnDistanceX = 300f;
 
         /// <summary>Where an outbound truck joins the westbound lane (it waits for a gap there).</summary>
         public static readonly Vector2 ExitMergePoint = new Vector2(-6f, WestboundLaneZ);
