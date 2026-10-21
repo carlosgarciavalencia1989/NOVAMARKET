@@ -139,13 +139,13 @@ namespace NovaMarket.Simulation.Ambient
             int east = definition.AddNode(new Vector2(HighwayHalfLength, HighwayZ), RoadNodeKind.Boundary);
             definition.AddRoad(previous, east, RoadClass.Highway, true, HighwayHalfWidth, HighwaySpeed);
 
-            AddBusStops(definition);
+            AddBusStops(definition, southEdge, northEdge);
             definition.KeepClear.Add(GateKeepClear);
             return definition;
         }
 
-        /// <summary>Stops on the highway near the metro stations and on every other avenue block, both directions.</summary>
-        private static void AddBusStops(RoadNetworkDefinition definition)
+        /// <summary>Stops on the highway near the metro stations and on every other avenue block (not on bridges), both directions.</summary>
+        private static void AddBusStops(RoadNetworkDefinition definition, float southEdge, float northEdge)
         {
             foreach (float x in HighwayBusStopX)
             {
@@ -158,6 +158,7 @@ namespace NovaMarket.Simulation.Ambient
                 if (road.Class != RoadClass.Avenue || !road.TwoWay || avenueRoads++ % 2 != 0) continue;
                 Vector2 a = definition.Nodes[road.From].Position, b = definition.Nodes[road.To].Position;
                 Vector2 middle = (a + b) / 2f, direction = Vector2.Normalize(b - a);
+                if (middle.Y > southEdge && middle.Y < northEdge) continue; // a bridge over the river: no stop
                 definition.BusStops.Add(new LaneMarkerDefinition(middle, direction));
                 definition.BusStops.Add(new LaneMarkerDefinition(middle, -direction));
             }

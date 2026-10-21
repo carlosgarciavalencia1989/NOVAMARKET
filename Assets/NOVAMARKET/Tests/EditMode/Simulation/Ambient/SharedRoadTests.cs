@@ -13,6 +13,7 @@ namespace NovaMarket.Tests.Simulation.Ambient
         private const float Step = 0.1f;
 
         [TestCase(7)]
+        [TestCase(13)]
         [TestCase(31)]
         public void CediTrucksAndTraffic_NeverTouch_TrucksStopAtRedLights_AndTheCediKeepsWorking(int seed)
         {

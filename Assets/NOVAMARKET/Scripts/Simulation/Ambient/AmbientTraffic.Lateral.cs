@@ -47,6 +47,13 @@ namespace NovaMarket.Simulation.Ambient
                 return;
             }
 
+            // First in the queue at a crossing without lights: back to the lane centre to reach the line.
+            if (!lane.HasSignal && toEnd < 8f && Math.Abs(v.TargetOffset) > 0.1f && NobodyAhead(v, lane) && SideClear(v, 0f))
+            {
+                v.TargetOffset = 0f;
+                return;
+            }
+
             bool blocked = v.LastFreeGap < 12f && v.LastLeaderSpeed < v.DesiredSpeed - 2f;
             if (blocked)
             {
@@ -58,6 +65,13 @@ namespace NovaMarket.Simulation.Ambient
             }
             else if (v.LastFreeGap > 30f && Math.Abs(v.TargetOffset) > 0.1f && toEnd > 25f && SideClear(v, 0f))
                 v.TargetOffset = 0f;
+        }
+
+        private static bool NobodyAhead(AmbientVehicle v, TrafficLane lane)
+        {
+            foreach (AmbientVehicle other in lane.Occupants)
+                if (other != v && other.Front > v.Front) return false;
+            return true;
         }
 
         /// <summary>Moves the body towards its target offset, only as far as the space beside it is free.</summary>

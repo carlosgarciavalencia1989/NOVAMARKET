@@ -18,7 +18,7 @@ namespace NovaMarket.Simulation.Ambient
         private const float AmberDecel = 4f;
 
         /// <summary>Last seconds of each green reserved for left turners (they wait for a gap in the oncoming flow).</summary>
-        private const float LeftTurnSeconds = 5f;
+        private const float LeftTurnSeconds = 8f;
 
         private const float MaxDecel = 7f;
         private const float ReactionSeconds = 0.5f;
@@ -324,12 +324,16 @@ namespace NovaMarket.Simulation.Ambient
 
             if (v.Link is TrafficLane lane)
             {
-                // "Do not block": do not stop inside the box; wait before it until there is room after it.
+                // "Do not block": do not stop inside the box; wait before it until there is room after it. Nobody
+                // enters it while a CEDI truck is moving through it (turning in or pulling out of the gate);
+                // vehicles overtaking in the other lane pass by.
+                bool overtaking = v.Overtake != null && v.Offset < -3f;
                 foreach ((float start, float end) in lane.KeepClear)
                 {
-                    if (v.Front > start - 0.05f || start - v.Front > lookahead + 5f) continue;
+                    if (overtaking || v.Front > start - 0.05f || start - v.Front > lookahead + 5f) continue;
                     float stopsAt = v.Front + Math.Min(obstacle, limit);
-                    if (obstacle < lookahead && stopsAt < end + v.Length + 1f) limit = Math.Min(limit, start - v.Front);
+                    if (obstacle < lookahead && stopsAt < end + v.Length + 1f || IsSharedVehicleMovingIn(lane, start, end))
+                        limit = Math.Min(limit, Math.Max(0f, start - v.Front));
                 }
 
                 // A stretch borrowed by someone overtaking against this lane's direction.
@@ -373,6 +377,17 @@ namespace NovaMarket.Simulation.Ambient
             limit = Math.Min(limit, Math.Max(0f, allowed - v.Front));
         }
 
+        /// <summary>A vehicle of the other simulation (a CEDI truck), not waiting, touches this stretch of the lane.</summary>
+        private bool IsSharedVehicleMovingIn(TrafficLane lane, float start, float end)
+        {
+            if (externals.Count == 0) return false;
+            float laneWidth = lane.TwoWay ? lane.HalfWidth : 2f * lane.HalfWidth;
+            var area = new Footprint(lane.PointAt((start + end) / 2f), lane.Direction, end - start, laneWidth);
+            foreach (SharedRoadVehicle external in externals)
+                if (!external.IsParked && Overlaps(area, external.Footprint, 0f)) return true;
+            return false;
+        }
+
         private void BusStopLimit(AmbientVehicle v, TrafficLane lane, float dt, ref float limit)
         {
             if (v.BusStopIndex >= lane.BusStops.Count) return;
@@ -404,12 +419,18 @@ namespace NovaMarket.Simulation.Ambient
         /// </summary>
         private void JunctionLimit(AmbientVehicle v, float lookahead, ref float limit)
         {
-            // Booked on green but still before the line when it turns red: stop if there is room to.
+            // Booked on green but still before the line when it turns red (or, going straight or right, when the
+            // left turners' last seconds begin): stop if there is room to.
             TrafficConnector booked = v.Held;
-            if (booked != null && v.Link == booked.From && booked.Junction.Signal != null
-                && AspectFor(booked.From) == SignalAspect.Red
-                && v.Speed * v.Speed / (2f * MaxDecel) < booked.From.Length - v.Front - 0.3f)
-                Release(v);
+            if (booked != null && v.Link == booked.From && booked.Junction.Signal != null)
+            {
+                float toEnd = booked.From.Length - v.Front - 0.3f;
+                float toStop = toEnd - (v.IsMoto ? 0f : CarStopBack);
+                bool red = AspectFor(booked.From) == SignalAspect.Red && v.Speed * v.Speed / (2f * MaxDecel) < toEnd;
+                bool leftTime = booked.Priority == 0 && InLeftTurnTime(booked.From)
+                                && v.Speed * v.Speed / (2f * AmberDecel) < toStop;
+                if (red || leftTime) Release(v);
+            }
 
             float distance = v.Link.Length - v.Front;
             TrafficConnector movement = null;
@@ -430,7 +451,10 @@ namespace NovaMarket.Simulation.Ambient
             if (movement == null || distance > lookahead + 15f) return;
 
             TrafficLane approach = movement.From;
-            float stopBack = approach.HasSignal && !v.IsMoto ? CarStopBack : 0.5f;
+            // Cars stop behind the moto box at lights; without lights a moto filtering at the side waits with
+            // the cars too (a long vehicle turning in sweeps over that corner).
+            bool besideLane = v.IsMoto && Math.Abs(v.Offset) > 1.2f;
+            float stopBack = approach.HasSignal ? (v.IsMoto ? 0.5f : CarStopBack) : besideLane ? CarStopBack : 0.5f;
             float toLine = distance - stopBack;
             bool onApproach = v.Link == approach;
 
