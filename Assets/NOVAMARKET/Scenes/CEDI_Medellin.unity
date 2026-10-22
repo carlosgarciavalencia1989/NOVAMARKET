@@ -3388,6 +3388,7 @@ GameObject:
   - component: {fileID: 277465823}
   - component: {fileID: 277465825}
   - component: {fileID: 277465826}
+  - component: {fileID: 277465827}
   m_Layer: 0
   m_Name: Ambient
   m_TagString: Untagged
@@ -3488,6 +3489,21 @@ MonoBehaviour:
   radiusLimits: {x: 150, y: 450}
   stepsPerSecond: 10
   waitingPerPlatform: 8
+--- !u!114 &277465827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277465821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 200642d0ef35fae41adee6b6458fc38e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Ambient.WindController
+  direction: 250
+  strength: 0.35
+  seed: 4
 --- !u!1 &280993524
 GameObject:
   m_ObjectHideFlags: 0

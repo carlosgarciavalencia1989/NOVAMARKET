@@ -601,15 +601,16 @@ namespace NovaMarket.Editor
             Mesh conifer = LoadOrCreateMesh("MSH_Tree_Conifer", TreeMeshes.Conifer);
             Mesh guayacan = LoadOrCreateMesh("MSH_Tree_Guayacan", () => TreeMeshes.Guayacan(Seed + 3));
 
+            Material[] canopy = CanopyMaterials();
             treeKinds = new[]
             {
-                new TreeKind { Name = "Tree_Broadleaf_Light", Mesh = broadleaf, Canopy = CreateMaterial("M_Tree_Canopy_Light", new Color(0.36f, 0.52f, 0.20f)) },
-                new TreeKind { Name = "Tree_Broadleaf_Mid", Mesh = broadleaf, Canopy = CreateMaterial("M_Tree_Canopy_Mid", new Color(0.22f, 0.40f, 0.16f)) },
-                new TreeKind { Name = "Tree_Broadleaf_Dark", Mesh = round, Canopy = CreateMaterial("M_Tree_Canopy_Dark", new Color(0.13f, 0.27f, 0.11f)) },
-                new TreeKind { Name = "Tree_Round_Mid", Mesh = round, Canopy = CreateMaterial("M_Tree_Canopy_Olive", new Color(0.30f, 0.42f, 0.17f)) },
-                new TreeKind { Name = "Tree_Conifer", Mesh = conifer, Canopy = CreateMaterial("M_Tree_Conifer", new Color(0.12f, 0.24f, 0.14f)) },
-                new TreeKind { Name = "Tree_Guayacan_Amarillo", Mesh = guayacan, Canopy = CreateMaterial("M_Tree_Guayacan_Amarillo", new Color(0.96f, 0.76f, 0.10f)) },
-                new TreeKind { Name = "Tree_Guayacan_Rosado", Mesh = guayacan, Canopy = CreateMaterial("M_Tree_Guayacan_Rosado", new Color(0.90f, 0.48f, 0.66f)) }
+                new TreeKind { Name = "Tree_Broadleaf_Light", Mesh = broadleaf, Canopy = canopy[0] },
+                new TreeKind { Name = "Tree_Broadleaf_Mid", Mesh = broadleaf, Canopy = canopy[1] },
+                new TreeKind { Name = "Tree_Broadleaf_Dark", Mesh = round, Canopy = canopy[2] },
+                new TreeKind { Name = "Tree_Round_Mid", Mesh = round, Canopy = canopy[3] },
+                new TreeKind { Name = "Tree_Conifer", Mesh = conifer, Canopy = canopy[4] },
+                new TreeKind { Name = "Tree_Guayacan_Amarillo", Mesh = guayacan, Canopy = canopy[5] },
+                new TreeKind { Name = "Tree_Guayacan_Rosado", Mesh = guayacan, Canopy = canopy[6] }
             };
 
             var prototypes = new TreePrototype[treeKinds.Length];
@@ -628,6 +629,36 @@ namespace NovaMarket.Editor
                 prototypes[i] = new TreePrototype { prefab = prefab, bendFactor = 0f };
             }
             return prototypes;
+        }
+
+        private const string WindShader = "NOVAMARKET/Wind Foliage";
+
+        /// <summary>Canopy materials of the terrain trees: they sway with the global wind (WindController).</summary>
+        private static Material[] CanopyMaterials() => new[]
+        {
+            CreateMaterial("M_Tree_Canopy_Light", new Color(0.36f, 0.52f, 0.20f), WindShader),
+            CreateMaterial("M_Tree_Canopy_Mid", new Color(0.22f, 0.40f, 0.16f), WindShader),
+            CreateMaterial("M_Tree_Canopy_Dark", new Color(0.13f, 0.27f, 0.11f), WindShader),
+            CreateMaterial("M_Tree_Canopy_Olive", new Color(0.30f, 0.42f, 0.17f), WindShader),
+            CreateMaterial("M_Tree_Conifer", new Color(0.12f, 0.24f, 0.14f), WindShader),
+            CreateMaterial("M_Tree_Guayacan_Amarillo", new Color(0.96f, 0.76f, 0.10f), WindShader),
+            CreateMaterial("M_Tree_Guayacan_Rosado", new Color(0.90f, 0.48f, 0.66f), WindShader)
+        };
+
+        /// <summary>Gives the tree canopies the wind shader without rebuilding the valley.</summary>
+        [MenuItem("NOVAMARKET/Environment/Apply Tree Wind Shader")]
+        public static void ApplyTreeWind()
+        {
+            CanopyMaterials();
+            AssetDatabase.SaveAssets();
+            // The terrain keeps its own copies of the tree materials: refresh them or it keeps the old shader.
+            Terrain terrain = Terrain.activeTerrain;
+            if (terrain != null)
+            {
+                terrain.terrainData.RefreshPrototypes();
+                terrain.Flush();
+            }
+            Debug.Log("Tree canopies now sway with the wind.");
         }
 
         private static Mesh LoadOrCreateMesh(string name, System.Func<Mesh> create)
@@ -855,6 +886,8 @@ namespace NovaMarket.Editor
                 material = new Material(Shader.Find(shader));
                 AssetDatabase.CreateAsset(material, path);
             }
+            else if (material.shader.name != shader && Shader.Find(shader) != null)
+                material.shader = Shader.Find(shader);
             if (material.HasProperty("_BaseColor"))
             {
                 material.SetColor("_BaseColor", color);
