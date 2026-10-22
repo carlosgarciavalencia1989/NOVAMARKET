@@ -54,6 +54,7 @@ namespace NovaMarket.Simulation.Ambient
         public static RoadNetworkDefinition Build(IEnumerable<StreetCell> cells, float northEdge, float southEdge,
             IReadOnlyCollection<float> bridgeX, IReadOnlyCollection<float> avenueX, IReadOnlyCollection<float> avenueZ)
         {
+            var cellList = new List<StreetCell>(cells);
             var definition = new RoadNetworkDefinition();
             var nodes = new Dictionary<(int, int), int>();
             var highwayNodes = new SortedDictionary<int, int>();
@@ -89,7 +90,7 @@ namespace NovaMarket.Simulation.Ambient
                 else side.Right++;
                 sides[key] = side;
             }
-            foreach (StreetCell cell in cells)
+            foreach (StreetCell cell in cellList)
             {
                 // Sides always run west→east or south→north; "left" is north or west of them.
                 AddSide(new Vector2(cell.XMin, cell.ZMin), new Vector2(cell.XMax, cell.ZMin), true);  // south side, cell north
@@ -140,6 +141,9 @@ namespace NovaMarket.Simulation.Ambient
             definition.AddRoad(previous, east, RoadClass.Highway, true, HighwayHalfWidth, HighwaySpeed);
 
             AddBusStops(definition, southEdge, northEdge);
+            foreach (Crosswalk crosswalk in CityWalkLayout.Crosswalks(cellList))
+                definition.Crosswalks.Add(new LaneMarkerDefinition(crosswalk.Centre, crosswalk.StreetDirection,
+                    CityWalkLayout.CrosswalkWidth / 2f));
             definition.KeepClear.Add(GateKeepClear);
             return definition;
         }

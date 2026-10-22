@@ -38,7 +38,7 @@ namespace NovaMarket.Simulation.Ambient
         {
             if (!(v.Link is TrafficLane lane)) return;
 
-            float toEnd = lane.Length - v.Front;
+            float toEnd = lane.Length - lane.StopLineBack - v.Front; // to the stop line
             bool atLight = lane.HasSignal && v.Held == null && toEnd < 2f && v.Speed < 0.3f;
             if (atLight && Math.Abs(v.TargetOffset) > 1.5f)
             {

@@ -105,6 +105,9 @@ namespace NovaMarket.Simulation.Ambient
         public List<LaneMarkerDefinition> BusStops { get; } = new List<LaneMarkerDefinition>();
         public List<LaneMarkerDefinition> KeepClear { get; } = new List<LaneMarkerDefinition>();
 
+        /// <summary>Zebra crossings: centre on the street, direction along the street, half length = half the band width.</summary>
+        public List<LaneMarkerDefinition> Crosswalks { get; } = new List<LaneMarkerDefinition>();
+
         public int AddNode(Vector2 position, RoadNodeKind kind = RoadNodeKind.Junction, bool signalized = false)
         {
             Nodes.Add(new RoadNodeDefinition(position, kind, signalized));

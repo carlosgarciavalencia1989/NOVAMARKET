@@ -162,7 +162,7 @@ namespace NovaMarket.Ambient
                 if (junction.Signal == null || visuals.TrafficLightPrefab == null) continue;
                 foreach (TrafficLane lane in junction.Incoming)
                 {
-                    Vector3 at = Ground(lane.End) + Vector3.up * SurfaceHeight(lane);
+                    Vector3 at = Ground(lane.End - lane.Direction * lane.StopLineBack) + Vector3.up * SurfaceHeight(lane);
                     GameObject light = Instantiate(visuals.TrafficLightPrefab, at, Facing(lane.Direction), root);
                     light.name = $"TrafficLight_{junction.Id}_{lane.Id}";
                     var view = light.GetComponent<TrafficLightView>();

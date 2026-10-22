@@ -64,6 +64,29 @@ namespace NovaMarket.Tests.Simulation.Ambient
             return CityRoadLayout.Build(cells, NorthEdge, SouthEdge, BridgeX, AvenueX, AvenueZ);
         }
 
+        /// <summary>The blocks of <see cref="City"/> (cells without their half streets); every seventh one is a park.</summary>
+        public static List<CityBlock> CityBlocks()
+        {
+            var blocks = new List<CityBlock>();
+            int index = 0;
+            for (int i = -5; i < 5; i++)
+            {
+                float x0 = i * 100f + 50f, x1 = x0 + 100f;
+                for (int row = 0; row < 3; row++)
+                {
+                    float z0 = NorthEdge + row * 80f;
+                    bool cediLot = row < 2 && x1 > -120f && x0 < 140f;
+                    if (!cediLot) blocks.Add(Block(x0, z0, x1, z0 + 80f, index++));
+                    float s1 = SouthEdge - row * 80f;
+                    blocks.Add(Block(x0, s1 - 80f, x1, s1, index++));
+                }
+            }
+            return blocks;
+        }
+
+        private static CityBlock Block(float x0, float z0, float x1, float z1, int index) =>
+            new CityBlock(x0 + 6f, z0 + 6f, x1 - 6f, z1 - 6f, index % 7 == 3 ? CityBlockKind.Park : CityBlockKind.City);
+
         public static TrafficLane LaneHeading(RoadNetwork network, Vector2 direction, Vector2 near) =>
             network.Lanes.Where(l => Vector2.Dot(l.Direction, direction) > 0.99f)
                 .OrderBy(l => Vector2.Distance((l.Start + l.End) / 2f, near)).First();

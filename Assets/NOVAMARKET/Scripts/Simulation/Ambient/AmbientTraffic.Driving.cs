@@ -358,7 +358,7 @@ namespace NovaMarket.Simulation.Ambient
         private static void MotoBesideLimit(AmbientVehicle v, TrafficLane lane, ref float limit)
         {
             const float zone = 15f, margin = 0.5f;
-            float line = lane.Length - 0.5f;
+            float line = lane.Length - lane.StopLineBack - 0.5f;
             if (lane.Length - v.Front > zone + 10f || v.Held?.From == lane) return; // far away, or already going
             float allowed = Math.Min(line, v.Front + limit);
             foreach (AmbientVehicle other in lane.Occupants)
@@ -424,7 +424,7 @@ namespace NovaMarket.Simulation.Ambient
             TrafficConnector booked = v.Held;
             if (booked != null && v.Link == booked.From && booked.Junction.Signal != null)
             {
-                float toEnd = booked.From.Length - v.Front - 0.3f;
+                float toEnd = booked.From.Length - booked.From.StopLineBack - v.Front - 0.3f;
                 float toStop = toEnd - (v.IsMoto ? 0f : CarStopBack);
                 bool red = AspectFor(booked.From) == SignalAspect.Red && v.Speed * v.Speed / (2f * MaxDecel) < toEnd;
                 bool leftTime = booked.Priority == 0 && InLeftTurnTime(booked.From)
@@ -455,6 +455,7 @@ namespace NovaMarket.Simulation.Ambient
             // the cars too (a long vehicle turning in sweeps over that corner).
             bool besideLane = v.IsMoto && Math.Abs(v.Offset) > 1.2f;
             float stopBack = approach.HasSignal ? (v.IsMoto ? 0.5f : CarStopBack) : besideLane ? CarStopBack : 0.5f;
+            stopBack += approach.StopLineBack; // before the zebra crossing
             float toLine = distance - stopBack;
             bool onApproach = v.Link == approach;
 

@@ -76,6 +76,9 @@ namespace NovaMarket.Simulation.Ambient
         /// <summary>The crossing at the end of the lane (null where the road leaves the map).</summary>
         public TrafficJunction EndJunction { get; internal set; }
 
+        /// <summary>The crossing at the start of the lane (null where the road enters the map).</summary>
+        public TrafficJunction StartJunction { get; internal set; }
+
         /// <summary>True when the lane has priority at its crossing (lights, or the main road).</summary>
         public bool IsMajor { get; internal set; } = true;
 
@@ -90,6 +93,12 @@ namespace NovaMarket.Simulation.Ambient
 
         /// <summary>Stretches where nobody may stop (e.g. in front of the CEDI gate).</summary>
         public IReadOnlyList<(float Start, float End)> KeepClear => keepClear;
+
+        /// <summary>
+        /// Distance from the end of the lane to its stop line: a zebra crossing just before the crossing pushes
+        /// the line back (vehicles wait before it, so people cross in front of them). 0 without one.
+        /// </summary>
+        public float StopLineBack { get; internal set; }
 
         public bool HasSignal => EndJunction?.Signal != null;
 
@@ -302,6 +311,7 @@ namespace NovaMarket.Simulation.Ambient
                     {
                         if (to.Road == from.Road && !deadEnd) continue;
                         TrafficConnector connector = AddConnector(from, to, junction);
+                        to.StartJunction = junction;
                         from.next.Add(connector);
                         connector.next.Add(to);
                     }
@@ -319,6 +329,13 @@ namespace NovaMarket.Simulation.Ambient
             {
                 TrafficLane lane = FindLane(zone.Point, zone.Direction, 4f, out float s);
                 if (lane != null) lane.keepClear.Add((Math.Max(0f, s - zone.HalfLength), Math.Min(lane.Length, s + zone.HalfLength)));
+            }
+            foreach (LaneMarkerDefinition crosswalk in definition.Crosswalks)
+            foreach (Vector2 direction in new[] { crosswalk.Direction, -crosswalk.Direction })
+            {
+                TrafficLane lane = FindLane(crosswalk.Point, direction, 4f, out float s);
+                if (lane == null || s < lane.Length / 2f) continue; // only the lane arriving at it stops before it
+                lane.StopLineBack = Math.Max(lane.StopLineBack, lane.Length - (s - crosswalk.HalfLength) + 0.3f);
             }
             foreach (TrafficLane lane in lanes) lane.busStops.Sort();
         }

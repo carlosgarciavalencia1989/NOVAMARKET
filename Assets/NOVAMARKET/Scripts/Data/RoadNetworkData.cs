@@ -45,6 +45,7 @@ namespace NovaMarket.Data
         [SerializeField] private Road[] roads = new Road[0];
         [SerializeField] private Marker[] busStops = new Marker[0];
         [SerializeField] private Marker[] keepClear = new Marker[0];
+        [SerializeField] private Marker[] crosswalks = new Marker[0];
 
         public int NodeCount => nodes.Length;
         public int RoadCount => roads.Length;
@@ -57,6 +58,7 @@ namespace NovaMarket.Data
                 definition.AddRoad(road.from, road.to, road.roadClass, road.twoWay, road.halfWidth, road.speedLimit, road.centreShift);
             foreach (Marker marker in busStops) definition.BusStops.Add(ToDefinition(marker));
             foreach (Marker marker in keepClear) definition.KeepClear.Add(ToDefinition(marker));
+            foreach (Marker marker in crosswalks) definition.Crosswalks.Add(ToDefinition(marker));
             return definition;
         }
 
@@ -77,6 +79,7 @@ namespace NovaMarket.Data
             roads = roadList.ToArray();
             busStops = definition.BusStops.ConvertAll(ToMarker).ToArray();
             keepClear = definition.KeepClear.ConvertAll(ToMarker).ToArray();
+            crosswalks = definition.Crosswalks.ConvertAll(ToMarker).ToArray();
         }
 
         private static LaneMarkerDefinition ToDefinition(Marker marker) =>

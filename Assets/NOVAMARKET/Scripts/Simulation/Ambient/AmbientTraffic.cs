@@ -62,6 +62,9 @@ namespace NovaMarket.Simulation.Ambient
         /// <summary>Vehicles of another simulation on the same roads (the CEDI trucks); null when alone.</summary>
         public ISharedRoadVehicles SharedVehicles { get; set; }
 
+        /// <summary>People on zebra crossings (vehicles wait for them); null without pedestrians.</summary>
+        public ISharedRoadVehicles SharedPedestrians { get; set; }
+
         /// <summary>Simulation time in seconds (drives the traffic lights).</summary>
         public double Time { get; private set; }
 
@@ -73,6 +76,18 @@ namespace NovaMarket.Simulation.Ambient
 
         /// <summary>Vehicles removed because they were stuck (should stay 0).</summary>
         public int StuckRemovals { get; private set; }
+
+        /// <summary>Vehicles whose front is on a lane.</summary>
+        public IReadOnlyList<AmbientVehicle> VehiclesOn(TrafficLink link) => link.Occupants;
+
+        /// <summary>True while a vehicle crossing the crossroads at the lane's start is driving into it.</summary>
+        public bool IsEnteringLane(TrafficLane lane)
+        {
+            if (lane.StartJunction == null) return false;
+            foreach (AmbientVehicle holder in lane.StartJunction.Holders)
+                if (holder.Held.To == lane) return true;
+            return false;
+        }
 
         /// <summary>Light colour a lane sees at its crossing (green where there are no lights).</summary>
         public SignalAspect AspectFor(TrafficLane lane) =>
@@ -278,6 +293,7 @@ namespace NovaMarket.Simulation.Ambient
             foreach (int lane in touchedLanes) laneExternals[lane].Clear();
             touchedLanes.Clear();
             SharedVehicles?.CollectSharedRoadVehicles(externals);
+            SharedPedestrians?.CollectSharedRoadVehicles(externals);
 
             foreach (SharedRoadVehicle external in externals)
             {
@@ -347,7 +363,7 @@ namespace NovaMarket.Simulation.Ambient
             TrafficLane lane = Network.FindLane(front, heading, 2.8f, out float s);
             if (lane?.EndJunction?.Signal == null || s > lane.Length - 0.3f) return float.MaxValue;
             // Between the car line and the moto line (stopped there behind someone) it stays where it is.
-            float distance = Math.Max(0f, lane.Length - CarStopBack - s);
+            float distance = Math.Max(0f, lane.Length - lane.StopLineBack - CarStopBack - s);
             if (distance > lookahead) return float.MaxValue;
             SignalAspect aspect = AspectFor(lane);
             if (aspect == SignalAspect.Red) return Math.Max(0f, distance);
