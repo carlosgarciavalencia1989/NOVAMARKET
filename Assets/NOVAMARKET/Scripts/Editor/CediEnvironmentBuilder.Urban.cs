@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NovaMarket.Simulation.Ambient;
 using UnityEngine;
 
 namespace NovaMarket.Editor
@@ -69,6 +70,12 @@ namespace NovaMarket.Editor
         }
 
         private static List<UrbanTree> urbanTrees;
+
+        /// <summary>The blocks built by the last rebuild and what each holds (exported for the people walking).</summary>
+        private static List<CityBlock> builtBlocks;
+
+        private static void RecordBlock(Rect block, CityBlockKind kind) =>
+            builtBlocks.Add(new CityBlock(block.xMin, block.yMin, block.xMax, block.yMax, kind));
         private static List<Vector2> handPlacedTrees;
 
         private static void BuildUrban(Transform environment)
@@ -87,6 +94,7 @@ namespace NovaMarket.Editor
             var industrialRng = new System.Random(Seed + 11);
             var cityRng = new System.Random(Seed + 13);
             int industrialBlocks = 0, cityBlocks = 0, parks = 0, towerBlocks = 0;
+            builtBlocks = new List<CityBlock>();
 
             foreach (Rect block in EnumerateBlocks())
             {
@@ -101,6 +109,7 @@ namespace NovaMarket.Editor
                 if (isIndustrial)
                 {
                     BuildIndustrialBlock(chunk, block, industrialRng);
+                    RecordBlock(block, CityBlockKind.Industrial);
                     industrialBlocks++;
                     continue;
                 }
@@ -110,14 +119,20 @@ namespace NovaMarket.Editor
                 if (downtown > 0f)
                 {
                     BuildDowntownBlock(chunk, block, downtown, cityRng);
+                    RecordBlock(block, CityBlockKind.Downtown);
                     towerBlocks++;
                 }
                 else if (cityRng.NextDouble() < 0.08)
                 {
                     BuildParkBlock(chunk, block, cityRng);
+                    RecordBlock(block, CityBlockKind.Park);
                     parks++;
                 }
-                else BuildCityBlock(chunk, block, cityRng);
+                else
+                {
+                    BuildCityBlock(chunk, block, cityRng);
+                    RecordBlock(block, CityBlockKind.City);
+                }
                 cityBlocks++;
             }
 

@@ -3526,3 +3526,1702 @@ MonoBehaviour:
   - point: {x: -2, y: -57}
     direction: {x: -1, y: 0}
     halfLength: 15
+  crosswalks:
+  - point: {x: -841, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -759, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -750, y: -45}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -750, y: 17}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -841, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -759, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -750, y: 35}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -750, y: 97}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -841, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -759, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -750, y: 115}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -750, y: 177}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -841, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -759, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -750, y: 195}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -750, y: 257}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -841, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -759, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -750, y: 275}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -750, y: 337}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -841, y: 426}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -759, y: 426}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -750, y: 355}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -750, y: 417}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -750, y: 435}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -750, y: 497}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -750, y: -208}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -750, y: -146}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -841, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -759, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -750, y: -288}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -750, y: -226}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -841, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -759, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -750, y: -368}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -750, y: -306}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -841, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -759, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -750, y: -448}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -750, y: -386}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -741, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -659, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -650, y: -45}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -650, y: 17}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -741, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -659, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -650, y: 35}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -650, y: 97}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -741, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -659, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -650, y: 115}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -650, y: 177}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -741, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -659, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -650, y: 195}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -650, y: 257}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -741, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -659, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -650, y: 275}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -650, y: 337}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -741, y: 426}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -659, y: 426}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -650, y: 355}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -650, y: 417}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -650, y: 435}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -650, y: 497}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -650, y: -208}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -650, y: -146}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -741, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -659, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -650, y: -288}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -650, y: -226}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -741, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -659, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -650, y: -368}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -650, y: -306}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -741, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -659, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -650, y: -448}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -650, y: -386}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -641, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -559, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -550, y: -45}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -550, y: 17}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -641, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -559, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -550, y: 35}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -550, y: 97}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -641, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -559, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -550, y: 115}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -550, y: 177}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -641, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -559, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -550, y: 195}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -550, y: 257}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -641, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -559, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -550, y: 275}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -550, y: 337}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -641, y: 426}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -559, y: 426}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -550, y: 355}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -550, y: 417}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -550, y: 435}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -550, y: 497}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -550, y: -208}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -550, y: -146}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -641, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -559, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -550, y: -288}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -550, y: -226}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -641, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -559, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -550, y: -368}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -550, y: -306}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -641, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -559, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -550, y: -448}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -550, y: -386}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -541, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -459, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -450, y: -45}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -450, y: 17}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -541, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -459, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -450, y: 35}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -450, y: 97}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -541, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -459, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -450, y: 115}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -450, y: 177}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -541, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -459, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -450, y: 195}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -450, y: 257}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -541, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -459, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -450, y: 275}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -450, y: 337}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -541, y: 426}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -459, y: 426}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -450, y: 355}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -450, y: 417}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -450, y: 435}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -450, y: 497}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -450, y: -208}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -450, y: -146}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -541, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -459, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -450, y: -288}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -450, y: -226}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -541, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -459, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -450, y: -368}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -450, y: -306}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -541, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -459, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -450, y: -448}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -450, y: -386}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -441, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -359, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -350, y: -45}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -350, y: 17}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -441, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -359, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -350, y: 35}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -350, y: 97}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -441, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -359, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -350, y: 115}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -350, y: 177}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -441, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -359, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -350, y: 195}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -350, y: 257}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -441, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -359, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -350, y: 275}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -350, y: 337}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -441, y: 426}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -359, y: 426}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -350, y: 355}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -350, y: 417}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -350, y: 435}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -350, y: 497}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -350, y: -208}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -350, y: -146}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -441, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -359, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -350, y: -288}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -350, y: -226}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -441, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -359, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -350, y: -368}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -350, y: -306}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -441, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -359, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -350, y: -448}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -350, y: -386}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -341, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -259, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -250, y: -45}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -250, y: 17}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -341, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -259, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -250, y: 35}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -250, y: 97}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -341, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -259, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -250, y: 115}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -250, y: 177}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -341, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -259, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -250, y: 195}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -250, y: 257}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -341, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -259, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -250, y: 275}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -250, y: 337}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -341, y: 426}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -259, y: 426}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -250, y: 355}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -250, y: 417}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -250, y: -208}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -250, y: -146}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -341, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -259, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -250, y: -288}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -250, y: -226}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -341, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -259, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -250, y: -368}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -250, y: -306}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -341, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -259, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -250, y: -448}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -250, y: -386}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -241, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -159, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -241, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -159, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -241, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -159, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -150, y: 115}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -150, y: 177}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -241, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -159, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -150, y: 195}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -150, y: 257}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -241, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -159, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -150, y: 275}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -150, y: 337}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -150, y: 355}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -150, y: 417}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -150, y: -208}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -150, y: -146}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -241, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -159, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -150, y: -288}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -150, y: -226}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -241, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -159, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -150, y: -368}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -150, y: -306}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -241, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -159, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -150, y: -448}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -150, y: -386}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -141, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -59, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -50, y: 115}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -50, y: 177}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -141, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -59, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -50, y: 195}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -50, y: 257}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -141, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -59, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -50, y: 275}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -50, y: 337}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -50, y: 355}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -50, y: 417}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -50, y: -208}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -50, y: -146}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -141, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -59, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -50, y: -288}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -50, y: -226}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -141, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -59, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -50, y: -368}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -50, y: -306}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -141, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -59, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: -50, y: -448}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -50, y: -386}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -41, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 41, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 50, y: 115}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 50, y: 177}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -41, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 41, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 50, y: 195}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 50, y: 257}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -41, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 41, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 50, y: 275}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 50, y: 337}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 50, y: 355}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 50, y: 417}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 50, y: -208}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 50, y: -146}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -41, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 41, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 50, y: -288}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 50, y: -226}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -41, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 41, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 50, y: -368}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 50, y: -306}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: -41, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 41, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 50, y: -448}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 50, y: -386}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 59, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 141, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 150, y: 115}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 150, y: 177}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 59, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 141, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 150, y: 195}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 150, y: 257}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 59, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 141, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 150, y: 275}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 150, y: 337}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 150, y: 355}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 150, y: 417}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 150, y: -208}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 150, y: -146}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 59, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 141, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 150, y: -288}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 150, y: -226}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 59, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 141, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 150, y: -368}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 150, y: -306}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 59, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 141, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 150, y: -448}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 150, y: -386}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 159, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 241, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 250, y: -45}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 250, y: 17}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 159, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 241, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 250, y: 35}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 250, y: 97}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 159, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 241, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 250, y: 115}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 250, y: 177}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 159, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 241, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 250, y: 195}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 250, y: 257}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 159, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 241, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 250, y: 275}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 250, y: 337}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 250, y: 355}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 250, y: 417}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 250, y: -208}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 250, y: -146}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 159, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 241, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 250, y: -288}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 250, y: -226}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 159, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 241, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 250, y: -368}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 250, y: -306}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 159, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 241, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 250, y: -448}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 250, y: -386}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 259, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 341, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 350, y: -45}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 350, y: 17}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 259, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 341, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 350, y: 35}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 350, y: 97}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 259, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 341, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 350, y: 115}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 350, y: 177}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 259, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 341, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 350, y: 195}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 350, y: 257}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 259, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 341, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 350, y: 275}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 350, y: 337}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 350, y: 355}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 350, y: 417}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 350, y: -208}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 350, y: -146}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 259, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 341, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 350, y: -288}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 350, y: -226}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 259, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 341, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 350, y: -368}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 350, y: -306}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 259, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 341, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 350, y: -448}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 350, y: -386}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 359, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 441, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 450, y: -45}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 450, y: 17}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 359, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 441, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 450, y: 35}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 450, y: 97}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 359, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 441, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 450, y: 115}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 450, y: 177}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 359, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 441, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 450, y: 195}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 450, y: 257}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 359, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 441, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 450, y: 275}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 450, y: 337}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 450, y: 355}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 450, y: 417}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 450, y: -208}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 450, y: -146}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 359, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 441, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 450, y: -288}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 450, y: -226}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 359, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 441, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 450, y: -368}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 450, y: -306}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 359, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 441, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 450, y: -448}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 450, y: -386}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 459, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 541, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 550, y: -45}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 550, y: 17}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 459, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 541, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 550, y: 35}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 550, y: 97}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 459, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 541, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 550, y: 115}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 550, y: 177}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 459, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 541, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 550, y: 195}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 550, y: 257}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 459, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 541, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 550, y: 275}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 550, y: 337}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 550, y: 355}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 550, y: 417}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 550, y: -208}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 550, y: -146}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 459, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 541, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 550, y: -288}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 550, y: -226}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 459, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 541, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 550, y: -368}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 550, y: -306}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 459, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 541, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 550, y: -448}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 550, y: -386}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 559, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 641, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 650, y: -45}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 650, y: 17}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 559, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 641, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 650, y: 35}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 650, y: 97}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 559, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 641, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 650, y: 115}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 650, y: 177}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 559, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 641, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 650, y: 195}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 650, y: 257}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 559, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 641, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 650, y: 275}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 650, y: 337}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 650, y: 355}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 650, y: 417}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 650, y: -208}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 650, y: -146}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 559, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 641, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 650, y: -288}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 650, y: -226}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 559, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 641, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 650, y: -368}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 650, y: -306}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 559, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 641, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 650, y: -448}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 650, y: -386}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 659, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 741, y: 26}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 750, y: -45}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 750, y: 17}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 659, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 741, y: 106}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 659, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 741, y: 186}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 659, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 741, y: 266}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 659, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 741, y: 346}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 750, y: -208}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 750, y: -146}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 659, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 741, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 750, y: -288}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 750, y: -226}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 659, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 741, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 750, y: -368}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 750, y: -306}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 659, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 741, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 750, y: -448}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 750, y: -386}
+    direction: {x: 0, y: -1}
+    halfLength: 1.5
+  - point: {x: 759, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 841, y: -217}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 759, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 841, y: -297}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 759, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5
+  - point: {x: 841, y: -377}
+    direction: {x: 1, y: -0}
+    halfLength: 1.5

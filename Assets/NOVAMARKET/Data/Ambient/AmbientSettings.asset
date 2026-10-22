@@ -17,10 +17,13 @@ MonoBehaviour:
   description: 
   low:
     vehicles: 60
+    pedestrians: 80
   medium:
     vehicles: 120
+    pedestrians: 150
   high:
     vehicles: 200
+    pedestrians: 300
   motoShare: 0.35
   busShare: 0.06
   truckShare: 0.09

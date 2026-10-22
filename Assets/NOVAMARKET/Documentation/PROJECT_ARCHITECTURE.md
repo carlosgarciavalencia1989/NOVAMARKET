@@ -510,6 +510,20 @@ Kenney / Quaternius / Synty / Mixamo packs without touching the logic.
   `MetroRunner` + `MetroTrainView` on `Systems/Ambient` (prefab `Prefabs/Vehicles/Ambient/Metro_Train`,
   doors change material while open). The trains are no longer part of the `Metro_Line` mesh:
   **NOVAMARKET → Environment → Rebuild Metro Line Only** rebuilds just the viaduct.
+- **People (stage 3):** `CityWalkLayout` builds the walk network from the blocks recorded by the
+  environment builder (`CityBlocksData`, exported on each full rebuild): the 2.5 m sidewalk around city and
+  downtown blocks (path 1.25 m from the kerb, 18 cm high), the edge of industrial blocks, park perimeters
+  and crossing paths (the plazas) and zebra crossings 3 m back from each corner between neighbouring
+  blocks (the lanes' stop line moves behind them: `TrafficLane.StopLineBack`). `AmbientPedestrians` keeps
+  80 / 150 / 300 people around the camera (Low / Medium / High): they keep right, stop now and then and
+  cross when the crossed street has red (and the other street still has 5 s of green) or, without lights,
+  when there is a gap; while crossing they are bodies for the traffic (`AmbientTraffic.SharedPedestrians`)
+  and step back if a vehicle stays in their way. `MetroPassengers` waits on the platforms, gets off and on
+  through the open doors; `CediWorkers` is the CEDI staff (guard on the gate island, pickers between the
+  pick stations, staff between parking and office who wait while a truck is near the door, two people
+  chatting). `PeopleRunner` + `PedestrianView` draw all of them from one pool (prefabs in
+  `Prefabs/Characters/`; a humanoid with an Animator float `Speed` works as is, the simple model swings
+  its legs and arms); `Crosswalk_Zebra` paints the crossings.
 - **Data:** `RoadNetworkData` (exported by **NOVAMARKET → Ambient → Export Road Network**, also run
   by the environment rebuild), `AmbientSettingsData` (Low 60 / Medium 120 / High 200 vehicles,
   vehicle mix), `AmbientVisualProfile` (prefab and colours per vehicle kind, traffic light, bus stop).
@@ -521,7 +535,8 @@ Kenney / Quaternius / Synty / Mixamo packs without touching the logic.
   Prefabs in `Prefabs/Vehicles/Ambient/` and `Prefabs/Environment/` have two LODs, no colliders
   (traffic is not selectable). **NOVAMARKET → Ambient → Setup Ambient Traffic** rebuilds all of it.
 
-**Status (2026-10-20): stages 0, 1 (traffic) and 2 (metro) done**, waiting for the author's approval
-before stage 3 (people on sidewalks, plazas and stations; operators in the CEDI).
+**Status (2026-10-21): stages 0–3 done** (traffic, metro, people), waiting for the author's approval
+before stage 4 (trees moving with the wind, smoke, lights ready for dusk, ambient sound with temporary
+placeholders until the Kenney CC0 packs arrive).
 Measured in the Editor (Game view 1920×888, start view): 0 vehicles 139 FPS, 60 → 119, 120 → 117,
 200 → 99; logic ≈1.9 ms per step at 120 vehicles, models ≈0.3 ms per frame.

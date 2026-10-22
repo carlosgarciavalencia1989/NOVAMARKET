@@ -21,6 +21,25 @@ namespace NovaMarket.Editor
         /// <summary>East-west avenues: the second street north of the highway and the second south of the river.</summary>
         private static readonly float[] AvenueZ = { CorridorNorth + 2f * GridPitchZ, CorridorSouth - 2f * GridPitchZ };
 
+        public const string CityBlocksPath = Root + "Data/Ambient/CityBlocks_CEDI_Medellin.asset";
+
+        /// <summary>Saves the blocks recorded by the last urban build (only during a full rebuild).</summary>
+        private static void ExportCityBlocks()
+        {
+            if (builtBlocks == null) return;
+            EnsureFolder(Root + "Data/Ambient");
+            var data = AssetDatabase.LoadAssetAtPath<CityBlocksData>(CityBlocksPath);
+            if (data == null)
+            {
+                data = ScriptableObject.CreateInstance<CityBlocksData>();
+                AssetDatabase.CreateAsset(data, CityBlocksPath);
+            }
+            data.SetBlocks(builtBlocks);
+            EditorUtility.SetDirty(data);
+            AssetDatabase.SaveAssets();
+            Debug.Log($"City blocks exported: {builtBlocks.Count}.");
+        }
+
         [MenuItem("NOVAMARKET/Ambient/Export Road Network")]
         public static RoadNetworkData ExportRoadNetwork()
         {

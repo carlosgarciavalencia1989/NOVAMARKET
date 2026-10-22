@@ -39,6 +39,7 @@ namespace NovaMarket.Simulation.Ambient
         private readonly Random random;
         private int nextId = 1;
         private bool filled;
+        private Vector2 filledAt;
 
         public AmbientPedestrians(WalkNetwork network, AmbientTraffic traffic = null, PedestrianSettings settings = null, int seed = 5)
         {
@@ -72,7 +73,10 @@ namespace NovaMarket.Simulation.Ambient
             Radius = radius;
             foreach (Pedestrian person in people) Walk(person, deltaTime);
             RemoveFar();
-            Spawn(!filled);
+            // After a jump of the camera (e.g. a click on the minimap) the new place fills at once, not from its edge.
+            bool jumped = Vector2.Distance(focus, filledAt) > radius * 0.5f && people.Count < Settings.Count / 2;
+            Spawn(!filled || jumped);
+            if (!filled || jumped) filledAt = focus;
             filled = true;
         }
 

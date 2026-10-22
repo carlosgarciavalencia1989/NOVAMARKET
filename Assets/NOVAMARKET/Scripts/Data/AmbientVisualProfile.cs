@@ -32,10 +32,26 @@ namespace NovaMarket.Data
         [SerializeField] private GameObject metroTrainPrefab;
         [Tooltip("Bus shelter, pivot on the kerb, +Z = traffic direction.")]
         [SerializeField] private GameObject busStopPrefab;
+        [Tooltip("Zebra crossing paint, pivot at its centre on the street, +Z = walking direction across the street.")]
+        [SerializeField] private GameObject crosswalkPrefab;
+
+        [Header("People")]
+        [Tooltip("Person models (each needs a PedestrianView on its root, pivot at the feet, front +Z).")]
+        [SerializeField] private GameObject[] pedestrianPrefabs = new GameObject[0];
+        [Tooltip("Clothes colours given to the renderers the view marks as clothes (optional).")]
+        [SerializeField] private Material[] clothesColours = new Material[0];
 
         public GameObject TrafficLightPrefab => trafficLightPrefab;
         public GameObject BusStopPrefab => busStopPrefab;
         public GameObject MetroTrainPrefab => metroTrainPrefab;
+        public GameObject CrosswalkPrefab => crosswalkPrefab;
+
+        /// <summary>A person model for a variant (null when none is set).</summary>
+        public GameObject PedestrianPrefabFor(int variant) =>
+            pedestrianPrefabs != null && pedestrianPrefabs.Length > 0 ? pedestrianPrefabs[Mathf.Abs(variant) % pedestrianPrefabs.Length] : null;
+
+        public Material ClothesColourFor(int variant) =>
+            clothesColours != null && clothesColours.Length > 0 ? clothesColours[Mathf.Abs(variant * 3 + 1) % clothesColours.Length] : null;
 
         /// <summary>The prefab for a vehicle kind and variant (null when the kind has none).</summary>
         public GameObject PrefabFor(AmbientVehicleKind kind, int variant)

@@ -3387,6 +3387,7 @@ GameObject:
   - component: {fileID: 277465824}
   - component: {fileID: 277465823}
   - component: {fileID: 277465825}
+  - component: {fileID: 277465826}
   m_Layer: 0
   m_Name: Ambient
   m_TagString: Untagged
@@ -3422,6 +3423,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Ambient.AmbientDebugOverlay
   runner: {fileID: 277465824}
+  people: {fileID: 277465826}
   visible: 0
   window: 5
 --- !u!114 &277465824
@@ -3462,6 +3464,30 @@ MonoBehaviour:
   line: {fileID: 11400000, guid: 5fb592314724eec43b68a1a8d4613722, type: 2}
   visuals: {fileID: 11400000, guid: 87578fe547513774a9daaa4584c50664, type: 2}
   stepsPerSecond: 20
+--- !u!114 &277465826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277465821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05192706b3177324fb5c445d0f03d9f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Ambient.PeopleRunner
+  blocks: {fileID: 11400000, guid: 4eabd175c5924ad448ae78be25d9c25b, type: 2}
+  settings: {fileID: 11400000, guid: 59e9ace9f795f524e84b106bc4a59faa, type: 2}
+  visuals: {fileID: 11400000, guid: 87578fe547513774a9daaa4584c50664, type: 2}
+  traffic: {fileID: 277465824}
+  metro: {fileID: 277465825}
+  operation: {fileID: 391676705}
+  cameraController: {fileID: 773018515}
+  seed: 31
+  radiusBaseAndFactor: {x: 60, y: 1}
+  radiusLimits: {x: 150, y: 450}
+  stepsPerSecond: 10
+  waitingPerPlatform: 8
 --- !u!1 &280993524
 GameObject:
   m_ObjectHideFlags: 0

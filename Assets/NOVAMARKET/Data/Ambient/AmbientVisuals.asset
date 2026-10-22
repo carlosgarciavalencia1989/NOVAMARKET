@@ -57,3 +57,16 @@ MonoBehaviour:
   trafficLightPrefab: {fileID: 3285883153685891505, guid: 6616c559b9013d64599da47b43ae241c, type: 3}
   metroTrainPrefab: {fileID: 2284027385753143695, guid: 4414505607d29d24d9d92932f167838c, type: 3}
   busStopPrefab: {fileID: 6826115903677471349, guid: 16f288d18d0feee46b575bf886fcb3b6, type: 3}
+  crosswalkPrefab: {fileID: 4310242374967874841, guid: acfb682e590b6c945a3656dbbbb7f099, type: 3}
+  pedestrianPrefabs:
+  - {fileID: 3497031191565941091, guid: ff3c9cf6fd3288742a8dadb38d26a6ac, type: 3}
+  - {fileID: 5889250033190641508, guid: 51d48caaac1c1a949a05f4365a69b200, type: 3}
+  clothesColours:
+  - {fileID: 2100000, guid: b746ad6b69c139244b2390279d052b1d, type: 2}
+  - {fileID: 2100000, guid: 7381a04dafbe45c4c82dd5c54b8e024a, type: 2}
+  - {fileID: 2100000, guid: 5509d4644826df6419de06ed8a7bb7f1, type: 2}
+  - {fileID: 2100000, guid: 29f083b1e0625e64ba375c8533275c7d, type: 2}
+  - {fileID: 2100000, guid: 56b0f1cf20484b6499e9550fb1bf6eb6, type: 2}
+  - {fileID: 2100000, guid: 0378a71386a57114cbdb43a4cc83d01c, type: 2}
+  - {fileID: 2100000, guid: 208533f56fc482749a6dfc3438437e1a, type: 2}
+  - {fileID: 2100000, guid: f60e76b7d725d8341b08954df6104d87, type: 2}

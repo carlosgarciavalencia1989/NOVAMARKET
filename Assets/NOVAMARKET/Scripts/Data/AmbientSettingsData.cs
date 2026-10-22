@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace NovaMarket.Data
 {
-    /// <summary>Quality levels of the scene life: how many vehicles (and later people) move around the camera.</summary>
+    /// <summary>Quality levels of the scene life: how many vehicles and people move around the camera.</summary>
     public enum AmbientQuality
     {
         Low,
@@ -23,11 +23,12 @@ namespace NovaMarket.Data
         private struct Level
         {
             [Min(0)] public int vehicles;
+            [Min(0)] public int pedestrians;
         }
 
-        [SerializeField] private Level low = new Level { vehicles = 60 };
-        [SerializeField] private Level medium = new Level { vehicles = 120 };
-        [SerializeField] private Level high = new Level { vehicles = 200 };
+        [SerializeField] private Level low = new Level { vehicles = 60, pedestrians = 80 };
+        [SerializeField] private Level medium = new Level { vehicles = 120, pedestrians = 150 };
+        [SerializeField] private Level high = new Level { vehicles = 200, pedestrians = 300 };
 
         [Header("Vehicle mix (Medellín: many motos)")]
         [SerializeField, Range(0.3f, 0.4f)] private float motoShare = 0.35f;
@@ -42,6 +43,16 @@ namespace NovaMarket.Data
             AmbientQuality.High => high.vehicles,
             _ => medium.vehicles
         };
+
+        public int PedestriansFor(AmbientQuality quality) => quality switch
+        {
+            AmbientQuality.Low => low.pedestrians,
+            AmbientQuality.High => high.pedestrians,
+            _ => medium.pedestrians
+        };
+
+        public PedestrianSettings ToPedestrianSettings(AmbientQuality quality) =>
+            new PedestrianSettings { Count = PedestriansFor(quality) };
 
         public AmbientTrafficSettings ToTrafficSettings(AmbientQuality quality) => new AmbientTrafficSettings
         {

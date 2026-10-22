@@ -23,6 +23,7 @@ namespace NovaMarket.Editor
         private const string AmbientPrefabFolder = Root + "Prefabs/Vehicles/Ambient";
         private const string FurniturePrefabFolder = Root + "Prefabs/Environment";
         private const float LineHeight = 0.045f;
+        private const string PeoplePrefabFolder = Root + "Prefabs/Characters";
 
         private static readonly Color[] CarColours =
         {
@@ -53,6 +54,7 @@ namespace NovaMarket.Editor
 
             RoadNetworkData network = CediEnvironmentBuilder.ExportRoadNetwork();
             AmbientSettingsData settings = LoadOrCreate<AmbientSettingsData>(AmbientDataFolder + "/AmbientSettings.asset");
+            FillPedestrianCounts(settings);
             AmbientVisualProfile visuals = BuildVisualProfile();
 
             Transform systems = GetOrCreateChild(scenarioRoot.transform, "Systems");
@@ -69,6 +71,16 @@ namespace NovaMarket.Editor
             var metro = GetOrAdd<MetroRunner>(ambient.gameObject);
             SetField(metro, "line", CediEnvironmentBuilder.ExportMetroLine());
             SetField(metro, "visuals", visuals);
+
+            var people = GetOrAdd<PeopleRunner>(ambient.gameObject);
+            SetField(people, "blocks", AssetDatabase.LoadAssetAtPath<CityBlocksData>(CediEnvironmentBuilder.CityBlocksPath));
+            SetField(people, "settings", settings);
+            SetField(people, "visuals", visuals);
+            SetField(people, "traffic", runner);
+            SetField(people, "metro", metro);
+            SetField(people, "operation", Object.FindAnyObjectByType<CediOperationRunner>());
+            SetField(people, "cameraController", Object.FindAnyObjectByType<StrategyCameraController>());
+            SetField(overlay, "people", people);
 
             AssetDatabase.SaveAssets();
             EditorSceneManager.MarkSceneDirty(scene);
@@ -96,6 +108,13 @@ namespace NovaMarket.Editor
             GameObject light = SavePrefab(BuildTrafficLight(), FurniturePrefabFolder + "/TrafficLight_Approach.prefab");
             GameObject shelter = SavePrefab(BuildBusStop(), FurniturePrefabFolder + "/BusStop_Shelter.prefab");
             GameObject train = SavePrefab(BuildMetroTrain(3), AmbientPrefabFolder + "/Metro_Train.prefab");
+            GameObject crosswalk = SavePrefab(BuildCrosswalk(), FurniturePrefabFolder + "/Crosswalk_Zebra.prefab");
+            EnsureFolder(PeoplePrefabFolder);
+            GameObject[] walkers =
+            {
+                SavePrefab(BuildPerson("Person_A", 1.0f), PeoplePrefabFolder + "/Person_A.prefab"),
+                SavePrefab(BuildPerson("Person_B", 0.93f), PeoplePrefabFolder + "/Person_B.prefab")
+            };
 
             AmbientVisualProfile profile = LoadOrCreate<AmbientVisualProfile>(AmbientDataFolder + "/AmbientVisuals.asset");
             var serialized = new SerializedObject(profile);
@@ -134,6 +153,9 @@ namespace NovaMarket.Editor
             serialized.FindProperty("trafficLightPrefab").objectReferenceValue = light;
             serialized.FindProperty("busStopPrefab").objectReferenceValue = shelter;
             serialized.FindProperty("metroTrainPrefab").objectReferenceValue = train;
+            serialized.FindProperty("crosswalkPrefab").objectReferenceValue = crosswalk;
+            SetArray(serialized.FindProperty("pedestrianPrefabs"), walkers);
+            SetArray(serialized.FindProperty("clothesColours"), Palette("M_Clothes_", ClothesColours));
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(profile);
             return profile;
@@ -346,6 +368,100 @@ namespace NovaMarket.Editor
             return root;
         }
 
+        // ------------------------------------------------------------------ people (pivot at the feet, front +Z)
+
+        private static readonly Color[] ClothesColours =
+        {
+            new Color(0.75f, 0.2f, 0.18f), new Color(0.2f, 0.36f, 0.62f), new Color(0.92f, 0.9f, 0.85f),
+            new Color(0.15f, 0.15f, 0.17f), new Color(0.95f, 0.78f, 0.2f), new Color(0.28f, 0.55f, 0.35f),
+            new Color(0.55f, 0.3f, 0.55f), new Color(0.9f, 0.5f, 0.2f)
+        };
+
+        /// <summary>Older settings assets have no people counts yet: give them the recommended ones.</summary>
+        private static void FillPedestrianCounts(AmbientSettingsData settings)
+        {
+            var serialized = new SerializedObject(settings);
+            foreach ((string level, int count) in new[] { ("low", 80), ("medium", 150), ("high", 300) })
+            {
+                SerializedProperty people = serialized.FindProperty(level).FindPropertyRelative("pedestrians");
+                if (people.intValue == 0) people.intValue = count;
+            }
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(settings);
+        }
+
+        /// <summary>
+        /// Simple person about 1.75 m tall (× <paramref name="scale"/>): legs and arms on pivots that swing while
+        /// walking, clothes coloured by the visual profile. A rigged humanoid with an Animator replaces it.
+        /// </summary>
+        private static GameObject BuildPerson(string name, float scale)
+        {
+            var root = new GameObject(name);
+            Transform model = Child(root.transform, "Model");
+            Transform lod0 = Child(model, "LOD0");
+            Transform lod1 = Child(model, "LOD1");
+            Material shirt = VehicleMaterial("M_Clothes_01", ClothesColours[0]);
+            Material pants = VehicleMaterial("M_Person_Pants", new Color(0.17f, 0.2f, 0.3f));
+            Material skin = VehicleMaterial("M_Person_Skin", new Color(0.72f, 0.53f, 0.42f));
+            Material hair = VehicleMaterial("M_Person_Hair", new Color(0.12f, 0.08f, 0.06f));
+            float hip = 0.92f * scale;
+
+            var limbs = new Transform[4];
+            for (int side = 0; side < 2; side++)
+            {
+                float x = side == 0 ? -0.11f : 0.11f;
+                Transform leg = Child(lod0, side == 0 ? "LeftLeg" : "RightLeg");
+                leg.localPosition = new Vector3(x, hip, 0f);
+                Piece(leg, "Leg", new Vector3(0f, -hip / 2f, 0f), new Vector3(0.16f, hip, 0.18f), pants, false);
+                Piece(leg, "Shoe", new Vector3(0f, -hip + 0.04f, 0.04f), new Vector3(0.14f, 0.08f, 0.26f), Dark(), false);
+                limbs[side] = leg;
+
+                Transform arm = Child(lod0, side == 0 ? "LeftArm" : "RightArm");
+                arm.localPosition = new Vector3(side == 0 ? -0.27f : 0.27f, 1.48f * scale, 0f);
+                Piece(arm, "Arm", new Vector3(0f, -0.3f * scale, 0f), new Vector3(0.12f, 0.6f * scale, 0.14f), shirt, false);
+                limbs[2 + side] = arm;
+            }
+            Renderer torso = Piece(lod0, "Torso", new Vector3(0f, hip + 0.31f * scale, 0f), new Vector3(0.42f, 0.62f * scale, 0.24f), shirt);
+            Piece(lod0, "Head", new Vector3(0f, 1.66f * scale, 0.01f), new Vector3(0.22f, 0.25f, 0.23f), skin, false, PrimitiveType.Sphere);
+            Piece(lod0, "Hair", new Vector3(0f, 1.74f * scale, -0.02f), new Vector3(0.23f, 0.12f, 0.22f), hair, false, PrimitiveType.Sphere);
+            Renderer box = Piece(lod1, "Body", new Vector3(0f, 0.87f * scale, 0f), new Vector3(0.45f, 1.74f * scale, 0.28f), shirt, false);
+
+            var group = model.gameObject.AddComponent<LODGroup>();
+            group.SetLODs(new[]
+            {
+                new LOD(0.05f, lod0.GetComponentsInChildren<Renderer>()),
+                new LOD(0.005f, lod1.GetComponentsInChildren<Renderer>())
+            });
+            group.RecalculateBounds();
+
+            var view = root.AddComponent<PedestrianView>();
+            var serialized = new SerializedObject(view);
+            serialized.FindProperty("model").objectReferenceValue = model;
+            SetArray(serialized.FindProperty("clothes"), new Object[]
+            {
+                torso, box, limbs[2].GetComponentInChildren<Renderer>(), limbs[3].GetComponentInChildren<Renderer>()
+            });
+            serialized.FindProperty("leftLeg").objectReferenceValue = limbs[0];
+            serialized.FindProperty("rightLeg").objectReferenceValue = limbs[1];
+            serialized.FindProperty("leftArm").objectReferenceValue = limbs[2];
+            serialized.FindProperty("rightArm").objectReferenceValue = limbs[3];
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            return root;
+        }
+
+        /// <summary>Zebra stripes across a 12 m street: +Z is the walking direction, stripes run along the street.</summary>
+        private static GameObject BuildCrosswalk()
+        {
+            var root = new GameObject("Crosswalk_Zebra");
+            Material paint = VehicleMaterial("M_Road_LineWhite", new Color(0.93f, 0.93f, 0.9f));
+            for (float z = -5.5f; z <= 5.51f; z += 1f)
+                Piece(root.transform, "Stripe", new Vector3(0f, 0f, z), new Vector3(CityWalkLayout.CrosswalkWidth, 0.02f, 0.5f), paint, false);
+            var group = root.AddComponent<LODGroup>();
+            group.SetLODs(new[] { new LOD(0.01f, root.GetComponentsInChildren<Renderer>()) });
+            group.RecalculateBounds();
+            return root;
+        }
+
         // ------------------------------------------------------------------ street furniture
 
         /// <summary>Pole on the right kerb, arm over the lane, three-lamp head; stop lines for cars and motos.</summary>
@@ -461,7 +577,9 @@ namespace NovaMarket.Editor
         {
             Material material = VehicleMaterial(name, colour);
             material.shader = Shader.Find("Universal Render Pipeline/Unlit");
-            material.SetColor("_BaseColor", colour * Mathf.Min(1f, intensity));
+            Color lit = colour * Mathf.Min(1f, intensity);
+            lit.a = 1f;
+            material.SetColor("_BaseColor", lit);
             EditorUtility.SetDirty(material);
             return material;
         }
