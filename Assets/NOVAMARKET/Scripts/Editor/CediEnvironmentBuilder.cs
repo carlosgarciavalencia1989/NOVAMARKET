@@ -88,6 +88,7 @@ namespace NovaMarket.Editor
             ExportRoadNetwork(); // the traffic follows the streets just built
             ExportMetroLine();
             ExportCityBlocks();
+            ExportChimneys();
 
             EditorUtility.SetDirty(terrainData);
             AssetDatabase.SaveAssets();
@@ -95,6 +96,8 @@ namespace NovaMarket.Editor
             heights = heightsBlur = dirtStamp = treeBlock = forestMap = slopeLandMap = null;
             urbanTrees = null;
             builtBlocks = null;
+            builtWarehouses = null;
+            builtChimneys = null;
             handPlacedTrees = null;
             Debug.Log("CEDI Medellin environment rebuilt.");
         }

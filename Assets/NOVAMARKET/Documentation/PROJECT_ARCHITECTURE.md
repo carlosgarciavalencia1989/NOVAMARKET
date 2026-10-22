@@ -535,8 +535,21 @@ Kenney / Quaternius / Synty / Mixamo packs without touching the logic.
   Prefabs in `Prefabs/Vehicles/Ambient/` and `Prefabs/Environment/` have two LODs, no colliders
   (traffic is not selectable). **NOVAMARKET → Ambient → Setup Ambient Traffic** rebuilds all of it.
 
-**Status (2026-10-21): stages 0–3 done** (traffic, metro, people), waiting for the author's approval
-before stage 4 (trees moving with the wind, smoke, lights ready for dusk, ambient sound with temporary
-placeholders until the Kenney CC0 packs arrive).
+- **Wind (stage 4a):** `WindModel` (plain C#: breeze at 250°, gusts, wandering direction) ticked by
+  `WindController` (`[ExecuteAlways]`, on `Systems/Ambient`), which sets the global `_WindParams`. The
+  canopy materials use `Shaders/WindFoliage.shader` ("NOVAMARKET/Wind Foliage", URP lit + shadows +
+  DOTS instancing for terrain trees). After changing it run **NOVAMARKET → Environment → Apply Tree
+  Wind Shader** (also refreshes the terrain's cached tree materials).
+- **Smoke (stage 4b, in progress):** `SmokeRules` (plain C#: chimney cycles, wind drift, diesel
+  exhaust of buses/trucks), `IndustrialChimneysData` (chimney tops exported by the builder,
+  `CediEnvironmentBuilder.Chimneys.cs`, own random numbers so the rest of the layout does not move),
+  `SmokeRunner` (two particle systems) and **NOVAMARKET → Ambient → Setup Smoke** (puff texture,
+  `M_Ambient_Smoke`, runner).
+
+**Status (2026-10-21): stages 0–3 done, stage 4 in progress.** 4a wind done. 4b smoke: code written
+and compiling; **next:** run the full environment rebuild (creates the chimneys and
+`IndustrialChimneys_CEDI_Medellin.asset`; check that only chimney meshes change), run Setup Smoke,
+check in Play and tune, run the tests (SmokeRulesTests not run yet), commit. Then 4c lights for dusk
+and 4d ambient sound (temporary placeholders until the Kenney CC0 packs arrive).
 Measured in the Editor (Game view 1920×888, start view): 0 vehicles 139 FPS, 60 → 119, 120 → 117,
 200 → 99; logic ≈1.9 ms per step at 120 vehicles, models ≈0.3 ms per frame.

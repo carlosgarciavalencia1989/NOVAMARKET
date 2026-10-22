@@ -82,6 +82,7 @@ namespace NovaMarket.Editor
             SetField(people, "cameraController", Object.FindAnyObjectByType<StrategyCameraController>());
             SetField(overlay, "people", people);
             GetOrAdd<WindController>(ambient.gameObject);
+            SetupSmoke(ambient);
 
             AssetDatabase.SaveAssets();
             EditorSceneManager.MarkSceneDirty(scene);

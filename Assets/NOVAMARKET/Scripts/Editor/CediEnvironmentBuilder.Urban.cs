@@ -95,6 +95,7 @@ namespace NovaMarket.Editor
             var cityRng = new System.Random(Seed + 13);
             int industrialBlocks = 0, cityBlocks = 0, parks = 0, towerBlocks = 0;
             builtBlocks = new List<CityBlock>();
+            builtWarehouses = new List<BuiltWarehouse>();
 
             foreach (Rect block in EnumerateBlocks())
             {
@@ -144,6 +145,7 @@ namespace NovaMarket.Editor
                     x + 6f, RoadZ - RoadHalfWidth), 0.03f, GroundAsphalt);
             }
 
+            BuildChimneys(industrial);
             CreateChunkObjects(environment, "IndustrialZone", "Industrial", industrial, groundPalette, buildingPalette);
             CreateChunkObjects(environment, "City", "City", city, groundPalette, buildingPalette);
             Debug.Log($"Urban: {industrialBlocks} industrial blocks, {cityBlocks} city blocks " +
@@ -295,6 +297,7 @@ namespace NovaMarket.Editor
             b.AddGableRoof(center, ridgeAlongX ? Vector3.right : Vector3.forward,
                 ridgeAlongX ? Vector3.forward : Vector3.right, halfLong, halfShort, eave,
                 halfShort * Mathf.Tan(6f * Mathf.Deg2Rad), roof, wall, MetalRoofTile);
+            RecordWarehouse(center, ridgeAlongX, halfLong, halfShort, eave + halfShort * Mathf.Tan(6f * Mathf.Deg2Rad));
 
             // Dock wall: the warehouse side that faces the yard.
             float wallLength = yardAlongZ ? footprint.width : footprint.height;
