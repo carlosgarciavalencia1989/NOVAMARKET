@@ -44,7 +44,7 @@ namespace NovaMarket.Simulation.Ambient
         public const float CycleSeconds = 90f;
 
         /// <summary>Puffs per second of a chimney with strength 1 at full output.</summary>
-        public const float ChimneyPuffsPerSecond = 4f;
+        public const float ChimneyPuffsPerSecond = 6f;
 
         /// <summary>Output of a chimney now: between 35 % and 100 % of its strength, following its plant cycle.</summary>
         public static float ChimneyOutput(SmokeSource source, float time)
@@ -73,8 +73,8 @@ namespace NovaMarket.Simulation.Ambient
             if (kind != AmbientVehicleKind.Bus && kind != AmbientVehicleKind.Truck) return ExhaustPuff.None;
             if (deltaTime <= 0f) return ExhaustPuff.None;
             float acceleration = (speed - previousSpeed) / deltaTime;
-            if (acceleration > 0.3f && speed < 8f) return new ExhaustPuff(7f, 0.85f);
-            if (speed < 0.3f) return new ExhaustPuff(1.5f, 0.3f);
+            if (acceleration > 0.3f && speed < 8f) return new ExhaustPuff(10f, 0.85f);
+            if (speed < 0.3f) return new ExhaustPuff(2f, 0.3f);
             return new ExhaustPuff(0.5f, 0.15f);
         }
 

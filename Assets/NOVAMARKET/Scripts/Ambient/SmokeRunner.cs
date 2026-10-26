@@ -22,16 +22,16 @@ namespace NovaMarket.Ambient
         [SerializeField] private Material smokeMaterial;
 
         [Header("Chimneys")]
-        [SerializeField] private Color chimneyColour = new Color(0.86f, 0.86f, 0.84f, 0.55f);
+        [SerializeField] private Color chimneyColour = new Color(0.9f, 0.9f, 0.88f, 0.85f);
         [SerializeField, Min(1f)] private float plumeSeconds = 16f;
-        [SerializeField] private Vector2 plumeSize = new Vector2(2.5f, 16f);
+        [SerializeField] private Vector2 plumeSize = new Vector2(4f, 14f);
         [SerializeField, Tooltip("m/s the smoke rises when it leaves the chimney.")] private float riseSpeed = 3f;
 
         [Header("Exhaust")]
         [SerializeField, Tooltip("Only buses and trucks this close to the camera focus smoke (meters).")]
         private float exhaustRadius = 260f;
         [SerializeField, Min(0.5f)] private float puffSeconds = 3f;
-        [SerializeField] private Vector2 puffSize = new Vector2(0.5f, 3f);
+        [SerializeField] private Vector2 puffSize = new Vector2(0.9f, 4.5f);
 
         private readonly Dictionary<AmbientVehicle, (float Speed, float Carry)> exhaust =
             new Dictionary<AmbientVehicle, (float, float)>();
@@ -115,7 +115,7 @@ namespace NovaMarket.Ambient
                 if (count == 0) continue;
 
                 float grey = Mathf.Lerp(0.62f, 0.12f, puff.Darkness);
-                emit.startColor = new Color(grey, grey, grey, Mathf.Lerp(0.35f, 0.75f, puff.Darkness));
+                emit.startColor = new Color(grey, grey, grey, Mathf.Lerp(0.55f, 0.9f, puff.Darkness));
                 emit.position = ExhaustOutlet(vehicle);
                 for (int k = 0; k < count; k++)
                 {
@@ -182,15 +182,15 @@ namespace NovaMarket.Ambient
             growth.enabled = true;
             float ratio = size.x / size.y;
             growth.size = new ParticleSystem.MinMaxCurve(size.y / size.x,
-                new AnimationCurve(new Keyframe(0f, ratio), new Keyframe(0.4f, 0.55f), new Keyframe(1f, 1f)));
+                new AnimationCurve(new Keyframe(0f, ratio), new Keyframe(0.4f, 0.35f), new Keyframe(1f, 1f)));
 
             ParticleSystem.ColorOverLifetimeModule fade = system.colorOverLifetime;
             fade.enabled = true;
             var gradient = new Gradient();
             gradient.SetKeys(
                 new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) },
-                new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(1f, 0.1f),
-                        new GradientAlphaKey(0.6f, 0.6f), new GradientAlphaKey(0f, 1f) });
+                new[] { new GradientAlphaKey(0.5f, 0f), new GradientAlphaKey(1f, 0.06f),
+                        new GradientAlphaKey(0.55f, 0.55f), new GradientAlphaKey(0f, 1f) });
             fade.color = gradient;
 
             ParticleSystem.RotationOverLifetimeModule spin = system.rotationOverLifetime;

@@ -34,6 +34,8 @@ namespace NovaMarket.Data
         [SerializeField] private GameObject busStopPrefab;
         [Tooltip("Zebra crossing paint, pivot at its centre on the street, +Z = walking direction across the street.")]
         [SerializeField] private GameObject crosswalkPrefab;
+        [Tooltip("Street lamp post along the highway and avenues, pivot at the foot of the post, +Z = over the road. Needs a StreetLampView.")]
+        [SerializeField] private GameObject streetLampPrefab;
 
         [Header("People")]
         [Tooltip("Person models (each needs a PedestrianView on its root, pivot at the feet, front +Z).")]
@@ -45,6 +47,7 @@ namespace NovaMarket.Data
         public GameObject BusStopPrefab => busStopPrefab;
         public GameObject MetroTrainPrefab => metroTrainPrefab;
         public GameObject CrosswalkPrefab => crosswalkPrefab;
+        public GameObject StreetLampPrefab => streetLampPrefab;
 
         /// <summary>A person model for a variant (null when none is set).</summary>
         public GameObject PedestrianPrefabFor(int variant) =>

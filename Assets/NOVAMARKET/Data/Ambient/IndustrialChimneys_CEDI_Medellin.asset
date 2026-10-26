@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b623723c88a43f646be4f886d0a76ad7, type: 3}
+  m_Name: IndustrialChimneys_CEDI_Medellin
+  m_EditorClassIdentifier: NovaMarket.Runtime::NovaMarket.Data.IndustrialChimneysData
+  id: 
+  displayName: 
+  description: 
+  chimneys:
+  - top: {x: -396.675, y: 25.246304, z: -21.421654}
+    strength: 0.70346075
+    phase: 2.7912858
+  - top: {x: -428.24896, y: 22.042774, z: 169.375}
+    strength: 1.141561
+    phase: 3.8966103
+  - top: {x: -272.47037, y: 28.277363, z: -191.625}
+    strength: 0.9669724
+    phase: 4.5541234
+  - top: {x: -209.6185, y: 27.104961, z: -25.025}
+    strength: 1.1417247
+    phase: 5.52783
+  - top: {x: -182.125, y: 24.711014, z: 88.46082}
+    strength: 0.90743726
+    phase: 1.0933709
+  - top: {x: -128.11891, y: 26.502968, z: -242.375}
+    strength: 0.8960988
+    phase: 0.30386922
+  - top: {x: -10.085081, y: 27.548044, z: -162.375}
+    strength: 0.94374365
+    phase: 3.3998375
+  - top: {x: 24.900002, y: 23.710009, z: -274.08066}
+    strength: 0.8560648
+    phase: 4.152662
+  - top: {x: 130.125, y: 26.200535, z: 138.03516}
+    strength: 1.1528592
+    phase: 0.5706486
+  - top: {x: 228.33698, y: 29.582102, z: 237.025}
+    strength: 1.1805812
+    phase: 0.781208
+  - top: {x: 164.675, y: 21.896751, z: -185.54037}
+    strength: 0.89372283
+    phase: 1.4226701
+  - top: {x: 313.12244, y: 24.899942, z: -2.9750004}
+    strength: 0.93507916
+    phase: 0.5349174
+  - top: {x: 417.875, y: 27.599674, z: 43.60389}
+    strength: 0.77924687
+    phase: 3.0440736

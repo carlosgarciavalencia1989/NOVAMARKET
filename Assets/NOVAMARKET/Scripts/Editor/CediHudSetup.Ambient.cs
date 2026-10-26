@@ -83,6 +83,8 @@ namespace NovaMarket.Editor
             SetField(overlay, "people", people);
             GetOrAdd<WindController>(ambient.gameObject);
             SetupSmoke(ambient);
+            SetupDayLight(ambient, visuals);
+            SetupSound(ambient);
 
             AssetDatabase.SaveAssets();
             EditorSceneManager.MarkSceneDirty(scene);

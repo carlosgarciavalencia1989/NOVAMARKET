@@ -36,9 +36,13 @@ namespace NovaMarket.Ambient
 
         [Header("Lights (ready for dusk)")]
         [SerializeField] private bool headlightsOn;
+        [Tooltip("Meters between street lamps along the highway and the avenues.")]
+        [SerializeField, Range(20f, 80f)] private float lampSpacing = 40f;
 
         private readonly Dictionary<AmbientVehicle, AmbientVehicleView> views = new Dictionary<AmbientVehicle, AmbientVehicleView>();
         private readonly List<(TrafficLightView View, TrafficLane Lane)> lights = new List<(TrafficLightView, TrafficLane)>();
+        private readonly List<StreetLampView> lamps = new List<StreetLampView>();
+        private bool lampsOn;
         private ViewPool<AmbientVehicleView> pool;
         private readonly System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
         private float accumulator;
@@ -47,6 +51,26 @@ namespace NovaMarket.Ambient
         public AmbientQuality Quality => quality;
         public int ActiveViews => views.Count;
         public int PooledViews => pool?.Created ?? 0;
+
+        /// <summary>Headlights of every vehicle (the day light switches them at dusk).</summary>
+        public bool HeadlightsOn
+        {
+            get => headlightsOn;
+            set => headlightsOn = value;
+        }
+
+        /// <summary>Street lamps along the highway and the avenues.</summary>
+        public bool LampsOn
+        {
+            get => lampsOn;
+            set
+            {
+                lampsOn = value;
+                foreach (StreetLampView lamp in lamps) lamp.SetOn(value);
+            }
+        }
+
+        public int LampCount => lamps.Count;
 
         /// <summary>Milliseconds of the last simulation step (the traffic logic).</summary>
         public float SimulationMs { get; private set; }
@@ -169,6 +193,17 @@ namespace NovaMarket.Ambient
                     if (view != null) lights.Add((view, lane));
                 }
             }
+
+            if (visuals.StreetLampPrefab != null)
+                foreach (StreetLamp lamp in StreetLampLayout.Place(Traffic.Network.Lanes, lampSpacing))
+                {
+                    GameObject post = Instantiate(visuals.StreetLampPrefab, Ground(lamp.Position), Facing(lamp.Facing), root);
+                    post.name = "StreetLamp";
+                    var view = post.GetComponent<StreetLampView>();
+                    if (view == null) continue;
+                    view.SetOn(lampsOn);
+                    lamps.Add(view);
+                }
 
             if (visuals.BusStopPrefab == null) return;
             foreach (TrafficLane lane in Traffic.Network.Lanes)

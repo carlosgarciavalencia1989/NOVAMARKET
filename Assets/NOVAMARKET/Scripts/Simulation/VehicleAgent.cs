@@ -43,6 +43,9 @@ namespace NovaMarket.Simulation
         public Vector2 Heading => Mover.Heading;
         public float Speed => Mover.Speed;
 
+        /// <summary>Moving backwards (into or out of a dock): the reverse beeper sounds.</summary>
+        public bool IsReversing => Mover.IsReversing && Mover.Speed > 0.05f;
+
         /// <summary>Body width in meters.</summary>
         public float Width => Kind switch
         {

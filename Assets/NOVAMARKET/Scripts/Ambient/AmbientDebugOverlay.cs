@@ -12,6 +12,7 @@ namespace NovaMarket.Ambient
         [SerializeField] private AmbientTrafficRunner runner;
         [SerializeField] private PeopleRunner people;
         [SerializeField] private SmokeRunner smoke;
+        [SerializeField] private AmbientSoundRunner sound;
         [SerializeField] private bool visible;
         [Tooltip("Seconds the averages cover.")]
         [SerializeField, Min(1f)] private float window = 5f;
@@ -51,9 +52,11 @@ namespace NovaMarket.Ambient
                 ? $"Vehículos: {runner.Traffic.Vehicles.Count} (calidad {runner.Quality}, {runner.PooledViews} modelos en el pool)\n" +
                   $"Radio alrededor de la cámara: {runner.Traffic.Radius:F0} m · lógica {runner.SimulationMs:F2} ms por paso · modelos {runner.ViewsMs:F2} ms" +
                   (people != null ? $"\nPersonas: {people.ActiveViews}" : "") +
-                  (smoke != null ? $" · partículas de humo: {smoke.ParticleCount}" : "")
+                  (smoke != null ? $" · partículas de humo: {smoke.ParticleCount}" : "") +
+                  (sound != null ? $" · voces de sonido: {sound.ActiveVoices}" : "") +
+                  $" · postes de luz: {runner.LampCount}"
                 : "Tráfico apagado";
-            GUI.Box(new Rect(Screen.width / 2f - 260f, 8f, 520f, 90f),
+            GUI.Box(new Rect(Screen.width / 2f - 330f, 8f, 660f, 90f),
                 $"FPS promedio ({window:F0} s): {AverageFps:F0}   ·   cuadro más lento: {WorstFrameMs:F1} ms\n{traffic}\nF3 oculta este cuadro", style);
         }
     }

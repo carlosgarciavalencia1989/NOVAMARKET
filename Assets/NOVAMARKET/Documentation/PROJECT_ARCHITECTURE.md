@@ -540,16 +540,36 @@ Kenney / Quaternius / Synty / Mixamo packs without touching the logic.
   canopy materials use `Shaders/WindFoliage.shader` ("NOVAMARKET/Wind Foliage", URP lit + shadows +
   DOTS instancing for terrain trees). After changing it run **NOVAMARKET → Environment → Apply Tree
   Wind Shader** (also refreshes the terrain's cached tree materials).
-- **Smoke (stage 4b, in progress):** `SmokeRules` (plain C#: chimney cycles, wind drift, diesel
-  exhaust of buses/trucks), `IndustrialChimneysData` (chimney tops exported by the builder,
-  `CediEnvironmentBuilder.Chimneys.cs`, own random numbers so the rest of the layout does not move),
-  `SmokeRunner` (two particle systems) and **NOVAMARKET → Ambient → Setup Smoke** (puff texture,
-  `M_Ambient_Smoke`, runner).
+- **Smoke (stage 4b):** `SmokeRules` (plain C#: chimney cycles, wind drift, diesel exhaust of
+  buses/trucks: black puff when pulling away, faint at idle), `IndustrialChimneysData` (13 chimney tops
+  exported by the builder, `CediEnvironmentBuilder.Chimneys.cs`, own random numbers so the rest of
+  the layout does not move), `SmokeRunner` (two particle systems, emitted from code, carried by the
+  wind) and **NOVAMARKET → Ambient → Setup Smoke** (puff texture, `M_Ambient_Smoke`, runner).
+- **Lights for dusk (stage 4c):** `DayLight` (plain C#: sun elevation/yaw/colour/intensity, ambient
+  scale and lamps on/off by hour; 16.5 h reproduces the afternoon lighting exactly) and
+  `StreetLampLayout` (posts on the kerbs of the highway and avenues, clear of crossings and bus
+  stops). `DayLightController` (`[ExecuteAlways]`, field **hour**: drag it to preview dusk/night; the
+  sky is only darkened in Play) switches `AmbientTrafficRunner.LampsOn` / `HeadlightsOn`.
+  `StreetLampView` lights the lens (Unlit) and an additive pool of light on the road.
+  **NOVAMARKET → Ambient → Setup Day Light** builds `Prefabs/Environment/StreetLamp_Post.prefab`.
+- **Music and sound (stage 4d):** the author asked for no city murmur and a very subtle background
+  music in the mood of Age of Empires (its tracks are copyrighted: never use them). From the strategy
+  view only the music plays; the street is heard only zoomed in close to the ground.
+  `ProceduralMusic` (plain C#) composes calm pieces in D minor (string pad, low drone, sparse plucked
+  harp/lute notes, soft echo; ~51 s each) from a seed; `ProceduralSounds` synthesises temporary street
+  loops (wind, engines, metro, reverse beeper); `AmbientSoundMix` (`NearGround`: full below 35 m camera
+  height, silent above 90 m; engine pitch by speed; nearest-N voices). `AmbientAudioProfile`
+  (`Data/Ambient/AmbientAudio`): `music` (CC0 tracks later; empty = 3 composed pieces rendered on a
+  worker thread, played in turn with `musicPause` seconds of silence), `musicVolume`, and the street
+  clips (Kenney CC0 later; empty = placeholder). `AmbientSoundRunner` moves its own listener ("Ears",
+  low between the focus and the camera; the camera's listener is disabled in Play) and pools 16 street
+  voices (12 vehicles, 2 trains, 2 CEDI beepers). **NOVAMARKET → Ambient → Setup Ambient Sound**.
 
-**Status (2026-10-21): stages 0–3 done, stage 4 in progress.** 4a wind done. 4b smoke: code written
-and compiling; **next:** run the full environment rebuild (creates the chimneys and
-`IndustrialChimneys_CEDI_Medellin.asset`; check that only chimney meshes change), run Setup Smoke,
-check in Play and tune, run the tests (SmokeRulesTests not run yet), commit. Then 4c lights for dusk
-and 4d ambient sound (temporary placeholders until the Kenney CC0 packs arrive).
+**Status (2026-10-25): stage 4 written, last checks pending.** 4a wind and 4b smoke checked in Play.
+4c lights checked in Play (afternoon / dusk 17:8 / night 20:30, 344 lamps). 4d: 403/403 tests passed
+before the music change; **next:** run the 408 tests (ProceduralMusicTests and the NearGround test
+never ran: the Editor stalled when it lost focus), listen to the music in Play, check the street is
+silent from the strategy view, measure FPS (preliminary ≈108 FPS with 120 vehicles, smoke and
+lamps), then commit as feat (4b–4d) and show the author captures and how to test.
 Measured in the Editor (Game view 1920×888, start view): 0 vehicles 139 FPS, 60 → 119, 120 → 117,
 200 → 99; logic ≈1.9 ms per step at 120 vehicles, models ≈0.3 ms per frame.

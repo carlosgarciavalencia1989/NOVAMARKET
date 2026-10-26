@@ -58,6 +58,7 @@ MonoBehaviour:
   metroTrainPrefab: {fileID: 2284027385753143695, guid: 4414505607d29d24d9d92932f167838c, type: 3}
   busStopPrefab: {fileID: 6826115903677471349, guid: 16f288d18d0feee46b575bf886fcb3b6, type: 3}
   crosswalkPrefab: {fileID: 4310242374967874841, guid: acfb682e590b6c945a3656dbbbb7f099, type: 3}
+  streetLampPrefab: {fileID: 395243537384996704, guid: ee14d15a98780c94dac48981a6f084f7, type: 3}
   pedestrianPrefabs:
   - {fileID: 3497031191565941091, guid: ff3c9cf6fd3288742a8dadb38d26a6ac, type: 3}
   - {fileID: 5889250033190641508, guid: 51d48caaac1c1a949a05f4365a69b200, type: 3}
