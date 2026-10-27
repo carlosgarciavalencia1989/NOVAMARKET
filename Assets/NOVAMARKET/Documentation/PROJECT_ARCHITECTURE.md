@@ -565,11 +565,11 @@ Kenney / Quaternius / Synty / Mixamo packs without touching the logic.
   low between the focus and the camera; the camera's listener is disabled in Play) and pools 16 street
   voices (12 vehicles, 2 trains, 2 CEDI beepers). **NOVAMARKET → Ambient → Setup Ambient Sound**.
 
-**Status (2026-10-25): stage 4 written, last checks pending.** 4a wind and 4b smoke checked in Play.
-4c lights checked in Play (afternoon / dusk 17:8 / night 20:30, 344 lamps). 4d: 403/403 tests passed
-before the music change; **next:** run the 408 tests (ProceduralMusicTests and the NearGround test
-never ran: the Editor stalled when it lost focus), listen to the music in Play, check the street is
-silent from the strategy view, measure FPS (preliminary ≈108 FPS with 120 vehicles, smoke and
-lamps), then commit as feat (4b–4d) and show the author captures and how to test.
-Measured in the Editor (Game view 1920×888, start view): 0 vehicles 139 FPS, 60 → 119, 120 → 117,
-200 → 99; logic ≈1.9 ms per step at 120 vehicles, models ≈0.3 ms per frame.
+**Status (2026-10-26): stages 0–4 done** (traffic, metro, people, wind, smoke, lights for dusk, music
+and street sound), 408/408 EditMode tests. Checked in Play: from the start view only the music plays
+(0 street voices); zoomed in to 27 m, 14 street voices + wind + music. Waiting for the author's
+review; the real CC0 music and Kenney sounds go into `AmbientAudio` when they arrive.
+Measured in the Editor (Game view 1920×888, start view): stages 0–3: 0 vehicles 139 FPS, 60 → 119,
+120 → 117, 200 → 99; logic ≈1.9 ms per step at 120 vehicles, models ≈0.3 ms per frame. With stage 4
+(120 vehicles, ~900 smoke particles, 344 lamps, music): ≈108 FPS at 16:30, ≈111 FPS at night.
+Composing a music piece takes ≈0.9 s on a worker thread; creating its clip < 1 ms.
