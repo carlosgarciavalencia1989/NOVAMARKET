@@ -72,3 +72,6 @@ desktop.ini
 
 # Screenshots taken while developing (kept local, not versioned)
 /[Cc]apturas/
+
+# Paquetes de assets descargados (sin importar), demasiado pesados para el repo
+/Paquetes gratis/
